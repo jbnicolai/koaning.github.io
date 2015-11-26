@@ -1,0 +1,348 @@
+
+# Open R Session
+
+
+> Author : Vincent D. Warmerdam 
+>
+> Blog: http://koaning.github.io 
+
+This document contains a notebook created at an open Rstudio session in Amsterdam. Free for all to use/refer to. It is meant as a sprint through R functionality to help you get started using the free software such that you aren't depended on software you need to pay for (SPPS/Excel/SAS).
+
+#### Libraries used. 
+
+In this document I will assume that you have installed the `dplyr` and `ggplot2` package and that you have activated them.  You can check this by running: 
+
+```{}
+library(dplyr)
+library(ggplot2)
+```
+
+
+```{r, echo=FALSE, message=FALSE}
+library(dplyr)
+library(ggplot2)
+```
+
+### Variables 
+
+We can declare variables just like excel cells. 
+
+<img src="http://i.imgur.com/PIbb0DK.png" width="100%">
+
+```{r}
+a = 1 
+b = 3 
+a + b 
+```
+
+We can also assign variables just like excel cells.
+
+```{r}
+c = a + b 
+c
+```
+
+We can make it as complex as we want, just like in excel. We'll shortly see that this might not be the best way of doing things though. 
+
+```{r}
+one = 1 
+two = 2 
+three = 3 
+four = 4 
+five = 5 
+total = one + two + three + four + five 
+total
+```
+
+### Functions 
+
+You will have used a function before in Excel even though you might not have been aware of this. 
+
+<img src="http://i.imgur.com/2IjGtOz.png" width="100%">
+
+```{r}
+max(one,5)
+```
+
+Notice that you can also use variables that you've defined just like cells. Remember that `four` and `five` are now variables? 
+
+```{r}
+max(four, five)
+```
+
+There are many other functions that excel uses that R also has. Some examples: 
+
+```{r}
+sqrt(2)
+```
+
+```{r}
+sum(1,2,3,4,5)
+```
+
+```{r}
+log(2)
+```
+
+R even has some variables predefined for you that might be useful. 
+
+```{r}
+pi
+```
+
+<img src="http://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Function_machine5.svg/350px-Function_machine5.svg.png">
+
+And if you want to, you can offcourse use a function within a function. 
+
+```{r}
+log(sqrt(2))
+```
+
+### Custom Functions 
+
+This is where excel doesn't excel (pun intended). In excel you have a list of useful functions, in R you can make your own. 
+
+##### Simple Example 
+
+Suppose that you are given a radius of a circle and you want to know the area of the circle. 
+
+```{r}
+circle_area = function(radius){
+  resultaat = radius*radius*pi
+  return(resultaat)
+}
+
+add = function(n1, n2){
+  return(n1 + n2)
+}
+
+add(1,circle_area(2))
+
+circle_area(1)
+```
+
+Just like that, you can create **ANY** function! You may not be able to appreciate the power that this gives you, but you may soon. 
+
+#### Assignment
+
+Try to create a function that calculates the amount of money on a savings account. Write a function that takes into account a starting amount, an interest rate and a number of years. When calling the function ```money(start=100, interest=0.03, years =1)``` it should give back 103. 
+
+#### Pipes 
+
+<img src="http://3.imimg.com/data3/IV/RA/MY-1058971/flexible-pvc-pipes-500x500.jpg">
+
+Let's get a little bit philosophical about lanuages now. By typing code we are giving instructions to the computer in a way that the computer understands. But this is not by definition the way we understand language. Note that in a computer language, just like in a real language, we can usually explain things in two ways. 
+
+For example, take this bit of code: 
+
+```{r}
+sqrt(2)
+```
+
+We are reading it as: "take the square root of two". Another way in which we can describe this is in human terms is "take the number two and calculate the square root of it". R is a nice language, because it allows both human thoughts to be translated into a computer program. 
+
+```{r}
+2 %>% sqrt 
+```
+
+Notice the similarity. This is just notation but it makes code just a bit easier to read. Just a simple example: 
+
+```{r}
+sqrt(log(sqrt(log(2))))
+```
+
+```{r}
+2 %>% log %>% sqrt %>% log %>% sqrt
+```
+
+It feels more as if I am reading a chain of commands that I can give the computer without having to write a very ugly function. 
+
+#### Types 
+
+So we have variables, which are basically names of objects. We can apply functions to these variables. But not every function will work on every variable. Just like in excel, this would produce an error: 
+
+```{}
+3 + 'three' 
+``` 
+
+This is because the computer doesn't know how to add `3` (a number) to `'three'` (a sequence of characters, also known as 'strings'). This might give a lot of errors and this is something you will need to be aware of. Certain functions work on certain variables. 
+
+Some examples of functions that work on characters: 
+
+```{r}
+paste("hello", "world")
+```
+
+```{r}
+a = 12
+substr("mattie",a , 2)
+```
+
+You can aslo change a type of a variable (this is know as casting): 
+
+```{r}
+as.numeric("104.5")
+```
+
+```{r}
+as.character(1)
+```
+
+#### Arrays 
+
+An array is another type of object we can use in R. It is basically a list of other variables, just like a row or a column in excel. These can be created easily.
+
+```{r}
+c(1,2,3,4,5,6,7,8,9,0)
+```
+
+```{r}
+1:100
+```
+
+```{r}
+seq(1, 10, 0.1)
+```
+
+These arrays can also be store in variables just like anything else. They can also have functions being applied on them.
+
+```{r}
+a = seq(1, 10, 0.1)
+sqrt(a)
+```
+
+Notice that our variable `a` has now been overwritten. You can confirm this by looking at the environment tab of Rstudio. This variable is no longer a number, but a list of numbers. Simple arrays that only have numbers in them can also be plotted very easily using the `plot` function. 
+
+```{r}
+# plot(sqrt(a))
+a %>% sqrt %>% plot(t='l')
+```
+
+We can also create an array with random numbers and use a histogram to draw them. 
+
+```{r}
+1000 %>% rnorm %>% hist
+hist(rnorm(1000))
+```
+
+We can also perform some operations before we actually plot something. Also, note that an array is also an object that can use certain functions. 
+
+```{r}
+a = sqrt(seq(1, 500, 0.1))
+b = rnorm(length(a))
+plot(a + b)
+```
+
+Again, because of pipes, we could also do this: 
+
+```{r}
+a = seq(1, 500, 0.1) %>% sqrt
+b = a %>% length %>% rnorm 
+(a + b) %>% plot
+```
+
+#### For loops 
+
+Arrays are useful, but sometimes we want to not change one by hand. We want to automate! That's the whole point of using a computer. For this, we could use a for loop. 
+
+```{r}
+arr = c(1,2,3,4,5,6)
+for(i in arr){
+  print(i*2)
+}
+
+for(i in seq(1,2,0.1)){
+  for(j in arr){
+    print(c(i,j))
+  }
+}
+```
+
+In this for-loop I am printing values in the array. In the next one I am changing the old array. 
+
+```{r}
+old_arr = c(1,2,3,4,5,6)
+new_arr = c()
+for(i in old_arr){
+  new_arr = c(new_arr, i*i)
+}
+new_arr
+```
+
+#### If statement 
+
+You might be able to imagine how useful this is.  It becomes especially useful when combining with an if statement. 
+
+Try to imagine what this next bit of code does. 
+
+```{r}
+numbers = rnorm(100)
+largest_num = 0
+for(i in numbers){
+  if(i > largest_num){
+    largest_num = i
+  }
+}
+```
+
+Notice that this is something we could create a function for. 
+
+```{r}
+my_max = function(numbers){
+  largest_num = 0
+  for(i in numbers){
+    if(i > largest_num){
+      largest_num = i
+    }
+  }
+  return(largest_num)
+}
+```
+
+#### Assignments 
+
+1. Create a function that grabs the minimum from a list of numbers. 
+2. Create a function that counts how often the number 2 occurs in a list of numbers. 
+3. Create a function that counts how often a number `a` occurs in a list of numbers. 
+4. Create a histogram of random numbers that are larger than 0.5. 
+
+## Part 2 : DataFrames 
+
+An excel file usually consists of rows and columns. Thusfar we've only considered one dimensional arrays. The power of R lies in something called the dataframe object, which is a variable that represents a table containing rows and columns. For many data analysis tasks, this is an object that contains the perfect abstraction. 
+
+R comes with some datasets out of the box that you can play with. Let's play with one called `ChickWeight`. There are a few functions that are useful for a dataframe, as well as some selection functionality. Can you guess what the following commands do? 
+
+```{r}
+ChickWeight %>% head
+ChickWeight$weight %>% head
+ChickWeight %>% select(weight) %>% head
+ChickWeight$Diet %>% unique
+unique(ChickWeight$Diet) 
+ChickWeight %>% colnames
+ChickWeight[1:5,2:3]
+ChickWeight[3] %>% head
+ChickWeight[1,1]
+agg = ChickWeight %>% filter(Time == 21)
+ggplot() + geom_point(data=ChickWeight, aes(Time, weight))
+
+p = ggplot() + geom_histogram(data=agg, aes(weight, fill=Diet)) 
+p + facet_grid(Diet ~ .)
+```
+
+Remember that you can always prefix a function with a questionmark to get the R help to help you out. For example: `?sqrt`. 
+
+## plotting 
+
+GGplot is the best plotting library I've had the pleasure of using. Here are some examples of things you can do with it. For each plot, try to imagine what the plot looks like before plotting it. 
+
+```{r}
+ns = read.csv("~/Development/notebooks/data/ns-storingen.csv")
+pltr = ns %>% 
+  filter(reason == "aanrijding met een persoon") %>% 
+  group_by(month = substr(startdate,6,7) %>% as.numeric) %>% 
+  summarise(n = n())
+
+ggplot() + geom_line(data=pltr, aes(month, n))
+ggplot() + geom_bar(data=pltr, aes(month, n), stat="identity")
+```
+

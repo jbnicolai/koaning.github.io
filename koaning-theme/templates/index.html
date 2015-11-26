@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% block content_title %}{% endblock %}
+{% block content %}  
+
+<h1>Posts</h1>
+<br>
+{% if articles %}
+{% for article in articles_page.object_list %}        
+<div class="article" itemscope itemtype="http://schema.org/BlogPosting">
+	<a href="/{{ article.url }}">
+		<h4 style="color:black" itemprop="name headline">{{ article.title }}</h4>
+	</a>
+	<time datetime="{{ article.date.isoformat() }}" itemprop="datePublished">{{ article.locale_date }}</time>
+</div>
+<hr>
+{% endfor %} {# For article #}
+{% endif %} {# If articles #}
+
+<style>
+	a{
+		color:black;
+	}
+</style>
+
+<br><br>
+
+<h1>Talks</h1><p> Here's some content for some talks that I've given in the past:</p>
+<footer id="footer">
+	<a data-toggle="collapse" href="#earl2015" aria-expanded="false" aria-controls="earl2015">
+		<u><h3 class="small">Spark Summit Meetup + EARL Boston 2015: SparkR</h3></u>
+	</a>
+	<div class="collapse" id="earl2015">
+	  <div class="well">
+	    <ul class="well">
+	    	<li><a href="/theme/notebooks/sparkr.pdf">slides</a></li>
+    	</ul>
+    	<br>
+	  </div>
+	</div>
+
+	<a data-toggle="collapse" href="#europython2015" aria-expanded="false" aria-controls="europython2015">
+		<u><h3 class="small">EuroPython 2015: Pyspark + Warcraft</h3></u>
+	</a>
+	<div class="collapse" id="europython2015">
+	  <div class="well">
+	    <ul class="well">
+	    	<li><a href="/theme/notebooks/wowspark.pdf">slides</a></li>
+	    	<li><a href="https://www.youtube.com/watch?v=AOwP2xq_ceE">youtube, not the best quality</a></li>
+    	</ul>
+    	<br>
+	  </div>
+	</div>
+
+	<a data-toggle="collapse" href="#open-rstudio-2015" aria-expanded="false" aria-controls="open-rstudio-2015">
+		<u><h3 class="small">Open Rstudio Session 2015</h3></u>
+	</a>
+	<div class="collapse" id="open-rstudio-2015">
+	  <div class="well">
+	    <ul class="well">
+	    	<li><a href="/theme/notebooks/open_r_session.Rmd">Rmd file</a></li>
+	    	<li><a href="/theme/notebooks/open_r_session.html">html document</a></li>
+    	</ul>
+    	<br>
+	  </div>
+	</div>
+
+	<a data-toggle="collapse" href="#open-pandas-2015" aria-expanded="false" aria-controls="open-pandas-2015">
+		<u><h3 class="small">Open Pandas Session 2015</h3></u>
+	</a>
+	<div class="collapse" id="open-pandas-2015">
+	  <div class="well">
+	    <ul class="well">
+	    	<li><a href="https://nbviewer.jupyter.org/github/koaning/koaning.github.io/blob/master/md/Open%20Pandas%20Session.ipynb">ipython notebook webview</a></li>
+	    	<li><a href="/theme/notebooks/open-pandas-2015.ipynb">ipython notebook file</a></li>
+	    	<li><a href="/theme/data/chickweight.csv">chickweight dataset</a></li>
+	    	<li><a href="/theme/data/ns-storingen.csv">ns dataset</a></li>
+    	</ul>
+    	<br>
+	  </div>
+	</div>
+
+	<a data-toggle="collapse" href="#python-ams-meetup" aria-expanded="false" aria-controls="python-ams-meetup">
+		<u><h3 class="small">Python AMS Meetup 2015</h3></u>
+	</a>
+	<div class="collapse" id="python-ams-meetup">
+	  <div class="well">
+	    <ul class="well">
+	    	<li><a href="https://gist.githubusercontent.com/koaning/28a91f5ac8be1571059a/raw/76d930d1c3c65a3f34e68ac64ac05ad00cbc9da3/gistfile1.txt">ipython notebook file</a></li>
+	    	<li><a href="/theme/iframes/ams-meetup-notebook.html">ipython notebook webview</a></li>
+	    	<li><a href="/theme/data/chickweight.csv">chickweight dataset</a></li>
+    	</ul>
+    	<br>
+	  </div>
+	</div>
+
+	<a data-toggle="collapse" href="#pydata-berlin" aria-expanded="false" aria-controls="pydata-berlin">
+		<u><h3 class="small">PyData Berlin 2014</h3></u>
+	</a>
+	<div class="collapse" id="pydata-berlin">
+	  <div class="well">
+			<ul class="well">
+	    	<li><a href="https://www.youtube.com/watch?v=ZW8Aei2wlsM">youtube</a></li>
+	    	<li><a href="/theme/iframes/ams-meetup-notebook.html">ipython notebook webview</a></li>
+	    	<li><a href="/theme/data/chickweight.csv">chickweight dataset</a></li>
+	    	<li><a href="/theme/data/financial.csv">financial dataset</a></li>
+	    	<li><a href="/theme/data/whatweare.csv">whatweare dataset</a></li>
+    	</ul>
+    	<br>
+	  </div>
+	</div>
+
+<br><br><br>
+
+</footer>
+{% endblock content %}
+
