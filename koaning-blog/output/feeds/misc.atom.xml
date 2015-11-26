@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>koaning.io</title><link href="koaning.io/" rel="alternate"></link><link href="koaning.io/feeds/misc.atom.xml" rel="self"></link><id>koaning.io/</id><updated>2015-11-25T00:00:00+01:00</updated><entry><title>Canvas, Trees and Communities</title><link href="koaning.io/canvas-trees-and-communities.html" rel="alternate"></link><updated>2015-11-25T00:00:00+01:00</updated><author><name>Vincent D. Warmerdam</name></author><id>tag:koaning.io,2015-11-25:canvas-trees-and-communities.html</id><summary type="html">&lt;p&gt;&lt;a href="http://d3js.org/"&gt;D3&lt;/a&gt; sometimes falls short in performance. Browsers just aren't meant to draw and update many svg elements. Canvas can help adress some of these problems and in this document I will demo some things that I've hacked together. All this work is heavily (!) inspired by the recent work of Mike Bostock found &lt;a href="http://bl.ocks.org/mbostock/280d83080497c8c13152"&gt;here&lt;/a&gt;. &lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>koaning.io</title><link href="koaning.io/" rel="alternate"></link><link href="koaning.io/feeds/misc.atom.xml" rel="self"></link><id>koaning.io/</id><updated>2015-11-25T00:00:00+01:00</updated><entry><title>Canvas, Trees and Communities</title><link href="koaning.io/canvas-trees-and-communities.html" rel="alternate"></link><updated>2015-11-25T00:00:00+01:00</updated><author><name>Vincent D. Warmerdam</name></author><id>tag:koaning.io,2015-11-25:canvas-trees-and-communities.html</id><summary type="html">&lt;style&gt;
+  canvas{
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    width: 500px;
+  }
+&lt;/style&gt;
+
+&lt;p&gt;&lt;a href="http://d3js.org/"&gt;D3&lt;/a&gt; sometimes falls short in performance. Browsers just aren't meant to draw and update many svg elements. Canvas can help adress some of these problems and in this document I will demo some things that I've hacked together. All this work is heavily (!) inspired by the recent work of Mike Bostock found &lt;a href="http://bl.ocks.org/mbostock/280d83080497c8c13152"&gt;here&lt;/a&gt;. &lt;/p&gt;
 &lt;h2&gt;Minimum Spanning Tree&lt;/h2&gt;
 &lt;p&gt;In d3, you would be able to keep track of the state of your visualisation via the DOM of the browser. It would keep track of where svg elements are located as well as have event bindings. Canvas will not give you this luxury, you'll need to track the state of the drawn objects yourself. &lt;/p&gt;
 &lt;p&gt;You can still use many utility functions from d3 though, or any other front end javascript code. In this next example I'm using &lt;code&gt;d3.timer&lt;/code&gt; and lodash extensively. &lt;/p&gt;
@@ -7,11 +18,9 @@
 &lt;p&gt;Imagine that we have a set number of drones that is each doing random searches on a plane. A random search is not the best way to go about this, but the coverage would not be terrible. The plot below shows location of 100 of these drones.&lt;/p&gt;
 &lt;div class="container"&gt;
   &lt;div class="row"&gt;
-    &lt;div class="col-sm-1"&gt;&lt;/div&gt;
-      &lt;div class="col-sm-10"&gt;
+      &lt;div class="col-sm-12"&gt;
         &lt;canvas height="300" width="550" id="canvas2"&gt;&lt;/canvas&gt;
       &lt;/div&gt;
-    &lt;div class="col-sm-1"&gt;&lt;/div&gt;
   &lt;/div&gt;
 &lt;/div&gt;
 

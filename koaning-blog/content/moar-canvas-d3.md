@@ -1,6 +1,16 @@
 Title: Canvas, Trees and Communities 
 Date: 2015-11-25
 
+<style>
+  canvas{
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    width: 500px;
+  }
+</style>
 [D3](http://d3js.org/) sometimes falls short in performance. Browsers just aren't meant to draw and update many svg elements. Canvas can help adress some of these problems and in this document I will demo some things that I've hacked together. All this work is heavily (!) inspired by the recent work of Mike Bostock found [here](http://bl.ocks.org/mbostock/280d83080497c8c13152). 
 
 ## Minimum Spanning Tree
@@ -14,11 +24,9 @@ Imagine that we have a set number of drones that is each doing random searches o
 
 <div class="container">
   <div class="row">
-    <div class="col-sm-1"></div>
-      <div class="col-sm-10">
+      <div class="col-sm-12">
         <canvas height="300" width="550" id="canvas2"></canvas>
       </div>
-    <div class="col-sm-1"></div>
   </div>
 </div>
 
@@ -103,8 +111,6 @@ If you want to expand this to more than two communities you might take the two s
 ## Conclusions 
 
 Canvas is pretty darn worthwhile and has some performance benefits compared to d3. You'll need to write more javascript though, which isn't too bad if you can use `d3` and `lodash`. 
-
-
 
 <script>
 /* https://github.com/d3/d3-timer Copyright 2015 Mike Bostock */

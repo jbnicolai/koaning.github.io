@@ -35,7 +35,18 @@
 		<time datetime="2015-11-25T00:00:00" itemprop="datePublished">Wed 25 November 2015</time>
 	</div>
 	<br><br>
-		<div itemprop="articleBody" class="article-body"><p><a href="http://d3js.org/">D3</a> sometimes falls short in performance. Browsers just aren't meant to draw and update many svg elements. Canvas can help adress some of these problems and in this document I will demo some things that I've hacked together. All this work is heavily (!) inspired by the recent work of Mike Bostock found <a href="http://bl.ocks.org/mbostock/280d83080497c8c13152">here</a>. </p>
+		<div itemprop="articleBody" class="article-body"><style>
+  canvas{
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    width: 500px;
+  }
+</style>
+
+<p><a href="http://d3js.org/">D3</a> sometimes falls short in performance. Browsers just aren't meant to draw and update many svg elements. Canvas can help adress some of these problems and in this document I will demo some things that I've hacked together. All this work is heavily (!) inspired by the recent work of Mike Bostock found <a href="http://bl.ocks.org/mbostock/280d83080497c8c13152">here</a>. </p>
 <h2>Minimum Spanning Tree</h2>
 <p>In d3, you would be able to keep track of the state of your visualisation via the DOM of the browser. It would keep track of where svg elements are located as well as have event bindings. Canvas will not give you this luxury, you'll need to track the state of the drawn objects yourself. </p>
 <p>You can still use many utility functions from d3 though, or any other front end javascript code. In this next example I'm using <code>d3.timer</code> and lodash extensively. </p>
@@ -43,11 +54,9 @@
 <p>Imagine that we have a set number of drones that is each doing random searches on a plane. A random search is not the best way to go about this, but the coverage would not be terrible. The plot below shows location of 100 of these drones.</p>
 <div class="container">
   <div class="row">
-    <div class="col-sm-1"></div>
-      <div class="col-sm-10">
+      <div class="col-sm-12">
         <canvas height="300" width="550" id="canvas2"></canvas>
       </div>
-    <div class="col-sm-1"></div>
   </div>
 </div>
 
