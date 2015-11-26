@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>SparkR just got better — koaning.io</title>
+	<meta name="description" content="Title: SparkR just got better; Date: 2015-09-09; Author: Vincent D. Warmerdam">
+	<meta name="author" content="Vincent D. Warmerdam">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="/theme/css/bootstrap.css">
+  <link rel="stylesheet" type="text/css" href="/theme/css/style.css">
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/d3/3.4.1/d3.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.js">
+  <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  </script>
+	</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <br>
+    		<h1><a class="web_title" href="/">koaning.io</a></h1>
+        <blockquote>Blog of a data scientist/developer</blockquote>
+    		<br><br>
+      </div>
+    </div>
+  	<div class="row">
+  		<div class="col-md-12">
+  			<div class="article" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="text-center article-header">
+		<h1 itemprop="name headline" class="article-title">SparkR just got better</h1>
+		<span itemprop="author" itemscope itemtype="http://schema.org/Person"></span>
+		<time datetime="2015-09-09T00:00:00" itemprop="datePublished">Wed 09 September 2015</time>
+	</div>
+	<br><br>
+		<div itemprop="articleBody" class="article-body"><p>In this document I'll give a quick review of some exiting new features for SparkR from the new 1.5 version that had it's official release today. </p>
+<h2>Rstudio provisioned</h2>
+<p><img alt="" src="https://www.rstudio.com/wp-content/uploads/2014/07/RStudio-Logo-Blue-Gradient.png" /></p>
+<p>Starting a full start SparkR service on aws just got a whole lot easier. It takes about 15 minutes and only requires you to do three simple things.</p>
+<h4>Step 1: Command line</h4>
+<p>If you have your amazon <code>.pem</code> files in order on your machine as well as your aws credentials in your <code>.bash_profile</code> you can use the command line app in the <code>spark-ec2</code> folder to start up a cluster on amazon. </p>
+<p>From this folder, run this command;</p>
+<div class="highlight"><pre>./spark-ec2 \
+    --key-pair=pems \
+    --identity-file=/path/pems.pem \
+    --region=eu-west-1 \
+    -s 4 \
+    --instance-type c3.xlarge \
+    --copy-aws-credentials
+    launch my-spark-cluster
+</pre></div>
+
+
+<p>This example will start a cluster with 4 slave nodes of type c3.xlarge in the eu-west-1 region. The name of the cluster is 'my-spark-cluster'. If you want a bigger cluster, you can set the preferences here. </p>
+<h4>Step 2: Ssh + set password</h4>
+<p>The same command line app allows you to ssh into the master machine of the spark cluster. </p>
+<div class="highlight"><pre>./spark-ec2 -k pems-df -i /path/pems.pem --region=eu-west-1 login my-spark-cluster
+</pre></div>
+
+
+<p>Once you are logged in, you'll be logged in as the root user. For security reasons it is more preferable to have a seperate user for rstudio. This user has already been added to the system, the only thing you need to do is assign a password to it. </p>
+<div class="highlight"><pre>passwd rstudio
+</pre></div>
+
+
+<h4>Step 3: Login</h4>
+<p>First, just check where the master server is located.</p>
+<div class="highlight"><pre>curl icanhazip.com
+</pre></div>
+
+
+<p>Then fill in the link in your favorite browser and go to port 8787 and log in with the 'rstudio' user and the password that you've set. </p>
+<p><img alt="" src="http://i.imgur.com/G6AbvPw.png" /></p>
+<p>You can use the <code>startSpark.R</code> script to quickly get started.  It creates a sparkContext and a sqlContext which you can then use to create distributed dataframes on your cluster. </p>
+<h5>When you are done</h5>
+<p>If you are done with the cluster and saved all your files back to s3, you don't need to pay for the ec2 machines anymore. The cluster can then safely be destroyed via the same command line app as before. </p>
+<div class="highlight"><pre>./spark-ec2 -k pems-df -i /path/pems.pem --region=eu-west-1 destroy my-spark-cluster
+</pre></div>
+
+
+<h2>Linear Models</h2>
+<h4>Regression Example</h4>
+<div class="highlight"><pre>ddf <span class="o">&lt;-</span> createDataFrame<span class="p">(</span>sqlContext<span class="p">,</span> ChickWeight<span class="p">)</span>
+ddf <span class="o">%&gt;%</span> 
+  summary <span class="o">%&gt;%</span> 
+  collect
+</pre></div>
+
+
+<h6>Result</h6>
+<div class="highlight"><pre>  summary             weight               Time              Chick 
+1   count                578                578                578 
+2    mean 121.81833910034602 10.717993079584774 25.750865051903116 
+3  stddev  71.01045205007217  6.752550828025898   14.5561866041844 
+4     min               35.0                0.0                  1 
+5     max              373.0               21.0                  9 
+                Diet
+1                578
+2  2.235294117647059
+3 1.1616716269489116
+4                  1
+5                  4
+</pre></div>
+
+
+<p>In this new SparkR shell you will notice that the <code>glm</code> method now comes from multiple packages. </p>
+<div class="highlight"><pre>?glm
+Help on topic ‘glm’ was found in the following packages:
+
+  Package               Library
+  SparkR                /Users/code/Downloads/spark-1.5.0-bin-hadoop2.6/R/lib
+  stats                 /Library/Frameworks/R.framework/Versions/3.2/Resources/library
+</pre></div>
+
+
+<p>You can run the model and save it's parameters in a variable, just like in normal R. </p>
+<div class="highlight"><pre>dist_mod <span class="o">&lt;-</span> glm<span class="p">(</span>weight <span class="o">~</span> Time <span class="o">+</span> Diet<span class="p">,</span> data <span class="o">=</span> ddf<span class="p">,</span> family <span class="o">=</span> <span class="s">&quot;gaussian&quot;</span><span class="p">)</span>
+</pre></div>
+
+
+<p>To view the characteristics of the regression you'll only need to run it through the summary function (a pattern common for many things in R). </p>
+<div class="highlight"><pre>dist_mod %&gt;% summary
+</pre></div>
+
+
+<h6>Result</h6>
+<div class="highlight"><pre><span class="p">$</span><span class="nv">coefficients</span><span class="x"></span>
+<span class="x">              Estimate</span>
+<span class="x">(Intercept)  41.157845</span>
+<span class="x">Time          8.750492</span>
+<span class="x">Diet__1     -30.233456</span>
+<span class="x">Diet__2     -14.067382</span>
+<span class="x">Diet__3       6.265952</span>
+</pre></div>
+
+
+<p>This model can be applied to new data to create predictions, very much in the same style as you would in normal R models/dataframes.</p>
+<div class="highlight"><pre>dist_mod %&gt;% 
+  predict(newData = ddf) %&gt;% 
+  showDF
+</pre></div>
+
+
+<h6>Result</h6>
+<div class="highlight"><pre>+------+----+-----+----+------------------+-----+------------------+
+|weight|Time|Chick|Diet|          features|label|        prediction|
++------+----+-----+----+------------------+-----+------------------+
+|  42.0| 0.0|    1|   1|     (4,[1],[1.0])| 42.0|10.924388954283739|
+|  51.0| 2.0|    1|   1| [2.0,1.0,0.0,0.0]| 51.0| 28.42537280265673|
+|  59.0| 4.0|    1|   1| [4.0,1.0,0.0,0.0]| 59.0| 45.92635665102972|
+|  64.0| 6.0|    1|   1| [6.0,1.0,0.0,0.0]| 64.0| 63.42734049940272|
+|  76.0| 8.0|    1|   1| [8.0,1.0,0.0,0.0]| 76.0| 80.92832434777571|
+|  93.0|10.0|    1|   1|[10.0,1.0,0.0,0.0]| 93.0| 98.42930819614871|
+| 106.0|12.0|    1|   1|[12.0,1.0,0.0,0.0]|106.0|115.93029204452169|
+| 125.0|14.0|    1|   1|[14.0,1.0,0.0,0.0]|125.0| 133.4312758928947|
+| 149.0|16.0|    1|   1|[16.0,1.0,0.0,0.0]|149.0|150.93225974126767|
+| 171.0|18.0|    1|   1|[18.0,1.0,0.0,0.0]|171.0|168.43324358964065|
+| 199.0|20.0|    1|   1|[20.0,1.0,0.0,0.0]|199.0|185.93422743801366|
+| 205.0|21.0|    1|   1|[21.0,1.0,0.0,0.0]|205.0|194.68471936220016|
+|  40.0| 0.0|    2|   1|     (4,[1],[1.0])| 40.0|10.924388954283739|
+|  49.0| 2.0|    2|   1| [2.0,1.0,0.0,0.0]| 49.0| 28.42537280265673|
+|  58.0| 4.0|    2|   1| [4.0,1.0,0.0,0.0]| 58.0| 45.92635665102972|
+|  72.0| 6.0|    2|   1| [6.0,1.0,0.0,0.0]| 72.0| 63.42734049940272|
+|  84.0| 8.0|    2|   1| [8.0,1.0,0.0,0.0]| 84.0| 80.92832434777571|
+| 103.0|10.0|    2|   1|[10.0,1.0,0.0,0.0]|103.0| 98.42930819614871|
+| 122.0|12.0|    2|   1|[12.0,1.0,0.0,0.0]|122.0|115.93029204452169|
+| 138.0|14.0|    2|   1|[14.0,1.0,0.0,0.0]|138.0| 133.4312758928947|
++------+----+-----+----+------------------+-----+------------------+
+</pre></div>
+
+
+<h4>A small GOTYA</h4>
+<p>You could compare the SparkR model results from the ChickWeight regression with the results from the normal R lm method. What you see might scare you a bit. </p>
+<div class="highlight"><pre>df <span class="o">&lt;-</span> ChickWeight
+loc_mod <span class="o">&lt;-</span> glm<span class="p">(</span>weight <span class="o">~</span> Time <span class="o">+</span> Diet<span class="p">,</span> data <span class="o">=</span> df<span class="p">)</span>
+loc_mod <span class="o">%&gt;%</span> <span class="kp">summary</span>
+</pre></div>
+
+
+<h6>Results</h6>
+<div class="highlight"><pre><span class="n">Coefficients</span><span class="o">:</span>
+            <span class="n">Estimate</span> <span class="n">Std</span><span class="o">.</span> <span class="n">Error</span> <span class="n">t</span> <span class="n">value</span> <span class="n">Pr</span><span class="o">(&gt;|</span><span class="n">t</span><span class="o">|)</span>    
+<span class="o">(</span><span class="n">Intercept</span><span class="o">)</span>  <span class="mf">10.9244</span>     <span class="mf">3.3607</span>   <span class="mf">3.251</span>  <span class="mf">0.00122</span> <span class="o">**</span> 
+<span class="n">Time</span>          <span class="mf">8.7505</span>     <span class="mf">0.2218</span>  <span class="mf">39.451</span>  <span class="o">&lt;</span> <span class="mi">2</span><span class="n">e</span><span class="o">-</span><span class="mi">16</span> <span class="o">***</span>
+<span class="n">Diet2</span>        <span class="mf">16.1661</span>     <span class="mf">4.0858</span>   <span class="mf">3.957</span> <span class="mf">8.56</span><span class="n">e</span><span class="o">-</span><span class="mi">05</span> <span class="o">***</span>
+<span class="n">Diet3</span>        <span class="mf">36.4994</span>     <span class="mf">4.0858</span>   <span class="mf">8.933</span>  <span class="o">&lt;</span> <span class="mi">2</span><span class="n">e</span><span class="o">-</span><span class="mi">16</span> <span class="o">***</span>
+<span class="n">Diet4</span>        <span class="mf">30.2335</span>     <span class="mf">4.1075</span>   <span class="mf">7.361</span> <span class="mf">6.39</span><span class="n">e</span><span class="o">-</span><span class="mi">13</span> <span class="o">***</span>
+</pre></div>
+
+
+<p>Compare this output with the distributed glm output. You might be frightned slightly at this point. The two models give very different output! </p>
+<p>Don't be scared just yet. The way that Spark has implemented machine learning is different it is still doing proper regression. </p>
+<p>The main difference is that R-glm translates the <code>Diet1</code> variable to be the constant intercept whereas the SparkR-glm translates <code>Diet4</code>. The only different therefore is a linear transformation of the model and the prediction outcomes shoulds still be the same. Another way to confirm this is to notice that the different between <code>Diet2</code> and <code>Diet3</code> is the same in both models and the parameter for <code>Time</code> is also the same. </p>
+<div class="highlight"><pre>loc_mod %&gt;% predict(df) %&gt;% head(20)
+</pre></div>
+
+
+<h6>Result</h6>
+<div class="highlight"><pre>        1         2         3         4         5         6         7         8
+ 10.92439  28.42537  45.92636  63.42734  80.92833  98.42931 115.93029 133.43128
+        9        10        11        12        13        14        15        16
+150.93226 168.43324 185.93423 194.68472  10.92439  28.42537  45.92636  63.42734
+       17        18        19        20
+ 80.92833  98.42931 115.93029 133.43128
+</pre></div>
+
+
+<h4>Classification Example</h4>
+<p>By turning the family parameter from "gaussian" to "binomial" we turn the linear regression into a logistic regression. </p>
+<div class="highlight"><pre>df <span class="o">&lt;-</span> <span class="kt">data.frame</span><span class="p">(</span>a <span class="o">=</span> <span class="kt">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">),</span> b <span class="o">=</span> <span class="kt">c</span><span class="p">(</span><span class="m">6</span><span class="p">,</span><span class="m">7</span><span class="p">,</span><span class="m">8</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">3</span><span class="p">))</span>
+ddf <span class="o">&lt;-</span> createDataFrame<span class="p">(</span>sqlContext<span class="p">,</span> df<span class="p">)</span>
+mod <span class="o">&lt;-</span> glm<span class="p">(</span>a <span class="o">~</span> b<span class="p">,</span> data<span class="o">=</span>ddf<span class="p">,</span> family<span class="o">=</span><span class="s">&quot;binomial&quot;</span><span class="p">)</span>
+mod <span class="o">%&gt;%</span> 
+  predict<span class="p">(</span>newData <span class="o">=</span> ddf<span class="p">)</span> <span class="o">%&gt;%</span> 
+  showDF
+</pre></div>
+
+
+<h6>Result</h6>
+<div class="highlight"><pre>+---+---+--------+-----+--------------------+--------------------+----------+
+|  a|  b|features|label|       rawPrediction|         probability|prediction|
++---+---+--------+-----+--------------------+--------------------+----------+
+|1.0|6.0|   [6.0]|  1.0|[-16.405749578003...|[7.50021053099107...|       1.0|
+|1.0|7.0|   [7.0]|  1.0|[-27.201563029171...|[1.53642468901809...|       1.0|
+|1.0|8.0|   [8.0]|  1.0|[-37.997376480340...|[3.14737918119432...|       1.0|
+|0.0|1.0|   [1.0]|  0.0|[37.5733176778398...|[1.0,4.8096720602...|       0.0|
+|0.0|2.0|   [2.0]|  0.0|[26.7775042266712...|[0.99999999999765...|       0.0|
+|0.0|3.0|   [3.0]|  0.0|[15.9816907755026...|[0.99999988538542...|       0.0|
++---+---+--------+-----+--------------------+--------------------+----------+
+</pre></div>
+
+
+<p>The logistic version of glm unfortuntaly doesn't give us a nice summary output at the moment. This is a known <a href="https://issues.apache.org/jira/browse/SPARK-9836">missing feature</a> and should become available as of Spark 1.6. Another problem is that SparkR currently does not seem to support strings; which means that all classification tasks need to be cast to integers manually. </p>
+<div class="highlight"><pre><span class="kp">names</span><span class="p">(</span>iris<span class="p">)</span> <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">(</span><span class="s">&quot;sepal_length&quot;</span><span class="p">,</span><span class="s">&quot;sepal_width&quot;</span><span class="p">,</span><span class="s">&quot;petal_length&quot;</span><span class="p">,</span><span class="s">&quot;petal_width&quot;</span><span class="p">,</span><span class="s">&quot;species&quot;</span><span class="p">)</span>
+
+ddf <span class="o">&lt;-</span> sqlContext <span class="o">%&gt;%</span> 
+  createDataFrame<span class="p">(</span>iris<span class="p">)</span> <span class="o">%&gt;%</span> 
+  withColumn<span class="p">(</span><span class="s">&quot;to_pred&quot;</span><span class="p">,</span> <span class="m">.</span><span class="o">$</span>species <span class="o">==</span> <span class="s">&quot;setosa&quot;</span><span class="p">)</span>
+
+glm<span class="p">(</span>to_pred <span class="o">~</span> sepal_length <span class="o">+</span> sepal_width <span class="o">+</span> petal_length <span class="o">+</span> petal_width<span class="p">,</span> family <span class="o">=</span> <span class="s">&quot;binomial&quot;</span><span class="p">,</span> data <span class="o">=</span> ddf<span class="p">)</span> <span class="o">%&gt;%</span> 
+  predict<span class="p">(</span>newData <span class="o">=</span> ddf<span class="p">)</span> <span class="o">%&gt;%</span> 
+  showDF
+</pre></div>
+
+
+<p>Note that Spark doesn't like points in column names, which is why they are manually reset here. </p>
+<h6>Result</h6>
+<div class="highlight"><pre>+-------+-------+-------+-------+-------+-------+ ... +----------+
+|sep_len|sep_wid|pet_len|pet_wid|species|to_pred| ... |prediction|
++-------+-------+-------+-------+-------+-------+ ... +----------+
+|    5.1|    3.5|     1.4|   0.2| setosa|   true| ... |       1.0|
+|    4.9|    3.0|     1.4|   0.2| setosa|   true| ... |       1.0|
+|    4.7|    3.2|     1.3|   0.2| setosa|   true| ... |       1.0|
+|    4.6|    3.1|     1.5|   0.2| setosa|   true| ... |       1.0|
+|    5.0|    3.6|     1.4|   0.2| setosa|   true| ... |       1.0|
+|    5.4|    3.9|     1.7|   0.4| setosa|   true| ... |       1.0|
+|    4.6|    3.4|     1.4|   0.3| setosa|   true| ... |       1.0|
+|    5.0|    3.4|     1.5|   0.2| setosa|   true| ... |       1.0|
+|    4.4|    2.9|     1.4|   0.2| setosa|   true| ... |       1.0|
+|    4.9|    3.1|     1.5|   0.1| setosa|   true| ... |       1.0|
+|    5.4|    3.7|     1.5|   0.2| setosa|   true| ... |       1.0|
+|    4.8|    3.4|     1.6|   0.2| setosa|   true| ... |       1.0|
+|    4.8|    3.0|     1.4|   0.1| setosa|   true| ... |       1.0|
+|    4.3|    3.0|     1.1|   0.1| setosa|   true| ... |       1.0|
+|    5.8|    4.0|     1.2|   0.2| setosa|   true| ... |       1.0|
+|    5.7|    4.4|     1.5|   0.4| setosa|   true| ... |       1.0|
+|    5.4|    3.9|     1.3|   0.4| setosa|   true| ... |       1.0|
+|    5.1|    3.5|     1.4|   0.3| setosa|   true| ... |       1.0|
+|    5.7|    3.8|     1.7|   0.3| setosa|   true| ... |       1.0|
+|    5.1|    3.8|     1.5|   0.3| setosa|   true| ... |       1.0|
++-------+-------+-------+-------+-------+-------+ ... +----------+
+only showing top 20 rows
+</pre></div>
+
+
+<h3>More Advanced Types and Queries</h3>
+<p>A few nice features were added in Spark 1.5 in regards to types and operations in distributed data frames. </p>
+<h4>The %in% operator</h4>
+<p>This was definately missing in Spark 1.4 but now you can do more complex queries via the <code>%in%</code> operator. </p>
+<div class="highlight"><pre>ddf <span class="o">&lt;-</span> createDataFrame<span class="p">(</span>sqlContext<span class="p">,</span> ChickWeight<span class="p">)</span>
+ddf <span class="o">%&gt;%</span> 
+  filter<span class="p">(</span><span class="m">.</span><span class="o">$</span>Diet <span class="o">%in%</span> <span class="kt">c</span><span class="p">(</span><span class="s">&quot;3&quot;</span><span class="p">,</span><span class="s">&quot;4&quot;</span><span class="p">))</span> <span class="o">%&gt;%</span> 
+  <span class="kp">sample</span><span class="p">(</span><span class="kc">TRUE</span><span class="p">,</span> <span class="m">0.05</span><span class="p">)</span> <span class="o">%&gt;%</span> 
+  collect
+</pre></div>
+
+
+<h6>Result</h6>
+<div class="highlight"><pre>   weight Time Chick Diet
+1      87    6    35    3
+2      48    2    37    3
+3     109   10    38    3
+4     232   18    38    3
+5      66    4    40    3
+6     215   16    40    3
+7     155   12    41    4
+8     204   16    42    4
+9     198   18    43    4
+10    101    8    46    4
+</pre></div>
+
+
+<h4>Date types</h4>
+<p>You can now start playing around with dates in SparkR.</p>
+<div class="highlight"><pre>df <span class="o">&lt;-</span> <span class="kt">data.frame</span><span class="p">(</span>
+  date <span class="o">=</span> <span class="kp">as.Date</span><span class="p">(</span><span class="s">&quot;2015-04-01&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="m">0</span><span class="o">:</span><span class="m">99</span><span class="p">,</span> 
+  r <span class="o">=</span> runif<span class="p">(</span><span class="m">100</span><span class="p">)</span>
+<span class="p">)</span>
+
+ddf <span class="o">&lt;-</span> createDataFrame<span class="p">(</span>sqlContext<span class="p">,</span> df<span class="p">)</span> 
+ddf <span class="o">%&gt;%</span> printSchema
+</pre></div>
+
+
+<h6>Result</h6>
+<div class="highlight"><pre>root
+ |-- date: date (nullable = true)
+ |-- r: double (nullable = true)
+</pre></div>
+
+
+<p>You can filter these dates by using date types. </p>
+<div class="highlight"><pre><span class="x">ddf %&gt;% </span>
+<span class="x">  filter(.</span><span class="p">$</span><span class="nv">date</span><span class="x"> &gt; as.Date(&quot;2015-04-03&quot;)) %&gt;% </span>
+<span class="x">  filter(.</span><span class="p">$</span><span class="nv">date</span><span class="x"> &lt; as.Date(&quot;2015-04-08&quot;)) %&gt;% </span>
+<span class="x">  collect</span>
+</pre></div>
+
+
+<h6>Result</h6>
+<div class="highlight"><pre>        date         r
+1 2015-04-04 0.5821896
+2 2015-04-05 0.9939826
+3 2015-04-06 0.4792869
+4 2015-04-07 0.3411329
+</pre></div>
+
+
+<p>SparkR even has some lubridate-ish support for date manipulation.</p>
+<div class="highlight"><pre><span class="x">ddf %&gt;% </span>
+<span class="x">    withColumn(&quot;dom&quot;, .</span><span class="p">$</span><span class="nv">date</span><span class="x"> %&gt;% dayofmonth) %&gt;% </span>
+<span class="x">    withColumn(&quot;doy&quot;, .</span><span class="p">$</span><span class="nv">date</span><span class="x"> %&gt;% dayofyear) %&gt;% </span>
+<span class="x">    withColumn(&quot;woy&quot;, .</span><span class="p">$</span><span class="nv">date</span><span class="x"> %&gt;% weekofyear) %&gt;% </span>
+<span class="x">    head</span>
+</pre></div>
+
+
+<h6>Result</h6>
+<div class="highlight"><pre>        date         r dom doy woy
+1 2015-04-01 0.2736077   1  91  14
+2 2015-04-02 0.2015249   2  92  14
+3 2015-04-03 0.3586754   3  93  14
+4 2015-04-04 0.6162447   4  94  14
+5 2015-04-05 0.5220081   5  95  14
+6 2015-04-06 0.4814839   6  96  15
+</pre></div>
+
+
+<p>You can do similar things with datetimes.</p>
+<div class="highlight"><pre>df <span class="o">&lt;-</span> <span class="kt">data.frame</span><span class="p">(</span>
+    t <span class="o">=</span> <span class="kp">as.POSIXct</span><span class="p">(</span><span class="s">&quot;2015-01-01 00:00:00&quot;</span><span class="p">)</span> <span class="o">+</span> runif<span class="p">(</span><span class="m">1000</span><span class="p">)</span><span class="o">*</span><span class="m">10000</span><span class="p">,</span> 
+    r <span class="o">=</span> runif<span class="p">(</span><span class="m">1000</span><span class="p">)</span>
+<span class="p">)</span>
+
+ddf <span class="o">&lt;-</span> createDataFrame<span class="p">(</span>sqlContext<span class="p">,</span> df<span class="p">)</span> 
+ddf <span class="o">%&gt;%</span> printSchema
+</pre></div>
+
+
+<h6>Result</h6>
+<div class="highlight"><pre>root
+ |-- t: timestamp (nullable = true)
+ |-- r: double (nullable = true)
+</pre></div>
+
+
+<p>Besides dates, we've also got some lubri-time methods in SparkR now. </p>
+<div class="highlight"><pre><span class="x">ddf %&gt;% </span>
+<span class="x">    withColumn(&quot;hour&quot;, .</span><span class="p">$</span><span class="nv">t</span><span class="x"> %&gt;% hour) %&gt;% </span>
+<span class="x">    withColumn(&quot;minute&quot;, .</span><span class="p">$</span><span class="nv">t</span><span class="x"> %&gt;% minute) %&gt;% </span>
+<span class="x">    withColumn(&quot;unix_t&quot;, .</span><span class="p">$</span><span class="nv">t</span><span class="x"> %&gt;% unix_timestamp) %&gt;% </span>
+<span class="x">    head</span>
+</pre></div>
+
+
+<h6>Result</h6>
+<div class="highlight"><pre>                    t         r hour minute     unix_t
+1 2015-01-01 01:08:09 0.1484953    1      8 1420070889
+2 2015-01-01 02:27:22 0.6907954    2     27 1420075642
+3 2015-01-01 01:11:24 0.6616176    1     11 1420071084
+4 2015-01-01 00:11:06 0.9897747    0     11 1420067466
+5 2015-01-01 02:07:13 0.2923660    2      7 1420074433
+6 2015-01-01 01:06:16 0.6781178    1      6 1420070776
+</pre></div>
+
+
+<p>For most dataframe operations, this is nice to start playing with, but don't expect the full flexibility of base R just yet. As of right now dates and dateimes cannot be summerized and they cannot be used in models. This is a current known issue in <a href="https://issues.apache.org/jira/browse/SPARK-10520">Jira</a> that peolpe are working on. </p>
+<h4>Levenshtein</h4>
+<p>These might fall in the special usecase category, but it can be suprisingly handy when trying to find similar names in a large databank. 
+    df &lt;- data.frame(
+        a = c('saark', 'spork', 'siaru', 'soobk'), 
+        b = c('spark', 'spark', 'spark', 'spark')
+    )</p>
+<div class="highlight"><pre>ddf <span class="o">&lt;-</span> createDataFrame<span class="p">(</span>sqlContext<span class="p">,</span> df<span class="p">)</span> 
+ddf<span class="o">$</span><span class="kt">c</span> <span class="o">&lt;-</span> levenshtein<span class="p">(</span>ddf<span class="o">$</span>a<span class="p">,</span> ddf<span class="o">$</span>b<span class="p">)</span>
+ddf <span class="o">%&gt;%</span> <span class="kp">head</span>
+</pre></div>
+
+
+<h6>Results</h6>
+<div class="highlight"><pre>      a     b c
+1 saark spark 1
+2 spork spark 1
+3 siaru spark 2
+4 soobk spark 3
+</pre></div>
+
+
+<h4>Regex</h4>
+<p>Again, regexes are a bit of a special use case to a lot of R users but they are invaluable when analysing log files. </p>
+<div class="highlight"><pre>df <span class="o">&lt;-</span> <span class="kt">data.frame</span><span class="p">(</span>
+    s <span class="o">=</span> <span class="kt">c</span><span class="p">(</span><span class="s">&#39;100-202&#39;</span><span class="p">,</span> <span class="s">&#39;2a4ta24&#39;</span><span class="p">,</span> <span class="s">&#39;300-200&#39;</span><span class="p">,</span> <span class="s">&#39;t2t2t2&#39;</span><span class="p">)</span>
+<span class="p">)</span>
+
+ddf <span class="o">&lt;-</span> createDataFrame<span class="p">(</span>sqlContext<span class="p">,</span> df<span class="p">)</span>
+
+ddf <span class="o">%&gt;%</span> 
+    withColumn<span class="p">(</span><span class="s">&#39;regex1&#39;</span><span class="p">,</span> regexp_extract<span class="p">(</span><span class="m">.</span><span class="o">$</span>s<span class="p">,</span> <span class="s">&quot;(\\d+)-(\\d+)&quot;</span><span class="p">,</span> <span class="m">1</span><span class="p">))</span> <span class="o">%&gt;%</span> 
+    withColumn<span class="p">(</span><span class="s">&#39;regex2&#39;</span><span class="p">,</span> regexp_extract<span class="p">(</span><span class="m">.</span><span class="o">$</span>s<span class="p">,</span> <span class="s">&quot;(\\d+)-(\\d+)&quot;</span><span class="p">,</span> <span class="m">2</span><span class="p">))</span> <span class="o">%&gt;%</span> 
+    withColumn<span class="p">(</span><span class="s">&#39;regex3&#39;</span><span class="p">,</span> regexp_replace<span class="p">(</span><span class="m">.</span><span class="o">$</span>s<span class="p">,</span> <span class="s">&quot;(\\d+)-(\\d+)&quot;</span><span class="p">,</span> <span class="s">&quot;HERE!&quot;</span><span class="p">))</span> <span class="o">%&gt;%</span> 
+    <span class="kp">head</span>
+</pre></div>
+
+
+<h6>Results</h6>
+<div class="highlight"><pre>        s regex1 regex2  regex3
+1 100-202    100    202   HERE!
+2 2a4ta24               2a4ta24
+3 300-200    300    200   HERE!
+4  t2t2t2                t2t2t2
+</pre></div>
+
+
+<h2>The future</h2>
+<p>Spark could use some more features, but the recent additions already grant many usecases. Spark is a project with enourmous traction and has a new release every 3 months, so you can expect more to come.</p>
+<p>Being able to work with a distributed dataframe in a dplyr-like syntax really opens up doors for R users who want to handle larger datasets. The fact that all of this can run on amazon cheaply adds to the benefit. </p></div>
+	<hr>
+</div>
+        <br>
+  		</div>
+  	</div> 
+  </div>
+
+  <div class="container">
+  	<div class="row">
+  		<div class="col-md-12 text-center center-block aw-bottom">
+  			<p>Vincent D. Warmerdam Made with Pelican</p>
+  		</div>
+  	</div>
+  </div>
+  <!-- JavaScript -->
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+  <script type="text/javascript">
+  jQuery(document).ready(function($) {
+  	$("div.collapseheader").click(function () {
+  		$header = $(this).children("span").first();
+  		$codearea = $(this).children(".input_area");
+  		$codearea.slideToggle(500, function () {
+  			$header.text(function () {
+  				return $codearea.is(":visible") ? "Collapse Code" : "Expand Code";
+  			});
+  		});
+  	});
+  });
+  
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-28011256-6', 'auto');
+  ga('send', 'pageview');
+
+</script>
+  </body>
+</html>

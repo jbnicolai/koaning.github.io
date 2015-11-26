@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Julia for Loops — koaning.io</title>
+	<meta name="description" content="Title: Julia for Loops; Date: 2015-08-25; Author: Vincent D. Warmerdam">
+	<meta name="author" content="Vincent D. Warmerdam">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="/theme/css/bootstrap.css">
+  <link rel="stylesheet" type="text/css" href="/theme/css/style.css">
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/d3/3.4.1/d3.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.js">
+  <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  </script>
+	</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <br>
+    		<h1><a class="web_title" href="/">koaning.io</a></h1>
+        <blockquote>Blog of a data scientist/developer</blockquote>
+    		<br><br>
+      </div>
+    </div>
+  	<div class="row">
+  		<div class="col-md-12">
+  			<div class="article" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="text-center article-header">
+		<h1 itemprop="name headline" class="article-title">Julia for Loops</h1>
+		<span itemprop="author" itemscope itemtype="http://schema.org/Person"></span>
+		<time datetime="2015-08-25T00:00:00" itemprop="datePublished">Tue 25 August 2015</time>
+	</div>
+	<br><br>
+		<div itemprop="articleBody" class="article-body"><hr>
+
+<h3>EDIT</h3>
+<blockquote>
+<p>This blogpost is in need of being revisioned after a discussion on <a href="https://www.reddit.com/user/one_more_minute#page=1">reddit</a>. This post attempts to do a benchmark and fails at doing a meaningful one.</p>
+</blockquote>
+<hr>
+
+<p>I've been dabbling at Julia for a while in some of my spare time and I like some of the things that I am seeing. It's a language that is mainly popular in academics, particularily statistics and operations research. It has a community with some impressive members that sets high goals; trying to create a language with many characteristics from other dynamically typed languages while trying to keep speed as a main feature.</p>
+<p>I've never gotten the impression that Julia was out to replace other languages but some people have been asking me when (not if) they should transition from R/Python to Julia. This seems like a very strange question. For some reason some people feel as if Julia will cause a change that is iminent instead of perhaps possible. </p>
+<p>In this blogpost I'd like to shed some light on why I feel that Julia won't be replacing R/python any time soon (probably ever). On this premise, I would like to emphesize that I enjoy watching what the Julia project is doing. I merely want to warn people who focus on the benchmarks. </p>
+<h2>A comperison</h2>
+<p>One of the main features of Julia, is it's speed without having to vectorize code. So for the most popular science languages (Julia, R and python). I'll repeat a very similar exercize. I'll loop over three very long loops to add a number; an exercize that Julia should excel in. For each primary language I'll show how I've benchmarked my code. </p>
+<h2>Julia</h2>
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">Base.time</span>
+
+<span class="n">function</span> <span class="n">f</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">:</span><span class="n">n</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">1</span><span class="p">:</span><span class="n">n</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">1</span><span class="p">:</span><span class="n">n</span>
+                <span class="n">a</span> <span class="o">+=</span> <span class="n">i</span>
+                <span class="n">a</span> <span class="o">+=</span> <span class="n">j</span>
+                <span class="n">a</span> <span class="o">+=</span> <span class="n">k</span>
+            <span class="n">end</span>
+        <span class="n">end</span> 
+    <span class="n">end</span>
+<span class="n">end</span>
+
+<span class="n">function</span> <span class="n">time</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+    <span class="n">tic</span> <span class="o">=</span> <span class="n">Base</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> 
+    <span class="n">f</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+    <span class="n">Base</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">tic</span>
+<span class="n">end</span>
+</pre></div>
+
+
+<h2>Base Python</h2>
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">time</span>
+
+<span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+                <span class="n">a</span> <span class="o">+=</span> <span class="n">i</span>
+                <span class="n">a</span> <span class="o">+=</span> <span class="n">j</span>
+                <span class="n">a</span> <span class="o">+=</span> <span class="n">k</span>
+    <span class="k">return</span> <span class="n">a</span>
+
+<span class="o">%%</span><span class="n">time</span>
+</pre></div>
+
+
+<p>You might be temped to wonder how this might work in numpy because common sense would suggest that anything numeric in python should probably be done in numpy. Turns out not to be that true. </p>
+<p>Using numpy caused a memory overflow (and a very hot macbook). Translating the above into something that is vectorized will result in something like below:</p>
+<div class="highlight"><pre>def f(n):
+    return np.sum(np.sum(np.full((n, n, n), np.arange(n)), axis = 0)[0:n,n-1])
+
+def timit(f, n):
+    tic = time.time()
+    f(n)
+    return time.time() - tic
+</pre></div>
+
+
+<p>Note that if $n$ is getting larger that we need to keep an object (<code>np.full((n, n, n), np.arange(n))</code>) in memory that is getting $n^3$ larger. Numpy doesn't seem like much help when $n &gt;&gt; 100$. </p>
+<h2>Base R</h2>
+<div class="highlight"><pre><span class="nx">f</span> <span class="o">&lt;-</span> <span class="kd">function</span><span class="p">(</span><span class="nx">n</span><span class="p">){</span>
+    <span class="nx">a</span> <span class="o">&lt;-</span> <span class="mi">0</span>
+    <span class="k">for</span><span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="mi">1</span><span class="o">:</span><span class="nx">n</span><span class="p">){</span>
+        <span class="k">for</span><span class="p">(</span><span class="nx">j</span> <span class="k">in</span> <span class="mi">1</span><span class="o">:</span><span class="nx">n</span><span class="p">){</span>
+            <span class="k">for</span><span class="p">(</span><span class="nx">k</span> <span class="k">in</span> <span class="mi">1</span><span class="o">:</span><span class="nx">n</span><span class="p">){</span>
+                <span class="nx">a</span> <span class="o">&lt;-</span> <span class="nx">a</span> <span class="o">+</span> <span class="nx">i</span>
+                <span class="nx">a</span> <span class="o">&lt;-</span> <span class="nx">a</span> <span class="o">+</span> <span class="nx">j</span> 
+                <span class="nx">a</span> <span class="o">&lt;-</span> <span class="nx">a</span> <span class="o">+</span> <span class="nx">k</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="nx">a</span>
+<span class="p">}</span>
+
+<span class="nx">timit</span> <span class="o">&lt;-</span> <span class="kd">function</span><span class="p">(</span><span class="nx">f</span><span class="p">,</span> <span class="nx">n</span><span class="p">){</span>
+  <span class="nx">tic</span> <span class="o">&lt;-</span> <span class="nx">Sys</span><span class="p">.</span><span class="nx">time</span><span class="p">()</span>
+  <span class="nx">f</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span>
+  <span class="nx">as</span><span class="p">.</span><span class="nx">numeric</span><span class="p">(</span><span class="nx">difftime</span><span class="p">(</span><span class="nx">Sys</span><span class="p">.</span><span class="nx">time</span><span class="p">(),</span> <span class="nx">tic</span><span class="p">,</span> <span class="nx">units</span> <span class="o">=</span> <span class="nx">c</span><span class="p">(</span><span class="s2">&quot;secs&quot;</span><span class="p">)))</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h1>First Comperisons</h1>
+<p>For loops in R are notiriously slow. Even when $n=100$ it already takes 593 ms. Python does better with 2.5 seconds for $n=5000$ but Julia manages to win here with 0.007 seconds for $n=5000$. </p>
+<p>Julia now manages a speedup of about 350x, which is impressive considering that I am not using a type system or any form of parallism. Still, you should not be fully convinced just quite yet. </p>
+<h1>Skill to the rescue</h1>
+<p>Writing code in python or R is meant to make <em>you</em> productive, not the code that is running. But the communities behind these languages have been aware of this and have added tools to make code run performant when it needs to. In python you can use numba as a just-in-time compiler to compile python to native machine code. In R, you can define functions in C++ which can then directly be used in the language. Code wise, it's not a huge investment. </p>
+<h2>Numba</h2>
+<div class="highlight"><pre><span class="kn">from</span> <span class="nn">numba</span> <span class="kn">import</span> <span class="n">jit</span>
+
+<span class="nd">@jit</span>
+<span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+                <span class="n">a</span> <span class="o">+=</span> <span class="n">i</span>
+                <span class="n">a</span> <span class="o">+=</span> <span class="n">j</span>
+                <span class="n">a</span> <span class="o">+=</span> <span class="n">k</span>
+    <span class="k">return</span> <span class="n">a</span>
+
+<span class="k">def</span> <span class="nf">timit</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+    <span class="n">tic</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">f</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">tic</span>
+</pre></div>
+
+
+<p>In case you didn't know yet; numba is <strong>crazy</strong> <a href="https://www.wakari.io/sharing/bundle/aron/Accelerating_Python_Libraries_with_Numba_-_Part_2">fast</a>. </p>
+<h2>Rcpp</h2>
+<div class="highlight"><pre>library(Rcpp)
+
+cppFunction(&#39;int f(int n){
+    int a = 0;
+    for(int i = 0; i &lt; n; ++i) {
+        for(int j = 0; j &lt; n; ++j) {
+            for(int k = 0; k &lt; n; ++k) {
+                a += i; 
+                a += j; 
+                a += k; 
+            }
+        }
+    }
+    return a;
+}&#39;)
+</pre></div>
+
+
+<h1>New statistics</h1>
+<div class="highlight"><pre>   count    numba     rcpp       julia
+1   1000 1.00e-06 3.60e-05 0.000307798
+2   5000 1.29e-06 3.72e-05 0.007336140
+3  10000 1.00e-05 3.90e-05 0.029693100
+4  50000 1.00e-05 4.00e-05 0.729448000
+5 100000 1.00e-05 4.10e-05 2.910130000
+</pre></div>
+
+
+<p>Suddenly, numba turns out to be the clear winner and even Rcpp seems to outperform Julia on this one. That is not to say that Julia is not doing something impressive. Julia is performing very well as a general language here. It only happens to get beaten by specialist packages from other popular languages.</p>
+<h2>Conclusion</h2>
+<p>People want to use R or Python to make something quickly and not necessarily something that immediately runs fast. As a result these two langauges have common patterns to combat their comprimised speed: </p>
+<ul>
+<li>
+<p>for common tasks that do put pressure on a language they use packages/tools that are optimized and written in a language that performs better (like pandas/dplyr or spark)</p>
+</li>
+<li>
+<p>for something less common these languages allow ways to rewrite slow parts in another more performant and tightly intergrated language (Rcpp, cython, numba)</p>
+</li>
+</ul>
+<p>This combination works very well for most people, but not all. And for those people Julia is very interesting.</p>
+<p>What Julia offers is a language that is inheritly a whole lot quicker if you write your own custom functions while keeping the syntax relatively clean. It might feel like Matlab, but is free and more open. If you are an academic, this is good news and it is no suprise that a lot of the community comes from the academic field switching over from Matlab. A lot of cool researchers use Julia. Keeping an eye on Julia also allows you to keep an eye on new algorithms. </p>
+<p>I'd be hard pressed to apply it in production anytime soon for a client though. R and Python are proven tools with gigantic communities and with proven methods to give great computational performance (which can compete with Julia's speed). Another downside of Julia is that it is very young and thus you may expect stackoverflow answers to be more sparse and packages to have more bugs.</p>
+<p>I like to think that just like R and python have learned from eachother, Julia might also offer lessons. Already, it's fun and easy to dabble with it (although the plotting functionality is painfully slow at the moment). Only time will tell if and how Julia might go beyond the academic field though. It would certainly not be a bad language, just not one that is automagically a better alternative to python or R.</p></div>
+	<hr>
+</div>
+        <br>
+  		</div>
+  	</div> 
+  </div>
+
+  <div class="container">
+  	<div class="row">
+  		<div class="col-md-12 text-center center-block aw-bottom">
+  			<p>Vincent D. Warmerdam Made with Pelican</p>
+  		</div>
+  	</div>
+  </div>
+  <!-- JavaScript -->
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+  <script type="text/javascript">
+  jQuery(document).ready(function($) {
+  	$("div.collapseheader").click(function () {
+  		$header = $(this).children("span").first();
+  		$codearea = $(this).children(".input_area");
+  		$codearea.slideToggle(500, function () {
+  			$header.text(function () {
+  				return $codearea.is(":visible") ? "Collapse Code" : "Expand Code";
+  			});
+  		});
+  	});
+  });
+  
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-28011256-6', 'auto');
+  ga('send', 'pageview');
+
+</script>
+  </body>
+</html>

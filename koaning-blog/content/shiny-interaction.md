@@ -1,0 +1,100 @@
+Title: Shiny and a Usecase for <<-
+Date: 2014-12-18
+
+<p>In R you can use the double arrow assignment (<code>&lt;&lt;-</code>) operator to keep track of state between functions and its parent functions. You can use this operator in shiny to create even more interactivity because it allows you to keep track of state in an app. I have made a minimum viable shiny app to show this pattern.</p>
+
+<h4>ui.R</h4>
+
+<pre><code>library(shiny)
+
+shinyUI(fluidPage(
+
+  # Application title
+  titlePanel("Shiny App"),
+
+  # Sidebar with a slider input for number of bins
+  sidebarLayout(
+    sidebarPanel(
+      sliderInput("ntree",
+                  "give the number of trees:",
+                  min = 1,
+                  max = 200,
+                  value = 10, step=1)
+    ),
+
+    # Show a plot of the generated distribution
+    mainPanel(
+      textOutput("runs"),
+      plotOutput("perf")
+    )
+  )
+))
+</code></pre>
+
+<h4>server.R</h4>
+
+<pre><code>library(shiny)
+library(ggplot2)
+library(reshape2)
+library(randomForest)
+
+df &lt;- ChickWeight 
+n &lt;- nrow(df)
+perfdf &lt;- data.frame(ntree = as.numeric(), 
+                    mse_train = as.numeric(), 
+                    mse_test = as.numeric())
+count = 0 
+
+shinyServer(function(input, output) {
+
+  output$runs &lt;- renderText({
+    train &lt;- df[sample(n),][1:478,]
+    test &lt;- df[sample(n),][479:n,]
+    rf &lt;- randomForest(weight ~ Time + Diet, data = train, ntree = input$ntree)
+    train$mse &lt;- (predict(rf, train) - train$weight)^2
+    test$mse &lt;- (predict(rf, test) - test$weight)^2
+
+    row &lt;- data.frame( ntree = input$ntree, 
+                       mse_train = mean(train$mse), 
+                       mse_test=mean(test$mse))
+    perfdf &lt;&lt;- rbind(perfdf, row)
+    count &lt;&lt;- count + 1 
+    paste("random forest count :", count)
+  })
+
+  output$perf &lt;- renderPlot({
+    input$ntree
+    perfdf &lt;- melt(perfdf, id.vars = c("ntree"),
+         variable.name = "variable", value.name = "value"
+    )
+    p &lt;- ggplot() + geom_point(data=perfdf, aes(ntree, value, colour=variable)) 
+    p &lt;- p + stat_smooth(data=perfdf, aes(ntree, value, colour=variable), se = FALSE) 
+    p + ggtitle("train set performance")
+  }, height=400)
+
+})
+</code></pre>
+
+<p>This app runs a random forest regression task on a small dataset. It splits the data into training and test set and you as a user will be able to specify how many trees the random forest needs to use. We keep track of the performance of the training and test set for each time the user specifies the number of trees. In other words, we are keeping track of state as the user supplies the shiny app with input.</p>
+
+<h3>The output</h3>
+
+<img src="/theme/images/shiny.png" alt="">
+
+<p>To understand how this works, notice these two lines specifically:</p>
+
+<pre><code>perfdf &lt;&lt;- rbind(perfdf, row)
+count &lt;&lt;- count + 1 
+</code></pre>
+
+<p>The app will fail if we use <code>&lt;-</code> instead of <code>&lt;&lt;-</code>. Why? Because the variables that we are trying to update (the variables that keep track of the count and random forest performance) are outside of scope otherwise. By using this pattern, we can keep state of what the user is giving the dashboard as input. You might even consider logging the users behavior this way.</p>
+
+<h3>Running this locally</h3>
+
+<p>If you want to run this code immediately, just run the following command in Rstudio (make sure that you have shiny installed):</p>
+
+<pre><code>shiny::runGist("https://gist.github.com/koaning/1b7b52e03ba5d81d5966")
+</code></pre>
+
+
+{% endblock body %}

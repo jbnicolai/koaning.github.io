@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Dynamic Scraping with Python — koaning.io</title>
+	<meta name="description" content="Title: Dynamic Scraping with Python; Date: 2013-03-30; Author: Vincent D. Warmerdam">
+	<meta name="author" content="Vincent D. Warmerdam">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="/theme/css/bootstrap.css">
+  <link rel="stylesheet" type="text/css" href="/theme/css/style.css">
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/d3/3.4.1/d3.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.js">
+  <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  </script>
+	</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <br>
+    		<h1><a class="web_title" href="/">koaning.io</a></h1>
+        <blockquote>Blog of a data scientist/developer</blockquote>
+    		<br><br>
+      </div>
+    </div>
+  	<div class="row">
+  		<div class="col-md-12">
+  			<div class="article" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="text-center article-header">
+		<h1 itemprop="name headline" class="article-title">Dynamic Scraping with Python</h1>
+		<span itemprop="author" itemscope itemtype="http://schema.org/Person"></span>
+		<time datetime="2013-03-30T00:00:00" itemprop="datePublished">Sat 30 March 2013</time>
+	</div>
+	<br><br>
+		<div itemprop="articleBody" class="article-body"><p>The library that I am discussing is meant for testing a website but it COULD also be used for scraping. It is YOUR responsibility that you scrape websites responsibly, not mine.
+scraping static websites is easy. to protect themselves against scrapers (and because of the load on the servers) many websites implement javascript to load data asynchronosly when a user requests a website. in such a situation the client needs to wait before all the javascript is executed before all html is generated. in these cases you cannot use libraries like urllib and requests to retreive the html data.</p>
+<h3>Enter selenium</h3>
+<p>Fortunately, there is a nice python library called selenium that emulates a browser for you which will still allow you to automate the collection of online data. In it's origin it is a java library but you can install the python bindings via pip. Selenium will use firefox as it's default browser, so make sure it's installed before installing selenium.</p>
+<div class="highlight"><pre><span class="nv">$ </span>sudo pip install selenium
+</pre></div>
+
+
+<p>Let's do a hello world example. We will get selenium to open google.com and make it return the browser windows title. open up a python terminal and run the following script;</p>
+<div class="highlight"><pre><span class="kn">from</span> <span class="nn">selenium</span> <span class="kn">import</span> <span class="n">webdriver</span>  
+<span class="n">browser</span> <span class="o">=</span> <span class="n">webdriver</span><span class="o">.</span><span class="n">Firefox</span><span class="p">()</span>  
+<span class="n">browser</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;http://www.google.com&#39;</span><span class="p">)</span>  
+<span class="k">print</span> <span class="n">browser</span><span class="o">.</span><span class="n">title</span>  
+<span class="n">browser</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+</pre></div>
+
+
+<p>You should see a firefox window open and close. Because we have an actual browser window we get it along with a full javascript interpreter. If the page has javascript that needs to run, you can have python wait for it to finish;</p>
+<div class="highlight"><pre><span class="kn">from</span> <span class="nn">selenium</span> <span class="kn">import</span> <span class="n">webdriver</span>  
+<span class="kn">import</span> <span class="nn">time</span>  
+<span class="n">browser</span> <span class="o">=</span> <span class="n">webdriver</span><span class="o">.</span><span class="n">Firefox</span><span class="p">()</span>  
+<span class="n">browser</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;http://www.google.com&#39;</span><span class="p">)</span>  
+<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  
+<span class="k">print</span> <span class="n">browser</span><span class="o">.</span><span class="n">title</span>  
+<span class="n">browser</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span> 
+<span class="n">full</span> <span class="n">javascript</span> <span class="n">control</span>
+</pre></div>
+
+
+<p>Selenium gives you a lot of control over the browser. We can have a browser run and wait untill any javascript that needs to be run is loaded. We can even run any javascript we want from python in the browser;</p>
+<div class="highlight"><pre><span class="kn">from</span> <span class="nn">selenium</span> <span class="kn">import</span> <span class="n">webdriver</span>  
+<span class="n">browser</span> <span class="o">=</span> <span class="n">webdriver</span><span class="o">.</span><span class="n">Firefox</span><span class="p">()</span>  
+<span class="n">browser</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;http://www.google.com&#39;</span><span class="p">)</span>  
+<span class="n">browser</span><span class="o">.</span><span class="n">execute_script</span><span class="p">(</span><span class="s">&quot;return document.cookie&quot;</span><span class="p">)</span>  
+<span class="n">browser</span><span class="o">.</span><span class="n">execute_script</span><span class="p">(</span><span class="s">&quot;return navigator.userAgent&quot;</span><span class="p">)</span>  
+<span class="n">browser</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+</pre></div>
+
+
+<p>You are able to have anything returned to python that javascript can access. You could even cause click events or query through css selectors with this library</p>
+<div class="highlight"><pre><span class="kn">from</span> <span class="nn">selenium</span> <span class="kn">import</span> <span class="n">webdriver</span>  
+<span class="n">browser</span> <span class="o">=</span> <span class="n">webdriver</span><span class="o">.</span><span class="n">Firefox</span><span class="p">()</span>  
+<span class="n">browser</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;http://www.google.com&#39;</span><span class="p">)</span>  
+<span class="nb">input</span> <span class="o">=</span>  <span class="n">browser</span><span class="o">.</span><span class="n">find_element_by_css_selector</span><span class="p">(</span><span class="s">&#39;input[type=&quot;text&quot;]&#39;</span><span class="p">)</span>
+<span class="nb">input</span><span class="o">.</span><span class="n">send_keys</span><span class="p">(</span><span class="s">&#39;koaning.com&#39;</span><span class="p">)</span>
+<span class="n">button</span> <span class="o">=</span>  <span class="n">browser</span><span class="o">.</span><span class="n">find_element_by_css_selector</span><span class="p">(</span><span class="s">&#39;button&#39;</span><span class="p">)</span>
+<span class="n">button</span><span class="o">.</span><span class="n">click</span><span class="p">()</span>
+<span class="n">browser</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+</pre></div>
+
+
+<p>Instead of using the click event on the button you could achieve a similar thing by sending keyboard information</p>
+<div class="highlight"><pre><span class="kn">from</span> <span class="nn">selenium</span> <span class="kn">import</span> <span class="n">webdriver</span>  
+<span class="kn">from</span> <span class="nn">selenium.webdriver.common.keys</span> <span class="kn">import</span> <span class="n">Keys</span>
+<span class="n">browser</span> <span class="o">=</span> <span class="n">webdriver</span><span class="o">.</span><span class="n">Firefox</span><span class="p">()</span>  
+<span class="n">browser</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;http://www.google.com&#39;</span><span class="p">)</span>  
+<span class="nb">input</span> <span class="o">=</span>  <span class="n">browser</span><span class="o">.</span><span class="n">find_element_by_css_selector</span><span class="p">(</span><span class="s">&#39;input[type=&quot;text&quot;]&#39;</span><span class="p">)</span>
+<span class="nb">input</span><span class="o">.</span><span class="n">send_keys</span><span class="p">(</span><span class="s">&#39;koaning.com&#39;</span><span class="p">)</span>
+<span class="n">inputElement</span><span class="o">.</span><span class="n">send_keys</span><span class="p">(</span><span class="n">Keys</span><span class="o">.</span><span class="n">ENTER</span><span class="p">)</span>
+<span class="n">browser</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+</pre></div>
+
+
+<p>Notice that you could also use <code>inputElement.submit()</code> to submit text to the inputelement instead of passing it a <code>Keys.ENTER</code> object.</p>
+<h3>Automation</h3>
+<p>If you want to automate this approach you will most likely want to outsource the scraping to a server (the javascript can take some time). Initially you might notice that this script doesn't always work run when you run it through ssh on another machine. This is because selenium needs a window to operate from. It cannot just run the entire browser from a console. To get selenium to work we need to fake a window, this can be done with pyvirtualdisplay.</p>
+<p>You can install it via;</p>
+<div class="highlight"><pre><span class="nv">$ </span>sudo pip install pyvirtualdisplay
+</pre></div>
+
+
+<p>If you log into a server through ssh then the following python script will work:</p>
+<div class="highlight"><pre><span class="kn">from</span> <span class="nn">pyvirtualdisplay</span> <span class="kn">import</span> <span class="n">Display</span>  
+<span class="kn">from</span> <span class="nn">selenium</span> <span class="kn">import</span> <span class="n">webdriver</span>  
+<span class="n">display</span> <span class="o">=</span> <span class="n">Display</span><span class="p">(</span><span class="n">visible</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">800</span><span class="p">,</span> <span class="mi">600</span><span class="p">))</span>  
+<span class="n">display</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>  
+<span class="n">browser</span> <span class="o">=</span> <span class="n">webdriver</span><span class="o">.</span><span class="n">Firefox</span><span class="p">()</span>  
+<span class="n">browser</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;http://www.google.com&#39;</span><span class="p">)</span>  
+<span class="k">print</span> <span class="n">browser</span><span class="o">.</span><span class="n">title</span>  
+<span class="n">browser</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>  
+<span class="n">display</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+</pre></div>
+
+
+<p>This can be useful for some small scrape jobs, be nice to the internet though. Both the client and the server need to do extra work through this trick. If you're gonna scrape, scrape responsibly. </p>
+<p _="%" body="body" endblock="endblock">{% endfilter %}</p></div>
+	<hr>
+</div>
+        <br>
+  		</div>
+  	</div> 
+  </div>
+
+  <div class="container">
+  	<div class="row">
+  		<div class="col-md-12 text-center center-block aw-bottom">
+  			<p>Vincent D. Warmerdam Made with Pelican</p>
+  		</div>
+  	</div>
+  </div>
+  <!-- JavaScript -->
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+  <script type="text/javascript">
+  jQuery(document).ready(function($) {
+  	$("div.collapseheader").click(function () {
+  		$header = $(this).children("span").first();
+  		$codearea = $(this).children(".input_area");
+  		$codearea.slideToggle(500, function () {
+  			$header.text(function () {
+  				return $codearea.is(":visible") ? "Collapse Code" : "Expand Code";
+  			});
+  		});
+  	});
+  });
+  
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-28011256-6', 'auto');
+  ga('send', 'pageview');
+
+</script>
+  </body>
+</html>

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Python Cubes in Blender — koaning.io</title>
+	<meta name="description" content="Title: Python Cubes in Blender; Date: 2014-07-27; Author: Vincent D. Warmerdam">
+	<meta name="author" content="Vincent D. Warmerdam">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="/theme/css/bootstrap.css">
+  <link rel="stylesheet" type="text/css" href="/theme/css/style.css">
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/d3/3.4.1/d3.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.js">
+  <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  </script>
+	</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <br>
+    		<h1><a class="web_title" href="/">koaning.io</a></h1>
+        <blockquote>Blog of a data scientist/developer</blockquote>
+    		<br><br>
+      </div>
+    </div>
+  	<div class="row">
+  		<div class="col-md-12">
+  			<div class="article" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="text-center article-header">
+		<h1 itemprop="name headline" class="article-title">Python Cubes in Blender</h1>
+		<span itemprop="author" itemscope itemtype="http://schema.org/Person"></span>
+		<time datetime="2014-07-27T00:00:00" itemprop="datePublished">Sun 27 July 2014</time>
+	</div>
+	<br><br>
+		<div itemprop="articleBody" class="article-body"><p>I've always wanted to play with 3d images and it now turns out that Blender has a python console that will help you do just that (thanks EuroPython 2014). Blender is an open source 3d editing tool with a sizeable community. It does lack beginner code tutorials with simple examples. Most tutorials are focussed on using the tool by hand because in the end, I imagine that that is how the tool will be used most of the time. My interests are to generate visualisations only based on data and code so in this document I will share some simple, albeit a bit verbose, python code to generate cubes with blender. To keep things simple I will only use cubes. Hopefully this will help get people started with the joy of 3d images.</p>
+<h3>Set Up with Blender</h3>
+<p>When you open up blender you can access a python console by clicking on the change editor button and then selecting the python console.</p>
+<p><img alt="" src="/theme/images/python-blender-1.png" /></p>
+<p>This python console runs python3 and you can veryify that basic python commands work as you would expect. This means that we can define anything function in python here and it would run. We also have access to everything that blender can do through python commands.</p>
+<h3>Deleting everything</h3>
+<p>Define the following function;</p>
+<div class="highlight"><pre>def delete_all():
+    bpy.ops.object.select_all(action=&#39;SELECT&#39;)
+    bpy.ops.object.delete(use_global=True)
+</pre></div>
+
+
+<p>This function will select everything in the scene and then delete everything that is selected. Now everytime you create something you can run <strong>delete_all()</strong> to remove it. After using this function in the console you should now see an empty scene.</p>
+<p><img alt="" src="/theme/images/python-blender-2.png" /></p>
+<p>The rest of the document will be python scripts to generate cubes. To show the resulting 3d image I will be using Sketchfab to show what the resulting 3d shape should look like in your blender view. </p>
+<h3>A Simple Cube</h3>
+<p>In blender a cube has a location which represents the center of the cube and a radius which describes how large the square is.</p>
+<div class="highlight"><pre>bpy.ops.mesh.primitive_cube_add(radius=1, location = (0,0,0))
+</pre></div>
+
+
+<iframe width="100%" height="480" src="https://sketchfab.com/models/85afc4e540bd49e18d9d3a8ab2367b90/embed" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" onmousewheel=""></iframe>
+
+<h3>Cube of Cubes</h3>
+<p>We can create many cubes in a regular pattern.</p>
+<div class="highlight"><pre>numcubes = 6 
+rcubes = 0.3 
+for x in range(numcubes):
+    for y in range(numcubes):
+        for z in range(numcubes):
+            bpy.ops.mesh.primitive_cube_add(
+                radius=rcubes, location = (x,y,z)
+            )
+</pre></div>
+
+
+<iframe width="100%" height="480" src="https://sketchfab.com/models/ee1e2cfbd52d4f90b81a4e2f0960ef07/embed" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" onmousewheel=""></iframe>
+
+<h3>Cubes of Different Sizes</h3>
+<p>Note that the radius doubles the size of an arc of a cube. So doubling the radius increase the volume of the cube by a factor of eight.</p>
+<div class="highlight"><pre>bpy.ops.mesh.primitive_cube_add(radius=4, location = (0,0,0))
+bpy.ops.mesh.primitive_cube_add(radius=3, location = (10,0,0))
+bpy.ops.mesh.primitive_cube_add(radius=2, location = (20,0,0))
+bpy.ops.mesh.primitive_cube_add(radius=1, location = (30,0,0))
+</pre></div>
+
+
+<iframe width="100%" height="480" src="https://sketchfab.com/models/0256275510a34725834e6c9837c6e810/embed" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" onmousewheel=""></iframe>
+
+<h3>The Sine and Cosine</h3>
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">math</span>
+
+<span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">):</span>
+    <span class="k">return</span> <span class="mi">5</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="o">/</span><span class="mf">15.0</span><span class="o">*</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">+</span> <span class="mi">5</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">y</span><span class="o">/</span><span class="mf">15.0</span><span class="o">*</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+
+
+<span class="n">numcubes</span> <span class="o">=</span> <span class="mi">8</span>
+
+<span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="n">numcubes</span><span class="p">,</span><span class="n">numcubes</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="n">numcubes</span><span class="p">,</span><span class="n">numcubes</span><span class="p">):</span>
+        <span class="n">bpy</span><span class="o">.</span><span class="n">ops</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">primitive_cube_add</span><span class="p">(</span>
+            <span class="n">radius</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">location</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">))</span>
+        <span class="p">)</span>
+</pre></div>
+
+
+<iframe width="100%" height="480" src="https://sketchfab.com/models/fe511d4c3d604a8eba1cc821bcf2cbdd/embed" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" onmousewheel=""></iframe>
+
+<h3>Recursion in all directions</h3>
+<p>This is my favorite. It shows you how you can make fractal like 3d constructs with only a few lines of python.</p>
+<div class="highlight"><pre>def new_cube(old_loc, direction, rad, dimmer):
+    res = []
+    for i in [0,1,2]:
+        res.append(old_loc[i] + direction[i]*dimmer +  2 * direction[i]*rad )
+    return [rad*dimmer,res]
+
+def rec(cube, depth):
+    if depth == 4 :
+        return None 
+    else: 
+        bpy.ops.mesh.primitive_cube_add(
+            radius=cube[0], location = cube[1]
+        )
+        print(cube)
+        rec( new_cube(cube[1],(1,0,0),cube[0],0.4) , depth + 1 )
+        rec( new_cube(cube[1],(0,1,0),cube[0],0.4) , depth + 1 )
+        rec( new_cube(cube[1],(0,0,1),cube[0],0.4) , depth + 1 )
+        rec( new_cube(cube[1],(-1,0,0),cube[0],0.4) , depth + 1 )
+        rec( new_cube(cube[1],(0,-1,0),cube[0],0.4) , depth + 1 )
+        rec( new_cube(cube[1],(0,0,-1),cube[0],0.4) , depth + 1 )
+
+rec([1,(0,0,0)],0)
+</pre></div>
+
+
+<iframe width="100%" height="480" src="https://sketchfab.com/models/02bc74d696634cbeaf2d5d86c04022f8/embed" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" onmousewheel=""></iframe>
+
+<h3>Random Ant Path</h3>
+<p>We can simulate a random path that an ant might walk underground. We sample a new cube based on the location of it's previous cube to get a 3d random path. Note that for this to work we need to keep in mind the radius of the previous cube and the new cube.</p>
+<div class="highlight"><pre>def randdir():
+    choices = [(1,0,0),(0,1,0),(0,0,1),(-1,0,0),(0,-1,0),(0,0,-1)]
+    return random.choice(choices)
+
+def new_cube(old_loc, direction):
+    res = []
+    for i in [0,1,2]:
+        res.append(old_loc[i] + direction[i])
+    return tuple(res)
+
+cube = (0,0,0)
+for i in range(500):
+    cube = new_cube(cube,randdir())
+    bpy.ops.mesh.primitive_cube_add(radius=0.5, location = cube)
+</pre></div>
+
+
+<iframe width="100%" height="480" src="https://sketchfab.com/models/68b2c34beff042dba45438384ffd89b0/embed" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" onmousewheel=""></iframe>
+
+<h3>Normal Distribution</h3>
+<p>As of this year, you could use numpy but before this wasn't possible. This code was written on a blender version without numpy to show that you can make 3d plots of normal distributions as well.</p>
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">random</span>
+
+<span class="k">def</span> <span class="nf">r</span><span class="p">():</span>
+    <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">gauss</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+
+<span class="k">def</span> <span class="nf">bins</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="n">minx</span> <span class="o">=</span> <span class="nb">min</span><span class="p">([</span> <span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">s</span> <span class="p">])</span>
+    <span class="n">maxx</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span> <span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">s</span> <span class="p">])</span>
+    <span class="n">miny</span> <span class="o">=</span> <span class="nb">min</span><span class="p">([</span> <span class="n">i</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">s</span> <span class="p">])</span>
+    <span class="n">maxy</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span> <span class="n">i</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">s</span> <span class="p">])</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="p">{}</span> 
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">minx</span><span class="p">,</span> <span class="n">maxx</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">xdict</span> <span class="o">=</span> <span class="p">{}</span> 
+        <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">miny</span><span class="p">,</span> <span class="n">maxy</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">xdict</span><span class="p">[</span><span class="n">y</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">s</span> <span class="k">if</span> <span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">x</span> <span class="ow">and</span> <span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">y</span> <span class="p">])</span>
+        <span class="n">res</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">=</span> <span class="n">xdict</span> 
+    <span class="k">return</span> <span class="n">res</span>
+
+<span class="n">bind</span> <span class="o">=</span> <span class="n">bins</span><span class="p">([</span> <span class="p">[</span><span class="n">r</span><span class="p">(),</span><span class="n">r</span><span class="p">()]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6000</span><span class="p">)</span> <span class="p">])</span>
+
+<span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">bind</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">bind</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="n">bind</span><span class="p">[</span><span class="n">x</span><span class="p">][</span><span class="n">y</span><span class="p">]</span> 
+        <span class="k">if</span> <span class="n">h</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">bpy</span><span class="o">.</span><span class="n">ops</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">primitive_cube_add</span><span class="p">(</span>
+                <span class="n">radius</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">location</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">h</span><span class="p">)</span>
+            <span class="p">)</span>
+</pre></div>
+
+
+<iframe width="100%" height="480" src="https://sketchfab.com/models/c88124880d9f4ffb8981c4dd0151ba8d/embed" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" onmousewheel=""></iframe>
+
+<h3>Conclusion</h3>
+<p>Blender is a lot of fun. High schools should be jumping on it for educational purposes pronto.</p></div>
+	<hr>
+</div>
+        <br>
+  		</div>
+  	</div> 
+  </div>
+
+  <div class="container">
+  	<div class="row">
+  		<div class="col-md-12 text-center center-block aw-bottom">
+  			<p>Vincent D. Warmerdam Made with Pelican</p>
+  		</div>
+  	</div>
+  </div>
+  <!-- JavaScript -->
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+  <script type="text/javascript">
+  jQuery(document).ready(function($) {
+  	$("div.collapseheader").click(function () {
+  		$header = $(this).children("span").first();
+  		$codearea = $(this).children(".input_area");
+  		$codearea.slideToggle(500, function () {
+  			$header.text(function () {
+  				return $codearea.is(":visible") ? "Collapse Code" : "Expand Code";
+  			});
+  		});
+  	});
+  });
+  
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-28011256-6', 'auto');
+  ga('send', 'pageview');
+
+</script>
+  </body>
+</html>
