@@ -1,0 +1,305 @@
+Title: Ensemble Yourself
+Date: 2015-12-17
+
+This document should feel like a game. One that will help you understand how an ensemble algorithm might work.
+
+<br>
+<hr>
+<br>
+
+Below you see a few points and a canvas that you can draw on with the mouse. It is a subset of a larger set of data points. The subset has noise and we are going to try to get a good prediction out of it while using a suboptimal machine learning model (namely, you). 
+
+Use the mouse to draw a line that matches the pattern you think fits on that small bit of data. When you are done drawing, another sample will appear. Try to continue drawing lines until a pattern emerges.
+
+<form action=""> 
+	<p class="pull-right">
+		Show prediction <input type="checkbox" name="predictions" value="false">
+	</p>
+</form>
+
+
+<meta charset="utf-8">
+
+<style>
+.newline {
+  fill: none;
+  stroke: #000;
+  stroke-width: 2px;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.oldline {
+  fill: none;
+  stroke: #444;
+  stroke-width: 2px;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+</style>
+
+<svg class="draw" width="100%" height="350">
+  <rect style="fill:#eee;" width="100%" height="100%"></rect>
+</svg>
+
+## The art of combining 
+
+When you've done this a few times; hit the show prediction button on top to see the mean of all the small predictions you've made. Even if every small prediction has some form of error, by making many of these predictions, the combined error cancels out quite nicely. Below you can see the difference between what you've predicted and what the true function was. 
+
+
+<svg class="show" width="100%" height="350">
+  <rect style="fill:#eee;" width="100%" height="100%"></rect>
+</svg>
+
+## Automation for Profit
+
+Naturally, the more samples you'll try to fit, the better the prediction will be because you'll cancel out any noise generated (either from the sample or from the prediction). At some point, you may imagine that it gets rather bothersome to have human make these small approximations. So instead usually, we'd have a computer do it. Computers lack the intuition to draw pretty curves, so per sample they will produce a worce model but they make up for it in speed. If you press the play button, the computer will attemp to beat your prediction by drawing straight lines only. 
+
+<button class="btn">Play.</button>
+
+<svg class="automate" width="100%" height="350">
+  <rect style="fill:#eee;" width="100%" height="100%"></rect>
+</svg>
+
+This is the intuition behind ensemble models. By combining a lot of simple models, we may compete with a very complicated one. This is why ensemble algorithms in machine learning are like the genetic algorithms in operations research. The mathematical foundation is modest but they tend to work [very (!) well](http://mlwave.com/kaggle-ensembling-guide/) for a lot of problems.
+
+<br> 
+
+<script src="/theme/js/d3.min.js"></script>
+<script src="/theme/js/lodash.js"></script>
+<script>
+
+var activeLine,
+    line_data = [],
+    ml_data = [];
+
+var w = d3.select("svg").node().clientWidth,
+    h = d3.select("svg").node().clientHeight
+
+var renderPath = d3.svg.line()
+    .x(function(d) { return d[0]; })
+    .y(function(d) { return d[1]; })
+    .interpolate("line");
+
+var svg_draw = d3.select("svg.draw")
+    .call(d3.behavior.drag()
+      .on("dragstart", dragstarted)
+      .on("drag", dragged)
+      .on("dragend", dragended));
+
+var svg_show = d3.select("svg.show"),
+	svg_automate = d3.select("svg.automate");
+
+var g_newcircle = svg_draw.append("g")
+  	.attr("class", "temp-circle");
+
+var g_showpattern = svg_draw.append("g")
+  	.attr("class", "pattern-circle");
+
+var g_autocircle = svg_automate.append("g")
+  	.attr("class", "temp-auto-circle");
+
+var g_autoline = svg_automate.append("g")
+  	.attr("class", "automated-lines");
+
+function dragstarted() {
+  activeLine = svg_draw.append("path")
+    .datum([])
+    .attr("class", "newline");
+}
+
+function dragged() {
+  activeLine.datum().push(d3.mouse(this));
+  activeLine.attr("d", renderPath);
+}
+
+function dragended() {
+  activeLine = null;
+  var new_data = _.last(d3.selectAll("path.newline").data());
+  line_data.push(new_data);
+  svg_draw.selectAll("path")
+  	.style("stroke-width", 1)
+  	.style("stroke", "#999")
+  	.style("stroke-opacity", 0.7);
+  svg_draw.selectAll("g.temp-circle circle").remove();
+  draw_sample(g_newcircle, sample_data());
+  if(d3.select("input[name=predictions]").property("checked")){
+  	draw_mean(svg_draw, line_data)
+  }
+  draw_mean(svg_show, line_data)
+}
+
+var func_dict = {
+	"func1" : function(x){
+		var trans_x = x/w*2*Math.PI
+		var res = Math.sin(trans_x)*h*0.3 + h/2;
+    	return res + Math.cos(trans_x*3)*h*0.2
+	}
+}
+
+function sample_data(proximity){
+	proximity = typeof proximity !== 'undefined' ? proximity : 10;
+	var orig_func = func_dict["func1"];
+	var noise_func = function(x){
+		return orig_func(x) + d3.random.normal(0,h/proximity)();
+	}
+
+	var rand_func = d3.random.normal(Math.random()*w, w/proximity)
+
+	return d3.range(20)
+		.map(function(d){ return rand_func()})
+		.map(function(x){ return{'x':x, 'y': noise_func(x)}});
+}
+
+function draw_sample(svg_elem, data){
+  svg_elem.selectAll("circle")
+    .data(data)
+    .enter().append("circle")
+    .attr("class", "temp-circle")
+    .attr("cx", function (d) { return d.x; })
+    .attr("cy", function (d) { return d.y; })
+    .attr("r", 3)
+    .style("fill", function(d) { return 'steelblue'; });
+}
+
+draw_sample(g_newcircle, sample_data());
+
+function make_model(data_input){
+	var flat_list =  _.flatten(data_input),
+		grouped = _.groupBy(flat_list, function(x){
+			return d3.round(x[0]/5) * 5
+		}),
+		agg = _.mapValues(grouped, function(x){
+			return d3.mean(x.map(function(d){return d[1]}))
+		});
+
+	var smooth = function(d,i,l){
+		if(i == 0){
+			i = 1;
+		}
+		if(i === l.length - 1){
+			i = l.length - 2
+		}
+		return [d[0], d3.mean([l[i-1][1], d[1], l[i+1][1]])]
+	}
+
+	return _.chain(agg)
+		.pairs()
+		.map(function(x){ return [Number(x[0]), x[1]]})
+		.value().map(smooth);
+}
+
+function draw_mean(svg_elem, line_data, input_data){
+	svg_elem.selectAll("g.mean-container").remove();
+	svg_elem.append("g")
+		.attr("class","mean-container")
+		.selectAll("circle")
+	    .data(make_model(line_data))
+	    .enter().append("circle")
+	    .attr("class", "mean-circle")
+	    .attr("cx", function (d) { return d[0]; })
+	    .attr("cy", function (d) { return d[1]; })
+	    .attr("r", 2)
+	    .style("fill", function(d) { return 'red'; });
+}
+
+function draw_pattern(svg_elem){
+	var func = func_dict["func1"];
+
+	var data = d3.range(1,w).map(function(x){ 
+		return {'x':x, 'y':func(x)}
+	});
+
+	var line = d3.svg.line()
+		.x(function(d){return d.x})
+		.y(function(d){return d.y})
+		.interpolate("linear");
+
+	svg_show.append("path")
+	    .attr("d", line(data))
+	    .style("stroke", function(d) { return 'green'; })
+	    .style("fill", "none");
+}
+
+function lm(x,y){
+    var mod = {},
+    	n = y.length,
+    	sum_x = 0,
+    	sum_y = 0,
+    	sum_xy = 0,
+    	sum_xx = 0,
+    	sum_yy = 0;
+
+    for (var i = 0; i < y.length; i++) {
+        sum_x += x[i];
+        sum_y += y[i];
+        sum_xy += (x[i]*y[i]);
+        sum_xx += (x[i]*x[i]);
+        sum_yy += (y[i]*y[i]);
+    } 
+
+    mod['slope'] = (n * sum_xy - sum_x * sum_y) / (n*sum_xx - sum_x * sum_x);
+    mod['intercept'] = (sum_y - mod.slope * sum_x)/n;
+
+    return function(d){ return mod['intercept'] + mod['slope'] * d};
+};
+
+function gen_lm_data(data){
+	var x = data.map(function(d){return d.x}),
+		y = data.map(function(d){return d.y}),
+		xbounds = d3.extent(x);
+
+	var xs = d3.range(xbounds[0], xbounds[1])
+	var ys = xs.map(lm(x,y));
+	return _.zip(xs, ys).map(function(d){return {x:d[0], y:d[1]}})
+}
+
+function draw_line(svg_elem, data){
+	var sorted = _.sortBy(data, function(d){return d.x});
+	var first = data[2],
+		last = data[data.length -2];
+
+	var line = d3.svg.line()
+		.x(function(d) { return d.x; })
+		.y(function(d) { return d.y; })
+		.interpolate("linear");
+
+	svg_elem.append("path")
+		.data([first, last])
+		.attr("d", line([first, last]))
+		.style("stroke-width", 1)
+	  	.style("stroke", "#999")
+	  	.style("stroke-opacity", 0.7);
+}
+
+function ml_play(){
+	var n = 0; 
+	svg_automate.selectAll("path").remove();
+	ml_data = [];
+	var interval = setInterval(function(){
+			svg_automate.selectAll("g.temp-auto-circle circle").remove();
+			var s_data = sample_data(20);
+			var mod_data = gen_lm_data(s_data);
+			ml_data.push(mod_data.map(function(d){return [d.x, d.y]}));
+			draw_sample(g_autocircle, s_data);
+			draw_line(g_autoline, mod_data);
+			n = n + 1; 
+			if(n > 200){
+				clearInterval(interval)
+			}
+			draw_mean(svg_automate, ml_data)
+		}, 50);
+}
+
+draw_pattern(g_showpattern)
+
+d3.select("input[name=predictions]").on("click", function(){ 
+	if(d3.select("input[name=predictions]").property("checked")){
+		draw_mean(svg_draw, line_data)
+	}else{
+		svg_draw.selectAll("g.mean-container").remove();
+	}
+})
+
+d3.select("button.btn").on("click", ml_play)
+
+</script>
