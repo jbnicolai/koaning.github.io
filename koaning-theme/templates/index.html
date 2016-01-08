@@ -2,6 +2,14 @@
 {% block content_title %}{% endblock %}
 {% block content %}  
 
+<style>
+	iframe{
+		overflow-x:hidden;
+		overflow-Y:hidden;
+	}
+</style>
+<iframe height="400px" width="100%" src="/theme/iframes/predict.html" frameborder="0" scrolling="no"></iframe>
+
 <h1>Posts</h1>
 <br>
 {% if articles %}
