@@ -1,2 +1,3 @@
 *.html
-./koaning-blog/output/*
+koaning-blog/output/theme/*
+koaning-blog/output/*.html

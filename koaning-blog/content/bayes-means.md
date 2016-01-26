@@ -1,7 +1,7 @@
 Title: Bayes-Means Clustering
 Date: 2016-01-15
 
-The k-means algorithm is great, but people tend to always get into discussions on how to choose the parameter $k$. In this blogpost I will demonstrate a simple bayesian method to automate this decision a bit $k$. I won't be as bold to 
+The k-means algorithm is great, but people tend to always get into discussions on how to choose the parameter $k$. In this blogpost I will demonstrate a simple bayesian method to automate this decision a bit $k$. 
 
 ## The task 
 
@@ -32,7 +32,7 @@ Take $H$ to be a hypothesis (say $k=4$ or $k=8$) and let $D$ be the data that is
 
 $$ P(H|D) = \frac{P(D|H)P(H)}{P(D)} \propto P(D|H)P(H)$$ 
 
-Let's zoom in on $P(D|H)$. It calculates, for every hypothesis, what is probability that the data that we have is generated from it? This likelihood, we will find out, punishes complicated models without the need of putting our own priors in about the preference of each hypothesis ($P(H)$). For the rest of this document I'll assume $P(H)$ to be homegeneous for all hypotheses. 
+Let's zoom in on $P(D|H)$. It calculates, for every hypothesis, what the probability is that the data that we have is generated from via a certain hypothesis. This likelihood, we will find out, punishes complicated models without the need of putting our own priors in about the preference of each hypothesis ($P(H)$). For the rest of this document I'll assume $P(H)$ to be homegeneous for all hypotheses. 
 
 Note that we are not interested in finding the exact probability value $P(H|D)$; we can suffice with a likelihood than can just tell us which hypothesis is most likely.
 
@@ -81,7 +81,7 @@ for(i in 1:12){
 }
 ```
 
-For every clustering allocation we now have an associated density $p(x|H)$. This is what they look like:
+Note that to determine the sample size for each cluster, I count the number of points that are assigned to it. For every clustering allocation we now have an associated density $p(x|H)$. This is what they look like:
 
 ```
 ggplot() + 
@@ -111,10 +111,10 @@ The only trick applied here is that I try to fit my original data with each of t
 12 12  -12130.69
 ```
 
-Low and behold, we reach maximum likelihood when we only have 3 clusters. By simply looking at bayes theorm we have gotten ourselves a probibalistic way of finding an appropriate $k$. 
+Behold(!), we reach maximum likelihood when we only have 3 clusters. By simply looking at bayes theorm we have gotten ourselves a probibalistic way of finding an appropriate $k$. 
 
 ## Conclusion
 
 I've kept the example simple by keeping $\sigma = 1$ everywhere. In practice this would be another thing that you estimate, but the general likelihood rule would still apply. In practice the likelihood function would just get (much) more complicated but you would still be able to apply a similar $P(D|H)$ trick to pick the best model.
 
-Note that this trick can be applied for other models and other tasks as well. Bayes rule is suprisingly effective in suggesting clever ways to judge algorithms.
+Note that this trick can be applied for other models and other tasks as well. Bayes rule is suprisingly effective in suggesting clever ways to judge algorithms. The hard part of these types of algorithms usually isn't in the application of bayes theorem, rather in finding an appropriate sampler. Because we're only using a one dimensinal problem we can use the simple `density` method. For more dimensions I might advice the kernel density estimator from scikit learn, which is quite exellent!
