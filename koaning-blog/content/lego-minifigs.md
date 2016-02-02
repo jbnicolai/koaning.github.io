@@ -1,6 +1,8 @@
 Title: Lego Minifigs = Stochastics + Profit
 Date: 2016-01-26
 
+![](/theme/images/minifigs.png)
+
 In this document I'll explain a fun scraping/simulation exercize where I try to investigate the value of investing in lego minifigures. The scraping result will immediately suggest that investing in minifigures might be a profitable venture. The stochastic process behind it requires more work, but might have interesting side effects for decision theorists. 
 
 ## Lego Minifigures 
