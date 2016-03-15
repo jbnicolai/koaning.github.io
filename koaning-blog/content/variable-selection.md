@@ -1,6 +1,10 @@
 Title: Variable Selection in Machine Learning
 Date: 2014-12-18
 
+<script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
 <p> I've had a discussion with a colleague on the selection of variables in a model. The discussion boils down to the following question: </p>
 
 <pre>Which is better? 
@@ -114,7 +118,7 @@ With this definition of $\beta_2$ we can analyse it to confirm that it should no
 
 <p> So in this case we would remove the variables $\beta_2$ that are not of influence while our estimate of $\beta_1$ does not have any bias. This is exactly what we want. </p>
 
-<h3>Conclusion </h3>
+<h3>Conclusion</h3>
 
 I've shown that by starting only a few variables and then adding them to the model has a bias risk in linear models. It should be said that you are still not without risk, I merely want to point out a risk that I am weary for. 
 

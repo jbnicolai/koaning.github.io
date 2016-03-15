@@ -9,7 +9,7 @@ Date: 2015-12-09
 
 A previous version of this blogpost had the worst typo ever. I simulated everything using `np.random.randint(1,6)` which only samples between 1-5. This led to a lot more jail time because it was much more likely to get there. 
 
-I've been trending on hackernews, I've been linked to in boing-boing; 14000 views later and nobody mentioned the error. Thankfully, I have a collegue who doesn't mind pointing out flaws in my code (holla at you Niels). The numbers have changes slightly and so have the conclusions.
+I've been trending on hackernews, I've been linked to in boing-boing; 14000 views later and nobody mentioned the error. Thankfully, I have a collegue who doesn't mind pointing out flaws in my code (holla at you Niels). The numbers have changed slightly and so have the conclusions.
 
 <br>
 

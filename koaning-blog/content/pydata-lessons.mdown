@@ -1,0 +1,65 @@
+Title: Lessons from PyData Amsterdam
+Date: 2016-03-15
+
+I had the unqiue pleasure last weekend to host a [PyData conference](pydata.org/amsterdam2016/) in Amsterdam together with an awesome committe. Hosting a conference is very different than attending or speaking at one and I figued I'd write down some lessons that I've learned for future reference for other organisors.
+
+#### Meetings 
+
+As a group, we've never met before the Saturday morning of the conference. All the meetings we've had took place on Google Hangout. This is pretty amazing in one way and pretty insane in another way. 
+
+This mainly hit me when I met a committee member on my local train station on my way to the conference. Turns out she lives 8 houses away from me. I had been planning a confernce with her for half a year and I did not know this. That's pretty crazy. There's something badass about never having met and still organising this amazing conference but it feels like it may have been better if we at least met twice before the conference. 
+
+#### Picking speakers is tricky. 
+
+You'll want to allow serendipity, gather community leaders, keep it balanced and try to be cool about new technologies. This is a hard task. It became easier when we noticed that talks can be split up in four main categories; 
+
+- data science techniques 
+- data engineering
+- new libraries/techonologies
+- usecases 
+
+A good balance between these areas as well as skill level seemed like a good sniff test to determine which talks to have over. Note that it is completely fine to have a talk about an old library (a good introduction to matplotlib never hurt anyone). In fact, you may want to prevent having too many talks about libraries that are very hip. You don't want to host 7 talks on Spark even if all the cool kids are supposedly using it.
+
+In hindsight we didn't have too many talks for people who were true python beginners which feels like we may have left a group of people out. We did invite a few bachelor students who taught themselves python, which added some cool and unexpected approaches in the mix.
+
+Filter out anything that sounds too much like a product pitch though, the PyData crowd will not appreciate that. 
+
+#### Sponsors 
+
+Sponsors are very important for the financial stability of the conference so it is important that they feel at home at the event. In fact, you may want to help them. Reason is that sponsors don't always know what to expect from a PyData crowd. 
+
+So give sponsors some tips in how to do cool stuff at their booths to get the crowd engaged. One sponsor had a video game with a Raspberry Pi 3 that people could win during the conference, others had math puzzles and some made sure to send good speakers to talk about interesting usecases. 
+
+Convincing all sponsors to do something like that makes it more fun for the sponsors as well as the attendees. It's a small reminder that can make the event better for everyone. 
+
+#### Marketing 
+
+There's a lot of people interested in PyData events, both on a local level but also on a European level. Visit meetups or contact meetup hosts in other places to spead the word. I flew to a PyData London meetup to do a lightning talk and to mention our conference. At PyData Amsterdam I've had people come up to me and mention that my talk convinced them to visit or even speak at our event. 
+
+You can also ask around in the community if people could tweet about the event. Many small voices do add up on that medium. PyData meetup groups from all over europe tweeted at least twice about the event just to make sure it was known to everyone and we're doing the same for their event. 
+
+#### Food 
+
+I didn't expect this to be such a lesson. Whatever you do; don't skip on food. You've probably been to a conference where the food was terrible. Remember what a buzzkill that was? Having great food has the exact opposite effect. When the food is amazing (and healthy!) you'll notice an extra level of energy appear at the conference. 
+
+We got lucky. We had two italians on the committee so food was something that 'automatically' seemed to be organised well. If you don't have this luxury, make sure you get a caterer that can deliver. 
+
+The main 'click' with our caterer happened when I noticed that the lead caterer took personal care that all the food was presented properly and he checked multiple times a day if everything was allright. When considering a caterer, try to find one that really cares about food. It will add much to the conference.
+
+#### Things will go wrong, everything will be allright 
+
+Behind the scenes, stuff will go wrong. Always. 
+
+It may be little things like a microphone not working but it may be big things like a speaker missing a plane to the conference. All these things will be alright if you improvise a little and prepare for common issues beforehand (extra mic, extra laptop, extra display plugs, etc). If a speaker slot is empty maybe host a panel or use a room as a meet-'n-greet for some project commiters. 
+
+PyData attendees understand that it is an event organised by volunteers who put their spare time in to create a great conference. That means that if small things go wrong, nobody will be angry. So don't worry too much; just relax and improvise your way through the conference if things don't go as planned.  
+
+#### Speakers appreciate the little things
+
+I've noticed that the speakers really appreciate it if their session host does a proper introduction. Giving an intro on their company, who they are, what they are working on and why the talk seemed relevant for PyData are great things to mention. It's easy to read the abstract of the talk and the bio of the speaker just before they talk, so do the homework. The speakers usually travel from far away to meet you and it seems like proper curtosy to make sure they get a decent introduction. 
+
+Also; when introducing speakers it is fine to wait a tick until the crowd has properly seated before you let the speaker begin. A talk that starts with a lot of background noise may throw off the start of the presentation.
+
+#### A thing we could do better
+
+I noticed a few attendees mention that their partner was at home with the kids and that this was a reason why they could not stay for the drinks/dinner. I also noticed that one committe member even brought her kid to the conference. These observations made me wonder if people didn't attend the conference because of their family responsibilities. Other conferences sometimes have a creche where they can safely leave the kids entertained as they visit the conference. This might be a thing to try at other events. I'd be curious to learn if this allows more people to attend.  
