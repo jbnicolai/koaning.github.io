@@ -1,6 +1,13 @@
 Title: Lessons from PyData Amsterdam
 Date: 2016-03-15
 
+<style>
+	iframe {
+    margin: 0 auto;
+    display: block;
+}
+</style>
+
 I had the unqiue pleasure last weekend to host a [PyData conference](pydata.org/amsterdam2016/) in Amsterdam together with an awesome committe. Hosting a conference is very different than attending or speaking at one and I figued I'd write down some lessons that I've learned for future reference for other organisors.
 
 #### Meetings 
@@ -26,6 +33,9 @@ Filter out anything that sounds too much like a product pitch though, the PyData
 
 #### Sponsors 
 
+<blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">Getting ready for <a href="https://twitter.com/hashtag/pydata?src=hash">#pydata</a> <a href="https://twitter.com/pydataamsterdam">@pydataamsterdam</a> It&#39;s going to be awesome.</p>&mdash; Rob van Elburg (@RAVanElburg) <a href="https://twitter.com/RAVanElburg/status/708298553693741056">March 11, 2016</a></blockquote>
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
 Sponsors are very important for the financial stability of the conference so it is important that they feel at home at the event. In fact, you may want to help them. Reason is that sponsors don't always know what to expect from a PyData crowd. 
 
 So give sponsors some tips in how to do cool stuff at their booths to get the crowd engaged. One sponsor had a video game with a Raspberry Pi 3 that people could win during the conference, others had math puzzles and some made sure to send good speakers to talk about interesting usecases. 
@@ -36,13 +46,22 @@ Convincing all sponsors to do something like that makes it more fun for the spon
 
 There's a lot of people interested in PyData events, both on a local level but also on a European level. Visit meetups or contact meetup hosts in other places to spead the word. I flew to a PyData London meetup to do a lightning talk and to mention our conference. At PyData Amsterdam I've had people come up to me and mention that my talk convinced them to visit or even speak at our event. 
 
+<blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr"><a href="https://twitter.com/fishnets88">@fishnets88</a> Vincent gives our 2nd lightning talk and plugs <a href="https://twitter.com/pydataamsterdam">@pydataamsterdam</a> (CfP still just open) <a href="https://t.co/fjTooYY76I">pic.twitter.com/fjTooYY76I</a></p>&mdash; Ian Ozsvald (@ianozsvald) <a href="https://twitter.com/ianozsvald/status/694624441419091968">February 2, 2016</a></blockquote>
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
 You can also ask around in the community if people could tweet about the event. Many small voices do add up on that medium. PyData meetup groups from all over europe tweeted at least twice about the event just to make sure it was known to everyone and we're doing the same for their event. 
 
 #### Food 
 
+<blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">What an amazing Saturday <a href="https://twitter.com/pydataamsterdam">@pydataamsterdam</a>! And now—barbecue! <a href="https://t.co/V50CJQocfg">pic.twitter.com/V50CJQocfg</a></p>&mdash; PyData (@PyData) <a href="https://twitter.com/PyData/status/708696803126939649">March 12, 2016</a></blockquote>
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
 I didn't expect this to be such a lesson. Whatever you do; don't skip on food. You've probably been to a conference where the food was terrible. Remember what a buzzkill that was? Having great food has the exact opposite effect. When the food is amazing (and healthy!) you'll notice an extra level of energy appear at the conference. 
 
 We got lucky. We had two italians on the committee so food was something that 'automatically' seemed to be organised well. If you don't have this luxury, make sure you get a caterer that can deliver. 
+
+<blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">Lunch is served <a href="https://twitter.com/pydataamsterdam">@pydataamsterdam</a>. What a beautiful spread! <a href="https://t.co/zd6FMprwfY">pic.twitter.com/zd6FMprwfY</a></p>&mdash; PyData (@PyData) <a href="https://twitter.com/PyData/status/708618628715974656">March 12, 2016</a></blockquote>
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
 
 The main 'click' with our caterer happened when I noticed that the lead caterer took personal care that all the food was presented properly and he checked multiple times a day if everything was allright. When considering a caterer, try to find one that really cares about food. It will add much to the conference.
 
@@ -50,16 +69,45 @@ The main 'click' with our caterer happened when I noticed that the lead caterer 
 
 Behind the scenes, stuff will go wrong. Always. 
 
+<blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">Second day, here we come! Running 10’ behind schedule already, as we wait for the next ferry to get here! <a href="https://t.co/VzHkEH3uL1">pic.twitter.com/VzHkEH3uL1</a></p>&mdash; PyData Amsterdam (@pydataamsterdam) <a href="https://twitter.com/pydataamsterdam/status/708926919530700800">March 13, 2016</a></blockquote>
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
 It may be little things like a microphone not working but it may be big things like a speaker missing a plane to the conference. All these things will be alright if you improvise a little and prepare for common issues beforehand (extra mic, extra laptop, extra display plugs, etc). If a speaker slot is empty maybe host a panel or use a room as a meet-'n-greet for some project commiters. 
 
-PyData attendees understand that it is an event organised by volunteers who put their spare time in to create a great conference. That means that if small things go wrong, nobody will be angry. So don't worry too much; just relax and improvise your way through the conference if things don't go as planned.  
+PyData attendees understand that it is an event organised by volunteers who put their spare time in to create a great conference. That means that if small things go wrong, nobody will be angry. So don't worry too much; just relax and improvise your way through the conference if things don't go as planned. It does help to have a chat tool like slack available to everyone such that you can communicate everything internally during the conference. 
 
 #### Speakers appreciate the little things
 
-I've noticed that the speakers really appreciate it if their session host does a proper introduction. Giving an intro on their company, who they are, what they are working on and why the talk seemed relevant for PyData are great things to mention. It's easy to read the abstract of the talk and the bio of the speaker just before they talk, so do the homework. The speakers usually travel from far away to meet you and it seems like proper curtosy to make sure they get a decent introduction. 
+I've noticed that the speakers really appreciate it if their session host does a proper introduction. Giving an intro on their company, who they are, what they are working on and why the talk seemed relevant for PyData are great things to mention. It's easy to read the abstract of the talk and the bio of the speaker just before they talk, so do the homework. The speakers usually travel from far away to meet you and it seems like proper curtosy to make sure they get a decent introduction. Another way to make speakers feel welcome is to tweet about them. 
 
-Also; when introducing speakers it is fine to wait a tick until the crowd has properly seated before you let the speaker begin. A talk that starts with a lot of background noise may throw off the start of the presentation.
+Also; when introducing speakers it is fine to wait a tick until the crowd has properly seated before you let the speaker begin. A talk that starts with a lot of background noise may throw off the start of the presentation. 
 
-#### A thing we could do better
+<blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">Jo-fai Chow on Instagram: “My very first <a href="https://twitter.com/h2oai">@h2oai</a> <a href="https://twitter.com/PyData">@PyData</a> talk <a href="https://twitter.com/hashtag/PyDataAmsterdam?src=hash">#PyDataAmsterdam</a> <a href="https://twitter.com/hashtag/Amster?src=hash">#Amster</a> <a href="https://t.co/0PahsDp7Yi">https://t.co/0PahsDp7Yi</a> <a href="https://t.co/bFFwZraPzy">pic.twitter.com/bFFwZraPzy</a></p>&mdash; Python (@PythonRR) <a href="https://twitter.com/PythonRR/status/708876913859637248">March 13, 2016</a></blockquote>
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+#### Attendees like the little things too
+
+<blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">The ferry from Amsterdam central station this morning arriving <a href="https://twitter.com/pydataamsterdam">@pydataamsterdam</a> <a href="https://t.co/Tfm0dlPytV">pic.twitter.com/Tfm0dlPytV</a></p>&mdash; PyData Amsterdam (@pydataamsterdam) <a href="https://twitter.com/pydataamsterdam/status/708569179532689408">March 12, 2016</a></blockquote>
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+We had a private PyData ferry this year that took you from central station straight to the conference location. People loved it! It was something that no other conference ever offered and it allowde them to view the city from a different perspective.
+
+<blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">Ferry to <a href="https://twitter.com/hashtag/pydataamsterdam?src=hash">#pydataamsterdam</a> <a href="https://twitter.com/pydataamsterdam">@pydataamsterdam</a> <a href="https://t.co/TbL2spbhDK">pic.twitter.com/TbL2spbhDK</a></p>&mdash; Mel (@sciencedryad) <a href="https://twitter.com/sciencedryad/status/708549329942945792">March 12, 2016</a></blockquote>
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
 
 I noticed a few attendees mention that their partner was at home with the kids and that this was a reason why they could not stay for the drinks/dinner. I also noticed that one committe member even brought her kid to the conference. These observations made me wonder if people didn't attend the conference because of their family responsibilities. Other conferences sometimes have a creche where they can safely leave the kids entertained as they visit the conference. This might be a thing to try at other events. I'd be curious to learn if this allows more people to attend.  
+
+<blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">The <a href="https://twitter.com/hashtag/pydataamsterdam?src=hash">#pydataamsterdam</a> committee worked really hard to hand out 300 badges this morning. Everything sailing smoothly! <a href="https://t.co/kemBSHbKaD">pic.twitter.com/kemBSHbKaD</a></p>&mdash; PyData Amsterdam (@pydataamsterdam) <a href="https://twitter.com/pydataamsterdam/status/708577317963096064">March 12, 2016</a></blockquote>
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+I also kept on getting questions on what bars were good, or what things people could do in the city. It would be a better to have a seperate 'what to do in [city]' section on the website. 
+
+#### Conclusion 
+
+Doing a conference right can be very rewarding and the rewards themselves can be little things. Tweets like these for example make it completely worthwhile; 
+
+<blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">Thx <a href="https://twitter.com/NumFOCUS">@NumFOCUS</a> for an amazing <a href="https://twitter.com/hashtag/pydataamsterdam?src=hash">#pydataamsterdam</a> conf. All <a href="https://twitter.com/h2oai">@h2oai</a> slides &amp; code can be found at <a href="https://t.co/TAX9YMBD7B">https://t.co/TAX9YMBD7B</a> <a href="https://t.co/5RjPGPQWuF">pic.twitter.com/5RjPGPQWuF</a></p>&mdash; Jo-fai (Joe) Chow (@matlabulous) <a href="https://twitter.com/matlabulous/status/709464809922797570">March 14, 2016</a></blockquote>
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+<blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">Had a great time at <a href="https://twitter.com/pydataamsterdam">@pydataamsterdam</a> big thanks to the organizers! Highly motivated to keep learning. <a href="https://t.co/viLZsrLCX3">pic.twitter.com/viLZsrLCX3</a></p>&mdash; Rodrigo Parra (@rparrapy) <a href="https://twitter.com/rparrapy/status/709088715927375872">March 13, 2016</a></blockquote>
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
