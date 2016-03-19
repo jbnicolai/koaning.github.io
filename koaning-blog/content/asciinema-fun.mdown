@@ -1,0 +1,31 @@
+Title: Fun with Asciinema 
+Date: 2016-04-12
+
+So there's this service that let's you record your actions in the terminal. This led me to play around with python.
+
+<style>
+	iframe {
+    margin: 0 auto;
+    display: block;
+}
+</style>
+
+Here's a demo of what I mean. 
+
+<script type="text/javascript" src="https://asciinema.org/a/28r5rjhr09v6cod4kpsb70jay.js" id="asciicast-28r5rjhr09v6cod4kpsb70jay" async></script>
+
+So what happends if I play with the colors of the terminal? 
+
+<script type="text/javascript" src="https://asciinema.org/a/153zhb0gkuiuv3dkt27zzu65w.js" id="asciicast-153zhb0gkuiuv3dkt27zzu65w" async></script>
+
+Playing with colors is fun. Let's show how a random sorting algorithm sorts. 
+
+<script type="text/javascript" src="https://asciinema.org/a/6znd52bfy2alzfv8xa7axmw74.js" id="asciicast-6znd52bfy2alzfv8xa7axmw74" async></script>
+
+We can even go all the way by playing a version of the game of life. Below I'm simulating random noise with something from an accumulated ising model. It feels slightly mesmerizing. 
+
+<script type="text/javascript" src="https://asciinema.org/a/0246tme4rmpd70l81giq1z17s.js" id="asciicast-0246tme4rmpd70l81giq1z17s" async></script>
+
+I call 'coding in train'-time well spent. One can imagine some education fun to be had using this tool too if people are just learning python from the terminal. 
+
+There's a gist [here](https://gist.github.com/koaning/955c7ef41428f5252639) with all the code, to all those who are interested. 
