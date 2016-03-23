@@ -41,7 +41,7 @@ The nodes that we've retreived now only need to be extracted for numerical value
 	           str_replace("HP: ", "") %>% as.numeric,
 	         attack = attack_txt %>% str_extract("(Damage: \\d.\\d*)") %>% 
 	           str_replace("Damage: ", "") %>% as.numeric,
-	         attack_spd = attack_txt %>% str_extract("(Speed: \\d.\\d*)") %>% 
+	         attack_spd = attack_txt %>% str_extract("(Speed: \\d\\.?\\d*)") %>% 
 	           str_replace("Speed: ", "") %>% as.numeric)
 
 Now that the dataframe is done, let's go for some massive visual exploring with `GGally`.
