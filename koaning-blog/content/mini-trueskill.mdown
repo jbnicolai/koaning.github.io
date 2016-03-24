@@ -1,0 +1,21 @@
+Title: Mini TrueSkill Demo
+Date: 2016-03-24
+
+This document contains a small Shiny app that demos the gist of the TrueSkill algorithm. TrueSkill is a bayesian ranking system developed for the Xbox matching but variants of this work have since also appeared in other places. The algorithm deals with uncertainty and can run in an online setting. My implementation is done via sampling, which is a bit sloppy, but makes it much easier to quickly bootstrap it together. 
+
+#### The Gist of TrueSkill
+
+The system tries to map a player to a belief of skill. We'll map this skill between 0 and 1. This is represented through a probability density function. When two players are playing against eachother then we can combine these two beliefs into a multivariate probability distribution. This is now a prior of skill between these two players. 
+
+Next, the game will have an outcome, which will update the prior. If player one wins, we remove likelihood from the distribution that suggests player 2 is better and vice versa. This will be a blunt change or a subtle change depending on what `margin` of noise we'll allow .
+
+By doing this we get a few very nice properties that you can confirm in the app below.
+
+- Suppose a good player wins from a player we know nothing about. In this case the posterior will look a lot like the prior. Very little belief will change. 
+- Suppose a good player looses from a player we know nothing about. In this case the good player will still be a good player but the unknown player will suddenly move up the ladder very rapidly. This makes sense. If we're sure you've just beat a very good player then we have more trust that you should move up rapidly. 
+- We can influence the speed at which an unknown player moves up/down the ladder by adjusting a parameter (here `prior`) which causes the prior belief to be more thickly centered around the center of skill levels. 
+- All of this can be implemented for a real time setting. You'll want the update rule to use probability theory instead of sampling if you care about such systems being fast and stable. 
+
+### Shiny App
+
+<iframe src="https://koaning.shinyapps.io/trueskill/trueskill.Rmd" frameborder="0" width="100%" height="1200"></iframe>
