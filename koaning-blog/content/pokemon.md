@@ -1,4 +1,4 @@
-Title: Pokemon Recommendations
+Title: Pokemon Recommendations, part 1
 Date: 2015-05-06
 
 <style>
@@ -306,4 +306,3 @@ Some pokemon are more efficient in the return/volatility ratio than others. If I
 	Muk        2.370720 5.680507
 
 So yeah, turns out that you can apply the <a href="http://en.wikipedia.org/wiki/Capital_asset_pricing_model">CAPM</a> model to pokemon. Nice!
-

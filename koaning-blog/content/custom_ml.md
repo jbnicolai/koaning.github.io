@@ -1,4 +1,4 @@
-Title: Custom ML in R 
+Title: Custom ML in R
 Date: 2015-11-05
 
 Before writing this blogpost I did very little with object oriented code in R. I never really saw it as a useful feature because I am mostly using R as an analysis tool. The power of R comes partly from the fact that other people have done this work for you. Recently though, I've been tasked to write a custom machine learning library that needed to support the `predict` function. 

@@ -6,7 +6,7 @@ Date: 2015-08-12
 <h3>Introduction</h3>
 <p>A radial basis function is a real-valued function whose value depends only on the distance from the origin. For example;</p>
 
-$$ \phi_i(x) = exp\left(\frac{1}{2\alpha}(x-m_i)^2\right)$$ 
+$$ \phi_i(x) = exp\left(-\frac{1}{2\alpha}(x-m_i)^2\right)$$ 
 
 <pre class="r"><code>x = seq(-2,5,0.01) 
 y = exp(-1/0.5*(x)^2)

@@ -3,7 +3,7 @@ Date: 2016-04-12
 
 So here's an interesting question; 
 
-<b>Can we generate a meaningful regression out of randomness? </b>
+<b>Can we generate a meaningful regression out of randomness?</b>
 
 You may be tempted to think that this is impossible because randomness does not contain any information. Although this is a valid statement I'd like to show the contrary in this blogpost. Turns out that correlated entropy can generate useful features that can be used to fit smooth functions. 
 
