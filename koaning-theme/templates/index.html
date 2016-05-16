@@ -12,7 +12,6 @@
 
 <h1>Posts</h1>
 <br>
-{% if articles %}
 {% for article in articles_page.object_list %}        
 <div class="article" itemscope itemtype="http://schema.org/BlogPosting">
 	<a href="/{{ article.url }}">
@@ -22,7 +21,6 @@
 </div>
 <hr>
 {% endfor %} {# For article #}
-{% endif %} {# If articles #}
 
 <style>
 	a{
@@ -36,7 +34,7 @@
 
 <footer id="footer">
 	<a data-toggle="collapse" href="#pydata_ams2016" aria-expanded="false" aria-controls="pydata_ams2016">
-		<u><h3 class="talk_notes">PyData Amsterdam 2016: The Dutch Tape of Heroes: Bayes Rule</h3></u>
+		<u><h3 class="talk_notes">PyData London/Amsterdam 2016: The Duct Tape of Heroes: Bayes Rule</h3></u>
 	</a>
 	<div class="collapse" id="pydata_ams2016">
 	  <div class="well">
@@ -127,7 +125,7 @@
 	</div>
 
 	<a data-toggle="collapse" href="#pydata-berlin" aria-expanded="false" aria-controls="pydata-berlin">
-		<u><h3 class="talk_notes">PyData Berlin 2014</h3></u>
+		<u><h3 class="talk_notes">PyData Berlin 2014: Pandas and Friends</h3></u>
 	</a>
 	<div class="collapse" id="pydata-berlin">
 	  <div class="well">

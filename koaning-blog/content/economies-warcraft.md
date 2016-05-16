@@ -33,7 +33,7 @@ You'll also notice that you can buy a stack of items instead of a single item. A
 
 ![](/theme/images/wow2.png)
 
-There are differences between servers, even though they all have the exact same game on it. The main difference that should influence the behavior of players on a macro level is the number of players on a server. The refresh rate of collectible items is constant so more players would cause items to be more rare. 
+There are differences between servers, even though they all have the exact same game on it. The main difference that should influence the behavior of players on a macro level is the number of players on a server. The refresh rate of collectible items is constant so more players would cause items to be more rare. Below is a scatter plot of total buyout gold (in 1000s) on the server vs. number of auctioneers to show how this can vary. Each point indicates a sererate horde or alliance auction house, one for each server. 
 
 ![](/theme/images/wow3.png)
 
@@ -43,13 +43,13 @@ You can also do some more silly queries just for the fun of it. Turns out that t
 
 ## Some economic theory 
 
-Before moving on to the big query, I just want to mention what the economic assumptions are that I think apply to world of warcraft; 
+Before moving on to the big query, I just want to mention three economic assumptions that I think apply to world of warcraft better than the real world; 
 
 - people have rational preferences when they trade
 - individuals maximize utility
 - people act independently on the basis of full and relevant information
 
-I find it hard to claim that these assumptions hold in the real world. But if people accept that we can apply economic theory in the real world based on these assumptions then it seems clear we can also do so in the world of warcraft. 
+I find it hard to claim that these assumptions hold in the real world. But if people accept that we can apply economic theory in the real world based on these assumptions then it seems appropriate we can also do so in the world of warcraft. 
 
 Being a video game, world of warcraft has a defined goal that players chase and players are rewarded if they get better at it, much more than in our world. Every aspect of the world is documented and quantified, much more than in our world. The assumption of rational players maximizing utility based on perfect information actually makes some sense here. 
 
@@ -57,13 +57,15 @@ With these assumptions met, I would assume that auction houses adhere to some ki
 
 ## Testing Theory
 
-There are different items in the world of warcraft, some of them rare and some of them more common. I'll take the top 150 most popular items for all of the work below such that I can zoom in on commodity items. 
+There are different items in the world of warcraft, some of them rare and some of them more common. In order to zoom in on commodity items I'll focus on the top 150 most popular items. 
 
-I'll take three of these items and summerise them. I'll take the mean and the number of items from each server from each fraction. I would expect that if there's more items on the server that there'll be a lower mean price. After all, more supply would cause the price to go down. When I plot this, it looks like this;
+The metrics I'll focus on are the mean buyout price per server and the number of items from each server from each fraction. I would expect that if there's more items on the server that there'll be a lower mean price. After all, more supply would cause the price to go down. 
+
+I'll show the supply vs. mean buyout price for three items below.
 
 ![](/theme/images/wow5.png)
 
-It looks like small quantities on the server might cause higher prices but I am not sure if this is because of outliers or anything else. So I'll remove the 2% outliers on both axis and get this;
+Note that every point in this chart represents a seperate auction house, from either the horde or the alliance for each server. Also note that the number listed on top of the chart is the `item_id` (which you could google if you wanted to know what it is). It looks like small quantities on the server might cause higher prices but I am not sure if this is because of outliers or anything else. So I'll remove the 2% outliers on both axis and get this;
 
 ![](/theme/images/wow6.png)
 
@@ -71,7 +73,7 @@ It still is not obvious what the relationship is between number of items and mea
 
 $$ \beta_1 = \frac{Cov(x,y)}{Var(x)} $$
 
-When I do this for all the items, this is what it looks like;
+In laymans terms; I'll be calculating the slope of the regression line. If this is negative then there's as hint that an increase of items indeed corresponds with a lower price. When I do this for all the items, this is what it looks like;
 
 ![](/theme/images/wow7.png)
 
@@ -79,7 +81,7 @@ When I do this for all the items, this is what it looks like;
 
 ![](/theme/images/wow9.png)
 
-This is **very** counterintuitive. Larger quantities in the market should proxy towards lower costs per product while it seems like all $\beta_1$ values are near zero or positive. Let's look at the histogram of $\beta_1$ values to be sure. 
+This is **very** counterintuitive. Larger quantities in the market should proxy towards lower costs per product while it seems like allmost all $\beta_1$ values are near zero or positive. Let's look at the histogram of $\beta_1$ values to be sure. 
 
 ![](/theme/images/wow10.png)
 

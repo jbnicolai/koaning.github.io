@@ -1,5 +1,5 @@
 var barChart = function(cssLocation, data){
-  
+
   var margin = {top: 20, right: 50, bottom: 30, left: 50},
       width = d3.select(cssLocation).node().clientWidth
       width = width - margin.left - margin.right,
@@ -47,24 +47,21 @@ var barChart = function(cssLocation, data){
         .data(data)
         .enter()
         .append("rect")
-        .attr("class", "bar")
-        .attr("x", function(d) { return x(d[0]); })
-        .attr("width", x.rangeBand())
-        .attr("y", function(d) { return y(d[1]); })
-        .attr("height", function(d) { return height - y(d[1]); }); 
-
         
-    var update = function update(data) {
-      x.domain(data.map(function(d) { return d[0]; }));
-      y.domain([0, d3.max(data, function(d) { return d[1]; })]);
+    var update = function(newData) {
+      console.log('chart update');
+      // x.domain(newData.map(function(d) { return d[0]; }));
+      // console.log(x)
+      y.domain([0, Math.max(1, d3.max(newData, function(d) { return d[1]; }))]);
+      console.log(y);
       bars.attr("x", function(d) { return x(d[0]); })
         .attr("width", x.rangeBand())
         .attr("y", function(d) { return y(d[1]); })
         .attr("height", function(d) { return height - y(d[1]); }); 
+      console.log(bars);
     }
 
-    // update(data)
-
+    update(data);
     return update;
 }
 
