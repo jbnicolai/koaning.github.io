@@ -319,10 +319,6 @@ var initCharts = function(num){
 
 initCharts(NUM_CHARTS)
 
-// var acc = [1,0,0,0,1,1,1,1,1]
-// acc.map(function(d,i,l){return d3.sum(acc.slice(0, i+1))/(i+1)})
-// d3.sum(acc)/acc.length
-
 var choose = function(n, k){
     if(k == 0){
       return 1
