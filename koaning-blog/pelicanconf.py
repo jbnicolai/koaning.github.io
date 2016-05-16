@@ -25,7 +25,7 @@ SOCIAL = ()
 DEFAULT_PAGINATION = False
 
 # Specify name of a built-in theme
-THEME = "/Users/code/koaning.io/koaning-theme"
+THEME = "../koaning-theme"
 
 # Uncomment following line if you want document-relative URLs when developing
 #RELATIVE_URLS = True
