@@ -13,8 +13,6 @@ Date: 2016-05-20
 <script src="/theme/js/redux.js"></script>
 <script src="/theme/js/lazy.js"></script>
 <script src="/theme/js/lodash.js"></script>
-<script src="/theme/js/base-charts.js"></script>
-
 <hr>
 
 **Edit:**
@@ -228,7 +226,7 @@ d3.select("button#robot-go").on("click", function(){
     count--;
     rawInputStore.dispatch({ type: Math.random() < 0.5 ? '1' : '0' });
     if (count > 0) {
-      setTimeout(tick, 100)
+      setTimeout(tick, 10)
     }
   }
 
@@ -259,6 +257,9 @@ var genHist = function(cssLoc, rank){
     size: {
       height: 200
     },
+    transition: {
+      duration: 250
+    },
     legend: {
       show: false
     }
@@ -281,6 +282,9 @@ var genChart = function(cssLoc, colnames, height = 400){
     size: {
       height: height
     },
+    transition: {
+      duration: 250
+    },
     axis: {
       y:{
         min:0,
@@ -294,12 +298,12 @@ var predChart = genChart("#preds", ['p1', 'p2', 'p3', 'p4', 'p5', 'pred'])
 var accChart = genChart("#acc", ['cumacc', 'curacc'], 200)
 
 predictionStore.subscribe(_.throttle(function () {
-  predChart.load({'json': predictionStore.getState(), keys: {  x: 'i', value: ['p1', 'p2', 'p3', 'p4', 'p5', 'pred'] } });
-}, 1000, {leading: true}))
+  var state = predictionStore.getState();
+  predChart.load({'json': state, keys: {  x: 'i', value: ['p1', 'p2', 'p3', 'p4', 'p5', 'pred'] } });
+  accChart.load({'json': state, keys: {  x: 'i', value: ['cumacc', 'curacc'] } });
+}, 250, {leading: true}))
 
-predictionStore.subscribe(_.throttle(function () {
-  accChart.load({'json': predictionStore.getState(), keys: {  x: 'i', value: ['cumacc', 'curacc'] } });
-}, 1000, {leading: true}))
+charts = [];
 
 var initCharts = function(num){
   for (let i = 1; i <= num; i++) {
@@ -309,9 +313,10 @@ var initCharts = function(num){
     var newDiv = d3.select('#container').append('div').attr('id', 'markov' + i)
     setTimeout(function () {
       var chart = genHist('#markov' + i, i)
+      charts.push(chart)
       rawInputStore.subscribe(_.throttle(function(){
         chart.load({'json': getData(i), keys: {x: 'pattern', value: ['freq']} })},
-        100,
+        250,
         { leading: true}));
     })
   }
