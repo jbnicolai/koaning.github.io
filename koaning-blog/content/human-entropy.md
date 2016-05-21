@@ -17,11 +17,11 @@ Date: 2016-05-20
 
 **Edit:**
 
-For good exerpience, don't read this blogpost on mobile. The **d3** stuff is heavy.</blockquote>
+You may not want to read this blogpost on mobile. The **d3** stuff can be a bit heavy.</blockquote>
 
 <hr>
 
-We'll do an experiment to see if humans perhaps can generate random numbers effectively. Please click the heads/tails button as randomly as you can. You may also use the 1 (heads) or 0 (tails) keys on your keyboards (which probably is a whole lot faster if you are on a laptop).
+In this document we'll do an experiment to see if humans can generate random numbers effectively. We will use you, a human to do this. Please click the heads/tails button as randomly as you can. You may also use the 1 (heads) or 0 (tails) keys on your keyboards (which probably is a whole lot faster if you1011011101110 are on a laptop).
 
 <div id="chart"></div>
 
@@ -42,31 +42,37 @@ You've just given your sequence of 'random' numbers. There are many axis for jud
 
 <br>
 
+Often, humans fall into a pattern instead of delivering true randomness. Especially repeating `0-1-0-1` or `1-0-1-0` is common. Using the barcharts it may become evident if this is the case. 
+
 <h3>Probability of predictions</h3>
 
 Let us go a step further. It is well possible that you are such a terrible machine that an actual machine can predict your 'randomness'. We can use the counts from before to generate simple markov models $M_k$ (where $k$ the number of nodes in the markov chain). Each markov chain can then say how likely it is to see a heads (or a 1).
 
-$$ P(H_t | M_k \{x_{t-1} ... x_{t-k}\}) $$
+$$ P(H_t | M_k,  \{x_{t-1} ... x_{t-k-1}\}) $$
 
 We can also combine these models. We train $M_1,...,M_5$ in real time and combine these via a naive ensemble rule.
 
-$$ P(H_t | M_1,...,M_k X_{t-k}) \approx \Pi_{i=1}^5 P(H_t | M_i X_{t-i}) $$
+$$ P(H_t | M_1,...,M_k X_{t-k-1}) \approx \Pi_{i=1}^5 P(H_t | M_i X_{t-i-1}) $$
 
-This is a blunt model, especially because we're sticking to discrete-land while a beta distribution would be much better here. Still, this should be able to pick up a lot of common human patterns. We'll also introduce some smoothing in the beginning to prevent a very early overfit. When we do this the predictions over time are;
+This is a blunt model, especially because we're sticking to discrete-land while a beta distribution would be much better here. Still, this should be able to pick up a lot of common human patterns. We'll also introduce some smoothing in the beginning to prevent a very early overfit. We encourge the reader to try and changing their pattern a few times to see how the markov chains respond. 
+
+When we do this the predictions over time are show below. The lines $p_1, ..., p_5$ correspond to the predictions of markov chain $M_1,...,M_5$ and `pred` corresponds to the prediction from $P(H_t | M_1,...,M_k X_{t-k-1})$. 
 
 <div id="preds"></div>
 
-The accuracy of this naive algorithm is depicted in the plot below.
+The accuracy of this naive ensemble is depicted in the plot below. We show the total accuracy as well as the accuracy of the last 15 predictions. We do this to also demonstrate how the markovs can learn new patterns.
 
 <div id="acc"></div>
 
 ## Conclusion
 
-So with these numbers, how random might the data be? Well, if the data truly was random then the number of correct predictions needs to come from the following distribution;
+So with these numbers, how random might the supplied data be? Well, if the data truly was random then the number of correct predictions needs to come from the following distribution;
 
 $$ P(a | H_0) \sim Bin(\frac{1}{2}, n) \sim {n \choose k} p^k (1-p)^{n-k} $$
 
-It is a simple way to think about how likely our found accuracy is if we assume that the data is indeed random. With this data, $P(a | H_0) = $ <span class="metric">1</span>.
+This means that our found accuracy can help us determine how likely it is that the data is generated randomly. In maths, with the given data; $\sum_i P(x_i \geq a | H_0) = $ <span class="metric">1</span>. This is by no means the only axis where we can measure randomness, but it is able to filter out a lot of human behavior. 
+
+Mainly, coding this was a lot of fun. 
 
 #### Bonus: What would a robot do?
 
@@ -76,7 +82,7 @@ You may be wondering what the result is if an actual robot filled this in. Press
 
 ## Shoutouts
 
-This document was created together with @josh-the-man, props to him!
+This document was created together with **@jbnicolai_**, props to him!
 
 <script>
 const counter = (state = [], action) => {
@@ -101,12 +107,13 @@ const predictor = (state = [], action) => {
       var totalCorrect = d3.sum(state.map(function(d){return d.correct}))
       var len = state.length
       var lag = 15
-      var recentCorrect = d3.sum(state.slice(len - lag, len).map(function(d){return d.correct}))
+      var currentState = state.slice(Math.max(len - lag, 0))
+      var recentCorrect = d3.sum(currentState.map(function(d){return d.correct}))
       if (res) {
         res['v'] = _.last(rawInputStore.getState())
         res['correct'] = res['v'] == Math.round(res['pred'])
         res['cumacc'] = (totalCorrect + res['correct'])/(state.length + 1)
-        res['curacc'] = (recentCorrect + res['correct'])/(state.slice(len - lag, len).length + 1)
+        res['curacc'] = (recentCorrect + res['correct'])/(currentState.length + 1)
         state.push(res)
       }
       state.push(predictCurrent())
@@ -154,17 +161,20 @@ const markov = function(rank){
   .toArray()
 }
 
-const lastFlips = function(n){return Lazy(rawInputStore.getState()).last(n).toArray()}
+const lastFlips = function(n){
+  return Lazy(rawInputStore.getState()).last(n).toArray()
+}
 
 const prob = function(rank, outcome='1'){
-  const past = lastFlips(rank - 1).join(',')
+  const lastF = lastFlips(rank - 1)
+  const past = lastF.join(',')
   const mk = markov(rank)
   const nextProbs = _.object(_.filter(mk, function(d){return d[0].indexOf(past) == 0}))
   var res = _.pick(nextProbs, function(v, k){
     return _.endsWith(k, outcome)
   })
-  const outcomeP = 5 + (nextProbs[past + ',' + outcome] || 0)
-  const notOutcomeP = 5 + (nextProbs[past + ',' + (outcome == '0' ? '1' : '0')] || 0)
+  const outcomeP = 5 + (nextProbs[lastF.concat([outcome]).join(',')] || 0)
+  const notOutcomeP = 5 + (nextProbs[lastF.concat([outcome == '0' ? '1' : '0'].join(','))] || 0)
   return outcomeP / (outcomeP + notOutcomeP)
 }
 
