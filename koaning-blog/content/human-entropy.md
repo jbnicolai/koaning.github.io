@@ -82,7 +82,7 @@ You may be wondering what the result is if an actual robot filled this in. Press
 
 ## Shoutouts
 
-This document was created together with **@jbnicolai_**, props to him!
+This document was created together with **[@jbnicolai_](https://twitter.com/jbnicolai_)**, props to him!
 
 <script>
 function counter(state, action) {
