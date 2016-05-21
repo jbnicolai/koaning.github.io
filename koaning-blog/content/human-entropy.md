@@ -9,10 +9,10 @@ Date: 2016-05-20
   }
 </style>
 <script src="/theme/js/d3.min.js"></script>
+<script src="/theme/js/lodash.js"></script>
 <script src="/theme/js/c3.js"></script>
 <script src="/theme/js/redux.js"></script>
 <script src="/theme/js/lazy.js"></script>
-<script src="/theme/js/lodash.js"></script>
 <hr>
 
 **Edit:**

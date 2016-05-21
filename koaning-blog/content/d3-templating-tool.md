@@ -220,6 +220,10 @@ for( c in data ){
     </div>
   </div>
 </div>
+
+<script src="/theme/js/d3.min.js"></script>
+<script src="/theme/js/lodash.js"></script>
+
 <script>
 
 	var payments = [

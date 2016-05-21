@@ -5,7 +5,8 @@ Date: 2014-07-07
 <script src="http://cdnjs.cloudflare.com/ajax/libs/d3/3.4.1/d3.min.js"></script>
 <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 <link rel="stylesheet" href="/css/prism.css">
-<script src="/js/prism.js"></script>
+<script src="/theme/js/d3.min.js"></script>
+<script src="/theme/js/lodash.js"></script>
 <style>
 	div#output{
 		font-size:11px;

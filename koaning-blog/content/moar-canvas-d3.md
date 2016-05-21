@@ -11,6 +11,10 @@ Date: 2015-11-25
     width: 500px;
   }
 </style>
+
+<script src="/theme/js/d3.min.js"></script>
+<script src="/theme/js/lodash.js"></script>
+
 [D3](http://d3js.org/) sometimes falls short in performance. Browsers just aren't meant to draw and update many svg elements. Canvas can help adress some of these problems and in this document I will demo some things that I've hacked together. All this work is heavily (!) inspired by the recent work of Mike Bostock found [here](http://bl.ocks.org/mbostock/280d83080497c8c13152). 
 
 ## Minimum Spanning Tree
