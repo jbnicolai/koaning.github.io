@@ -36,7 +36,7 @@ Let us do an inverse turing test.
 
 ![](/theme/images/turing.jpg)
 
-You've just given your sequence of 'random' numbers. There are many axis for judging if you have given random data. In this document we will focus on the markov chain that we can learn from the generated input. The counts for these markov models are graphed below. You may see no bias in the first or second chart, but as you scroll down it may become more and more biased to a certain pattern.
+You've just given your sequence of 'random' numbers. There are many axes for judging if you have given random data. In this document we will focus on the markov chain that we can learn from the generated input. The counts for these markov models are graphed below. You may see no bias in the first or second chart, but as you scroll down it may become more and more biased to a certain pattern.
 
 <div id="container"></div>
 
