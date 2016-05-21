@@ -26,8 +26,8 @@ text{
 	font-size: 6px;
 }
 </style>
-<link href="/theme/css/c3.css" rel="stylesheet" type="text/css">
-<script src="/theme/js/c3.js"></script>
+<link href="/theme/css/c3.min.css" rel="stylesheet" type="text/css">
+<script src="/theme/js/c3.min.js"></script>
 
 > Hint: this page works much better on a pc if you want to enjoy the scale of the visualisations. Mobile phones tend to break; I use this blogpost to explain why d3 is not always a good idea.
 

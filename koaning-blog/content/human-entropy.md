@@ -1,7 +1,7 @@
 Title: Human Entropy
 Date: 2016-05-20
 
-<link rel="stylesheet" type="text/css" href="/theme/css/c3.css"></link>
+<link rel="stylesheet" type="text/css" href="/theme/css/c3.min.css"></link>
 <style>
   button.btn{
     background-color: white;
@@ -9,8 +9,8 @@ Date: 2016-05-20
   }
 </style>
 <script src="/theme/js/d3.min.js"></script>
+<script src="/theme/js/c3.min.js"></script>
 <script src="/theme/js/lodash.js"></script>
-<script src="/theme/js/c3.js"></script>
 <script src="/theme/js/redux.js"></script>
 <script src="/theme/js/lazy.js"></script>
 <hr>
@@ -42,7 +42,7 @@ You've just given your sequence of 'random' numbers. There are many axis for jud
 
 <br>
 
-Often, humans fall into a pattern instead of delivering true randomness. Especially repeating `0-1-0-1` or `1-0-1-0` is common. Using the barcharts it may become evident if this is the case. 
+Often, humans fall into a pattern instead of delivering true randomness. Especially repeating `0-1-0-1` or `1-0-1-0` is common. Using the barcharts it may become evident if this is the case.
 
 <h3>Probability of predictions</h3>
 
@@ -54,9 +54,9 @@ We can also combine these models. We train $M_1,...,M_5$ in real time and combin
 
 $$ P(H_t | M_1,...,M_k X_{t-k-1}) \approx \Pi_{i=1}^5 P(H_t | M_i X_{t-i-1}) $$
 
-This is a blunt model, especially because we're sticking to discrete-land while a beta distribution would be much better here. Still, this should be able to pick up a lot of common human patterns. We'll also introduce some smoothing in the beginning to prevent a very early overfit. We encourge the reader to try and changing their pattern a few times to see how the markov chains respond. 
+This is a blunt model, especially because we're sticking to discrete-land while a beta distribution would be much better here. Still, this should be able to pick up a lot of common human patterns. We'll also introduce some smoothing in the beginning to prevent a very early overfit. We encourge the reader to try and changing their pattern a few times to see how the markov chains respond.
 
-When we do this the predictions over time are show below. The lines $p_1, ..., p_5$ correspond to the predictions of markov chain $M_1,...,M_5$ and `pred` corresponds to the prediction from $P(H_t | M_1,...,M_k X_{t-k-1})$. 
+When we do this the predictions over time are show below. The lines $p_1, ..., p_5$ correspond to the predictions of markov chain $M_1,...,M_5$ and `pred` corresponds to the prediction from $P(H_t | M_1,...,M_k X_{t-k-1})$.
 
 <div id="preds"></div>
 
@@ -70,9 +70,9 @@ So with these numbers, how random might the supplied data be? Well, if the data 
 
 $$ P(a | H_0) \sim Bin(\frac{1}{2}, n) \sim {n \choose k} p^k (1-p)^{n-k} $$
 
-This means that our found accuracy can help us determine how likely it is that the data is generated randomly. In maths, with the given data; $\sum_i P(x_i \geq a | H_0) = $ <span class="metric">1</span>. This is by no means the only axis where we can measure randomness, but it is able to filter out a lot of human behavior. 
+This means that our found accuracy can help us determine how likely it is that the data is generated randomly. In maths, with the given data; $\sum_i P(x_i \geq a | H_0) = $ <span class="metric">1</span>. This is by no means the only axis where we can measure randomness, but it is able to filter out a lot of human behavior.
 
-Mainly, coding this was a lot of fun. 
+Mainly, coding this was a lot of fun.
 
 #### Bonus: What would a robot do?
 
