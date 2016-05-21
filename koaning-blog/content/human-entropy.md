@@ -13,11 +13,9 @@ Date: 2016-05-20
 <script src="/theme/js/redux.js"></script>
 <script src="/theme/js/lazy.js"></script>
 <script src="/theme/js/lodash.js"></script>
-<script src="/theme/js/base-charts.js"></script>
-
 <hr>
 
-**Edit:** 
+**Edit:**
 
 For good exerpience, don't read this blogpost on mobile. The **d3** stuff is heavy.</blockquote>
 
@@ -30,11 +28,11 @@ We'll do an experiment to see if humans perhaps can generate random numbers effe
 <button class="btn btn-default btn-block btn-lg" id="heads">Heads</button>
 <button class="btn btn-block btn-lg" id="tails">Tails</button>
 
-You've currently generated <span class="num_items">0</span> numbers, please ensure that you got about 100 before moving on. You are likely to cheat if you scroll down, which is fine when you try this a second time but it would be best to do a clean attempt beforehand. 
+You've currently generated <span class="num_items">0</span> numbers, please ensure that you got about 100 before moving on. You are likely to cheat if you scroll down, which is fine when you try this a second time but it would be best to do a clean attempt beforehand.
 
-## Inverse Turing Test 
+## Inverse Turing Test
 
-Let us do an inverse turing test. 
+Let us do an inverse turing test.
 
 ![](/theme/images/turing.jpg)
 
@@ -42,17 +40,17 @@ You've just given your sequence of 'random' numbers. There are many axis for jud
 
 <div id="container"></div>
 
-<br> 
+<br>
 
 <h3>Probability of predictions</h3>
 
-Let us go a step further. It is well possible that you are such a terrible machine that an actual machine can predict your 'randomness'. We can use the counts from before to generate simple markov models $M_k$ (where $k$ the number of nodes in the markov chain). Each markov chain can then say how likely it is to see a heads (or a 1). 
+Let us go a step further. It is well possible that you are such a terrible machine that an actual machine can predict your 'randomness'. We can use the counts from before to generate simple markov models $M_k$ (where $k$ the number of nodes in the markov chain). Each markov chain can then say how likely it is to see a heads (or a 1).
 
-$$ P(H_t | M_k \{x_{t-1} ... x_{t-k}\}) $$ 
+$$ P(H_t | M_k \{x_{t-1} ... x_{t-k}\}) $$
 
 We can also combine these models. We train $M_1,...,M_5$ in real time and combine these via a naive ensemble rule.
 
-$$ P(H_t | M_1,...,M_k X_{t-k}) \approx \Pi_{i=1}^5 P(H_t | M_i X_{t-i}) $$ 
+$$ P(H_t | M_1,...,M_k X_{t-k}) \approx \Pi_{i=1}^5 P(H_t | M_i X_{t-i}) $$
 
 This is a blunt model, especially because we're sticking to discrete-land while a beta distribution would be much better here. Still, this should be able to pick up a lot of common human patterns. We'll also introduce some smoothing in the beginning to prevent a very early overfit. When we do this the predictions over time are;
 
@@ -62,11 +60,11 @@ The accuracy of this naive algorithm is depicted in the plot below.
 
 <div id="acc"></div>
 
-## Conclusion 
+## Conclusion
 
 So with these numbers, how random might the data be? Well, if the data truly was random then the number of correct predictions needs to come from the following distribution;
 
-$$ P(a | H_0) \sim Bin(\frac{1}{2}, n) \sim {n \choose k} p^k (1-p)^{n-k} $$ 
+$$ P(a | H_0) \sim Bin(\frac{1}{2}, n) \sim {n \choose k} p^k (1-p)^{n-k} $$
 
 It is a simple way to think about how likely our found accuracy is if we assume that the data is indeed random. With this data, $P(a | H_0) = $ <span class="metric">1</span>.
 
@@ -76,9 +74,9 @@ You may be wondering what the result is if an actual robot filled this in. Press
 
 <button class="btn btn-block btn-lg" id="robot-go">Restart and robot</button>
 
-## Shoutouts 
+## Shoutouts
 
-This document was created together with @josh-the-man, props to him! 
+This document was created together with @josh-the-man, props to him!
 
 <script>
 const counter = (state = [], action) => {
@@ -94,7 +92,7 @@ const counter = (state = [], action) => {
     default:
       return state;
   }
-}; 
+};
 
 const predictor = (state = [], action) => {
   switch (action.type){
@@ -129,7 +127,7 @@ function calcAllPairs(len){
   for (var i = 0; i < len - 1; i++) {
     args.push([",1", ",0"]);
   }
-  
+
   var base = _.reduce(args, function(a,b){
     return _.flatten(_.map(a, function(x){
       return _.map(b, function(y){
@@ -228,7 +226,7 @@ d3.select("button#robot-go").on("click", function(){
     count--;
     rawInputStore.dispatch({ type: Math.random() < 0.5 ? '1' : '0' });
     if (count > 0) {
-      setTimeout(tick, 100)
+      setTimeout(tick, 10)
     }
   }
 
@@ -259,6 +257,9 @@ var genHist = function(cssLoc, rank){
     size: {
       height: 200
     },
+    transition: {
+      duration: 250
+    },
     legend: {
       show: false
     }
@@ -281,6 +282,9 @@ var genChart = function(cssLoc, colnames, height = 400){
     size: {
       height: height
     },
+    transition: {
+      duration: 250
+    },
     axis: {
       y:{
         min:0,
@@ -294,12 +298,12 @@ var predChart = genChart("#preds", ['p1', 'p2', 'p3', 'p4', 'p5', 'pred'])
 var accChart = genChart("#acc", ['cumacc', 'curacc'], 200)
 
 predictionStore.subscribe(_.throttle(function () {
-  predChart.load({'json': predictionStore.getState(), keys: {  x: 'i', value: ['p1', 'p2', 'p3', 'p4', 'p5', 'pred'] } });
-}, 1000, {leading: true}))
+  var state = predictionStore.getState();
+  predChart.load({'json': state, keys: {  x: 'i', value: ['p1', 'p2', 'p3', 'p4', 'p5', 'pred'] } });
+  accChart.load({'json': state, keys: {  x: 'i', value: ['cumacc', 'curacc'] } });
+}, 250, {leading: true}))
 
-predictionStore.subscribe(_.throttle(function () {
-  accChart.load({'json': predictionStore.getState(), keys: {  x: 'i', value: ['cumacc', 'curacc'] } });
-}, 1000, {leading: true}))
+charts = [];
 
 var initCharts = function(num){
   for (let i = 1; i <= num; i++) {
@@ -309,19 +313,16 @@ var initCharts = function(num){
     var newDiv = d3.select('#container').append('div').attr('id', 'markov' + i)
     setTimeout(function () {
       var chart = genHist('#markov' + i, i)
+      charts.push(chart)
       rawInputStore.subscribe(_.throttle(function(){
-        chart.load({'json': getData(i), keys: {x: 'pattern', value: ['freq']} })}, 
-        100,
+        chart.load({'json': getData(i), keys: {x: 'pattern', value: ['freq']} })},
+        250,
         { leading: true}));
     })
   }
 }
 
 initCharts(NUM_CHARTS)
-
-// var acc = [1,0,0,0,1,1,1,1,1]
-// acc.map(function(d,i,l){return d3.sum(acc.slice(0, i+1))/(i+1)})
-// d3.sum(acc)/acc.length
 
 var choose = function(n, k){
     if(k == 0){
