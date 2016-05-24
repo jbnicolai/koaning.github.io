@@ -82,10 +82,11 @@ You may be wondering what the result is if an actual robot filled this in. Press
 
 ## Shoutouts
 
-This document was created together with **@jbnicolai_**, props to him!
+This document was created together with **[@jbnicolai_](https://twitter.com/jbnicolai_)**, props to him!
 
 <script>
-const counter = (state = [], action) => {
+function counter(state, action) {
+  state = state || [];
   switch (action.type) {
     case '0':
       state.push(0)
@@ -100,7 +101,8 @@ const counter = (state = [], action) => {
   }
 };
 
-const predictor = (state = [], action) => {
+function predictor(state, action) {
+  state = state || [];
   switch (action.type){
     case 'predict':
       res = state.pop()
@@ -125,9 +127,9 @@ const predictor = (state = [], action) => {
   }
 }
 
-const { createStore } = Redux;
-const rawInputStore = createStore(counter);
-const predictionStore = createStore(predictor);
+var createStore = Redux.createStore;
+var rawInputStore = createStore(counter);
+var predictionStore = createStore(predictor);
 
 function calcAllPairs(len){
   var args = [ len > 0 ? ["1", "0"] : []]
@@ -146,39 +148,40 @@ function calcAllPairs(len){
   return base.map(function(d){ return [d, 0]})
 }
 
-const NUM_CHARTS = 5
-const PAIRS = d3.range(NUM_CHARTS + 1).map(calcAllPairs)
+var NUM_CHARTS = 5
+var PAIRS = d3.range(NUM_CHARTS + 1).map(calcAllPairs)
   .map(function(d){return _.object(d)})
 
-const render = function(){
+var render = function(){
   d3.select('.num_items').text(rawInputStore.getState().length);
 };
 
-const markov = function(rank){
+var markov = function(rank){
   return Lazy(rawInputStore.getState())
   .consecutive(rank)
   .countBy(function(d){return d})
   .toArray()
 }
 
-const lastFlips = function(n){
+var lastFlips = function(n){
   return Lazy(rawInputStore.getState()).last(n).toArray()
 }
 
-const prob = function(rank, outcome='1'){
-  const lastF = lastFlips(rank - 1)
-  const past = lastF.join(',')
-  const mk = markov(rank)
-  const nextProbs = _.object(_.filter(mk, function(d){return d[0].indexOf(past) == 0}))
+var prob = function(rank, outcome){
+  outcome = outcome || '1'
+  var lastF = lastFlips(rank - 1)
+  var past = lastF.join(',')
+  var mk = markov(rank)
+  var nextProbs = _.object(_.filter(mk, function(d){return d[0].indexOf(past) == 0}))
   var res = _.pick(nextProbs, function(v, k){
     return _.endsWith(k, outcome)
   })
-  const outcomeP = 5 + (nextProbs[lastF.concat([outcome]).join(',')] || 0)
-  const notOutcomeP = 5 + (nextProbs[lastF.concat([outcome == '0' ? '1' : '0'].join(','))] || 0)
+  var outcomeP = 5 + (nextProbs[lastF.concat([outcome]).join(',')] || 0)
+  var notOutcomeP = 5 + (nextProbs[lastF.concat([outcome == '0' ? '1' : '0'].join(','))] || 0)
   return outcomeP / (outcomeP + notOutcomeP)
 }
 
-const predictCurrent = function(){
+var predictCurrent = function(){
   res = {
     'i' : rawInputStore.getState().length,
     'p1': prob(1),
@@ -193,16 +196,16 @@ const predictCurrent = function(){
   return res
 }
 
-const getData = function(rank){
+var getData = function(rank){
   var state_map = PAIRS[rank]
   if(rawInputStore.getState().length > rank){
     state_map = _.extend({}, state_map, _.object(markov(rank)))
   }
 
-  const mk = Object.keys(state_map).map(
+  var mk = Object.keys(state_map).map(
     function(k){return [k, state_map[k]]}
   )
-  const sum = _.reduce(mk, function(x,y){return x + y[1]}, 0) || 1
+  var sum = _.reduce(mk, function(x,y){return x + y[1]}, 0) || 1
   return _.sortBy(mk.map(function(d){return {'pattern': d[0], 'freq': d[1]/sum}}), 'pattern')
 }
 
@@ -214,7 +217,7 @@ rawInputStore.subscribe(function(){ predictionStore.dispatch({type: 'predict'}) 
 render();
 
 d3.select("body").on("keydown", function(){
-  const type = ({ 49: '1', 48: '0'})[d3.event.keyCode]
+  var type = ({ 49: '1', 48: '0'})[d3.event.keyCode]
   if (type) {
     rawInputStore.dispatch({'type': type})
   }
@@ -276,7 +279,7 @@ var genHist = function(cssLoc, rank){
   });
 }
 
-var genChart = function(cssLoc, colnames, height = 400){
+var genChart = function(cssLoc, colnames, height){
   return c3.generate({
     bindto: cssLoc,
     data: {
@@ -290,7 +293,7 @@ var genChart = function(cssLoc, colnames, height = 400){
       show: false
     },
     size: {
-      height: height
+      height: height || 400
     },
     transition: {
       duration: 250
@@ -313,22 +316,21 @@ predictionStore.subscribe(_.throttle(function () {
   accChart.load({'json': state, keys: {  x: 'i', value: ['cumacc', 'curacc'] } });
 }, 250, {leading: true}))
 
-charts = [];
-
 var initCharts = function(num){
-  for (let i = 1; i <= num; i++) {
+  for (var i = 1; i <= num; i++) {
     d3.select('#container')
       .append('h5').text('Counts, Markov chainsize = ' + i).append('br')
 
     var newDiv = d3.select('#container').append('div').attr('id', 'markov' + i)
-    setTimeout(function () {
-      var chart = genHist('#markov' + i, i)
-      charts.push(chart)
-      rawInputStore.subscribe(_.throttle(function(){
-        chart.load({'json': getData(i), keys: {x: 'pattern', value: ['freq']} })},
-        250,
-        { leading: true}));
-    })
+    !function (i) {
+      setTimeout(function () {
+        var chart = genHist('#markov' + i, i)
+        rawInputStore.subscribe(_.throttle(function(){
+          chart.load({'json': getData(i), keys: {x: 'pattern', value: ['freq']} })},
+          250,
+          { leading: true}));
+      })
+    }(i);
   }
 }
 
