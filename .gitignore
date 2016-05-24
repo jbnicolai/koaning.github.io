@@ -1,3 +1,4 @@
 *.html
+*.pid
 koaning-blog/output/theme/*
 koaning-blog/output/*.html
