@@ -72,11 +72,9 @@ So with these numbers, how random might the supplied data be? Well, if the data 
 
 $$ P(a | H_0) \sim Bin(\frac{1}{2}, n) \sim {n \choose k} p^k (1-p)^{n-k} $$
 
-This means that our found accuracy can help us determine how likely it is that the data is generated randomly. 
+This means that our found accuracy can help us determine how likely it is that the data is generated randomly. In maths, with the given data; $\sum_i P(x_i \geq a | H_0) = $ <span class="metric">1</span>. This is by no means the only axis where we can measure randomness, but it is able to filter out a lot of human behavior.
 
-In maths, with the given data; $\sum_i P(x_i \geq a | H_0) = $ <span class="metric">1</span>. This is by no means the only axis where we can measure randomness, but it is able to filter out a lot of human behavior. 
-
-The main discovery of this blogpost was that coding all this was a lot of fun.
+Mainly, coding this was a lot of fun.
 
 #### Bonus: What would a robot do?
 
