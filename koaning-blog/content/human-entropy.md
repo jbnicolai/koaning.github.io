@@ -2,17 +2,13 @@ Title: Human Entropy
 Date: 2016-05-20
 
 <link rel="stylesheet" type="text/css" href="/theme/css/c3.css"></link>
-<style>
-  button.btn{
-    background-color: white;
-    border-color: black;
-  }
-</style>
+
 <script src="/theme/js/d3.min.js"></script>
 <script src="/theme/js/lodash.js"></script>
 <script src="/theme/js/c3.js"></script>
 <script src="/theme/js/redux.js"></script>
 <script src="/theme/js/lazy.js"></script>
+
 <hr>
 
 **Edit:**
@@ -21,7 +17,7 @@ You may not want to read this blogpost on mobile. The **d3** stuff can be a bit 
 
 <hr>
 
-In this document we'll do an experiment to see if humans can generate random numbers effectively. We will use you, a human to do this. Please click the heads/tails button as randomly as you can. You may also use the 1 (heads) or 0 (tails) keys on your keyboards (which probably is a whole lot faster if you1011011101110 are on a laptop).
+In this document we'll do an experiment to see if humans can generate random numbers effectively. We will use you, a human to do this. Please click the heads/tails button as randomly as you can. You may also use the 1 (heads) or 0 (tails) keys on your keyboards (which probably is a whole lot faster if you are on a laptop).
 
 <div id="chart"></div>
 
@@ -70,7 +66,11 @@ So with these numbers, how random might the supplied data be? Well, if the data 
 
 $$ P(a | H_0) \sim Bin(\frac{1}{2}, n) \sim {n \choose k} p^k (1-p)^{n-k} $$
 
-This means that our found accuracy can help us determine how likely it is that the data is generated randomly. In maths, with the given data; $\sum_i P(x_i \geq a | H_0) = $ <span class="metric">1</span>. This is by no means the only axis where we can measure randomness, but it is able to filter out a lot of human behavior. 
+This means that our found accuracy can help us determine how likely it is that the data is generated randomly. 
+
+In maths, with the given data; $\sum_i P(x_i \geq a | H_0) = $ <span class="metric">1</span>. 
+
+This is by no means the only axis where we can measure randomness, but it is able to filter out a lot of human behavior. 
 
 Mainly, coding this was a lot of fun. 
 
