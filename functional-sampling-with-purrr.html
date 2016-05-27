@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Functional Sampling with Purrr — koaning.io</title>
+  <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+	<meta name="description" content="Title: Functional Sampling with Purrr; Date: 2015-11-03; Author: Vincent D. Warmerdam">
+	<meta name="author" content="Vincent D. Warmerdam">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="/theme/css/bootstrap.css">
+  <link rel="stylesheet" type="text/css" href="/theme/css/style.css">
+  <script async type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  </script>
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <br>
+    		<h1><a class="web_title" href="/">koaning.io</a></h1>
+        <blockquote>
+          <p class="pull-left">Blog of a data scientist/developer </p>
+          <p class="pull-right"><a href="https://nl.linkedin.com/in/vincentwarmerdam"> &nbsp; keyword bingo</a></p>
+          <p class="pull-right"><a href="https://twitter.com/fishnets88"> &nbsp; twitter</a></p>
+          <p class="pull-right"><a href="/feeds/rss.xml"> &nbsp; rss</a></p>
+        </blockquote>
+    		<br><br>
+      </div>
+    </div>
+  	<div class="row">
+  		<div class="col-md-12">
+<div class="article" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="text-center article-header">
+		<h1 itemprop="name headline" class="article-title">Functional Sampling with Purrr</h1>
+		<span itemprop="author" itemscope itemtype="http://schema.org/Person"></span>
+		<time datetime="2015-11-03T00:00:00+01:00" itemprop="datePublished">Tue 03 November 2015</time>
+	</div>
+	<br><br>
+	<div itemprop="articleBody" class="article-body"><p>Purrr 0.1 got released a while ago and I noticed a very nice pattern emerge incombination with dataframes for simulation experiments. </p>
+<p>Let's simulate the effect of the law of large numbers. You'll notice that I'm using <code>map_dbl</code> from <code>purrr</code> to keep the syntax clean. </p>
+<div class="highlight"><pre><span></span><span class="kn">library</span><span class="p">(</span>dplyr<span class="p">)</span>
+<span class="kn">library</span><span class="p">(</span>purrr<span class="p">)</span>
+<span class="kn">library</span><span class="p">(</span>reshape2<span class="p">)</span>
+<span class="kn">library</span><span class="p">(</span>ggplot2<span class="p">)</span>
+
+df <span class="o">&lt;-</span> <span class="kt">data.frame</span><span class="p">(</span>
+  n_100  <span class="o">=</span> <span class="m">1</span><span class="o">:</span><span class="m">2000</span> <span class="o">%&gt;%</span> map_dbl<span class="p">(</span><span class="o">~</span> rnorm<span class="p">(</span><span class="m">100</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="kp">mean</span><span class="p">),</span>
+  n_200  <span class="o">=</span> <span class="m">1</span><span class="o">:</span><span class="m">2000</span> <span class="o">%&gt;%</span> map_dbl<span class="p">(</span><span class="o">~</span> rnorm<span class="p">(</span><span class="m">200</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="kp">mean</span><span class="p">),</span>
+  n_300  <span class="o">=</span> <span class="m">1</span><span class="o">:</span><span class="m">2000</span> <span class="o">%&gt;%</span> map_dbl<span class="p">(</span><span class="o">~</span> rnorm<span class="p">(</span><span class="m">300</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="kp">mean</span><span class="p">),</span> 
+  n_1000 <span class="o">=</span> <span class="m">1</span><span class="o">:</span><span class="m">2000</span> <span class="o">%&gt;%</span> map_dbl<span class="p">(</span><span class="o">~</span> rnorm<span class="p">(</span><span class="m">1000</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="kp">mean</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="c1"># checking every column for variance is easy</span>
+<span class="o">&gt;</span> df <span class="o">%&gt;%</span> map<span class="p">(</span>var<span class="p">)</span>
+       n_100       n_200       n_300       n_1000
+<span class="m">1</span> <span class="m">0.01007404</span> <span class="m">0.005087112</span> <span class="m">0.003267154</span> <span class="m">0.0009894314</span>
+</pre></div>
+
+
+<p>It feels like the scala api for spark but for the normal R language. We can confirm that we've properly got a good simulation out of this via ggplot. </p>
+<div class="highlight"><pre><span></span>ggplot() + 
+  geom_histogram(data=df %&gt;% melt, aes(value, fill = variable), binwidth = 0.01) + 
+  facet_grid(variable ~ .) + 
+  ggtitle(&quot;see the distribution change as we increase n&quot;)
+</pre></div>
+
+
+<p><img alt="inline" src="/theme/images/purrr1.png" /></p>
+<p>The thing of the law of large numbers is that it does not matter which distribution you use. The mean of the distribution will always converge to a normal distribution. Let's add a layer of abstraction to what we've just done to create many plots of many distributions. </p>
+<div class="highlight"><pre><span></span>create_df <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>dist_func<span class="p">,</span> n_means<span class="p">,</span> means<span class="p">){</span>
+  <span class="kt">data.frame</span><span class="p">(</span>
+    n_100  <span class="o">=</span> <span class="m">1</span><span class="o">:</span>n_means <span class="o">%&gt;%</span> map_dbl<span class="p">(</span><span class="o">~</span> dist_func<span class="p">(</span><span class="m">100</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="kp">mean</span><span class="p">),</span>
+    n_200  <span class="o">=</span> <span class="m">1</span><span class="o">:</span>n_means <span class="o">%&gt;%</span> map_dbl<span class="p">(</span><span class="o">~</span> dist_func<span class="p">(</span><span class="m">200</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="kp">mean</span><span class="p">),</span>
+    n_300  <span class="o">=</span> <span class="m">1</span><span class="o">:</span>n_means <span class="o">%&gt;%</span> map_dbl<span class="p">(</span><span class="o">~</span> dist_func<span class="p">(</span><span class="m">300</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="kp">mean</span><span class="p">),</span> 
+    n_1000 <span class="o">=</span> <span class="m">1</span><span class="o">:</span>n_means <span class="o">%&gt;%</span> map_dbl<span class="p">(</span><span class="o">~</span> dist_func<span class="p">(</span><span class="m">1000</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="kp">mean</span><span class="p">)</span>
+  <span class="p">)</span>
+<span class="p">}</span>
+
+plot_df <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>df<span class="p">,</span> distname<span class="p">){</span>
+  ggplot<span class="p">()</span> <span class="o">+</span> 
+    geom_histogram<span class="p">(</span>data<span class="o">=</span>df <span class="o">%&gt;%</span> melt<span class="p">,</span> aes<span class="p">(</span>value<span class="p">,</span> fill <span class="o">=</span> variable<span class="p">),</span> binwidth <span class="o">=</span> <span class="m">0.01</span><span class="p">)</span> <span class="o">+</span> 
+    facet_grid<span class="p">(</span>variable <span class="o">~</span> <span class="m">.</span><span class="p">,</span> scales <span class="o">=</span> <span class="s">&quot;free_y&quot;</span><span class="p">)</span> <span class="o">+</span> 
+    ggtitle<span class="p">(</span><span class="kp">paste</span><span class="p">(</span><span class="s">&#39;distribution of means from&#39;</span><span class="p">,</span> distname<span class="p">,</span> <span class="s">&#39;distribution&#39;</span><span class="p">))</span>
+<span class="p">}</span>
+
+<span class="kt">list</span><span class="p">(</span>gauss <span class="o">=</span> rnorm<span class="p">,</span> uniform <span class="o">=</span> runif<span class="p">)</span> <span class="o">%&gt;%</span> 
+  map<span class="p">(</span><span class="o">~</span> create_df<span class="p">(</span><span class="m">.</span><span class="p">,</span> <span class="m">200</span><span class="p">))</span> <span class="o">%&gt;%</span> 
+  map2<span class="p">(</span><span class="kp">names</span><span class="p">(</span><span class="m">.</span><span class="p">),</span> <span class="o">~</span>plot_df<span class="p">(</span><span class="m">.</span>x<span class="p">,</span> <span class="m">.</span>y<span class="p">))</span>
+</pre></div>
+
+
+<p><img alt="inline" src="/theme/images/purrr2.png" />
+<img alt="inline" src="/theme/images/purrr3.png" /></p>
+<p>Notice that the y-axis differs for each value of $n$. Let's try to improve this code a bit more. It feels like <code>create_df</code> can have a bit more flexibility. </p>
+<div class="highlight"><pre><span></span>create_df <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>dist_func<span class="p">,</span> name<span class="p">,</span> n_means<span class="p">,</span> sample_means<span class="p">){</span>
+  res <span class="o">&lt;-</span> sample_means <span class="o">%&gt;%</span> 
+    map<span class="p">(</span><span class="o">~</span> <span class="m">1</span><span class="o">:</span>n_means <span class="o">%&gt;%</span> map_dbl<span class="p">(</span><span class="o">~</span> dist_func<span class="p">(</span><span class="m">.</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="kp">mean</span><span class="p">))</span>
+  <span class="kp">names</span><span class="p">(</span>res<span class="p">)</span> <span class="o">&lt;-</span> sample_means <span class="o">%&gt;%</span> 
+    map_chr<span class="p">(</span><span class="o">~</span> <span class="kp">paste0</span><span class="p">(</span><span class="s">&#39;n_&#39;</span><span class="p">,</span> <span class="kp">as.character</span><span class="p">(</span><span class="m">.</span><span class="p">)))</span>
+  res <span class="o">%&gt;%</span> 
+    <span class="kt">data.frame</span> <span class="o">%&gt;%</span> 
+    mutate<span class="p">(</span>name <span class="o">=</span> name<span class="p">)</span>
+<span class="p">}</span>
+
+plot_all <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>df<span class="p">){</span>
+  pltr <span class="o">&lt;-</span> df <span class="o">%&gt;%</span> melt
+  ggplot<span class="p">()</span> <span class="o">+</span> 
+    geom_histogram<span class="p">(</span>data<span class="o">=</span>pltr <span class="o">%&gt;%</span> arrange<span class="p">(</span>name<span class="p">,</span> variable<span class="p">),</span> 
+                   aes<span class="p">(</span>value<span class="p">),</span> binwidth <span class="o">=</span> <span class="m">0.01</span><span class="p">)</span> <span class="o">+</span> 
+    facet_wrap<span class="p">(</span><span class="o">~</span> name <span class="o">+</span> variable<span class="p">,</span> scales <span class="o">=</span> <span class="s">&quot;free&quot;</span><span class="p">)</span> <span class="o">+</span> 
+    ggtitle<span class="p">(</span><span class="s">&#39;law of large numbers&#39;</span><span class="p">)</span>
+<span class="p">}</span>
+
+distributions <span class="o">&lt;-</span> <span class="kt">list</span><span class="p">(</span>
+  gauss <span class="o">=</span> rnorm<span class="p">,</span> 
+  uniform <span class="o">=</span> runif<span class="p">,</span> 
+  pois <span class="o">=</span> <span class="kr">function</span><span class="p">(</span>x<span class="p">)</span> rpois<span class="p">(</span>x<span class="p">,</span> <span class="m">2</span><span class="p">),</span> 
+  exp <span class="o">=</span> rexp
+<span class="p">)</span> 
+
+distributions <span class="o">%&gt;%</span> 
+  map2<span class="p">(</span><span class="kp">names</span><span class="p">(</span><span class="m">.</span><span class="p">),</span> <span class="o">~</span> create_df<span class="p">(</span><span class="m">.</span>x<span class="p">,</span> <span class="m">.</span>y<span class="p">,</span> <span class="m">1000</span><span class="p">,</span> <span class="kt">c</span><span class="p">(</span><span class="m">100</span><span class="p">,</span> <span class="m">200</span><span class="p">,</span> <span class="m">500</span><span class="p">,</span> <span class="m">1000</span><span class="p">)))</span> <span class="o">%&gt;%</span> 
+  reduce<span class="p">(</span><span class="kp">rbind</span><span class="p">)</span> <span class="o">%&gt;%</span> 
+  plot_all
+</pre></div>
+
+
+<p><img alt="inline" src="/theme/images/purrr4.png" /></p>
+<p>Functions are very powerful and <code>purrr</code> is a nice addition to R because of it. It allows you to combine functional operations both outside and within dataframes. The combination is very powerful. Just look at how simple it is to create bootstrap samples and with regression samples; </p>
+<div class="highlight"><pre><span></span><span class="m">1</span><span class="o">:</span><span class="m">2000</span> <span class="o">%&gt;%</span> 
+  map<span class="p">(</span><span class="o">~</span> ChickWeight <span class="o">%&gt;%</span> sample_n<span class="p">(</span><span class="m">50</span><span class="p">))</span> <span class="o">%&gt;%</span> 
+  map_dbl<span class="p">(</span><span class="o">~</span> lm<span class="p">(</span>weight <span class="o">~</span> Time<span class="p">,</span> data <span class="o">=</span> <span class="m">.</span><span class="p">)</span> <span class="o">%&gt;%</span> coefficients <span class="o">%&gt;%</span> <span class="m">.</span><span class="p">[</span><span class="m">2</span><span class="p">])</span> <span class="o">%&gt;%</span> 
+  hist<span class="p">(</span><span class="m">50</span><span class="p">)</span>
+</pre></div>
+
+
+<p><img alt="inline" src="/theme/images/purrr5.png" /></p>
+<p>Notice that although I am sampling means from four different distributions; the distribution of means is always normal. Simulating this with <code>purrr</code> removes the need for many for loops, keeping things clean. I can see this package going places. It really cleans up much of my code. </p></div>
+	<hr>
+</div>
+        <br>
+  		</div>
+  	</div>
+  </div>
+
+  <div class="container">
+  	<div class="row">
+  		<div class="col-md-12 text-center center-block aw-bottom">
+  			<p>Vincent D. Warmerdam Made with Pelican</p>
+  		</div>
+  	</div>
+  </div>
+  <!-- JavaScript -->
+  <script src="/theme/js/jquery-2.1.3.min.js"></script>
+  <script type="text/javascript">
+  jQuery(document).ready(function($) {
+  	$("div.collapseheader").click(function () {
+  		$header = $(this).children("span").first();
+  		$codearea = $(this).children(".input_area");
+  		$codearea.slideToggle(500, function () {
+  			$header.text(function () {
+  				return $codearea.is(":visible") ? "Collapse Code" : "Expand Code";
+  			});
+  		});
+  	});
+  });
+
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-28011256-6', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

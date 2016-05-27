@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Sparling Water for Spark(R) — koaning.io</title>
+  <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+	<meta name="description" content="Title: Sparling Water for Spark(R); Date: 2016-04-23; Author: Vincent D. Warmerdam">
+	<meta name="author" content="Vincent D. Warmerdam">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="/theme/css/bootstrap.css">
+  <link rel="stylesheet" type="text/css" href="/theme/css/style.css">
+  <script async type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  </script>
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <br>
+    		<h1><a class="web_title" href="/">koaning.io</a></h1>
+        <blockquote>
+          <p class="pull-left">Blog of a data scientist/developer </p>
+          <p class="pull-right"><a href="https://nl.linkedin.com/in/vincentwarmerdam"> &nbsp; keyword bingo</a></p>
+          <p class="pull-right"><a href="https://twitter.com/fishnets88"> &nbsp; twitter</a></p>
+          <p class="pull-right"><a href="/feeds/rss.xml"> &nbsp; rss</a></p>
+        </blockquote>
+    		<br><br>
+      </div>
+    </div>
+  	<div class="row">
+  		<div class="col-md-12">
+<div class="article" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="text-center article-header">
+		<h1 itemprop="name headline" class="article-title">Sparling Water for Spark(R)</h1>
+		<span itemprop="author" itemscope itemtype="http://schema.org/Person"></span>
+		<time datetime="2016-04-23T00:00:00+02:00" itemprop="datePublished">Sat 23 April 2016</time>
+	</div>
+	<br><br>
+	<div itemprop="articleBody" class="article-body"><p>SparkR offers R users to do data wrangling on bigger chunks of data. The machine learning algorithms that are supported are a bit modest (only linear models). Even if you go to PySpark or even Scala Spark, you'll notice that not every ML method is supported. This document explains how to append this problem by provisioning Spark with <a href="http://h2o.ai/">h2o</a>. It will focus on SparkR because that takes the most work to set up.</p>
+<p>This document explains how to provision a single spark server with h2o and how to access it from spark. It will focus on SparkR because that takes the most work to set up. Most of this information can also be found while zooming through the <a href="http://www.h2o.ai/download/sparkling-water/spark16">documentation</a> but I found it useful to make this reference for myself. In this document I'll also demonstrate some features of h2o that make it a worthwhile ecosystem to keep an eye on. </p>
+<h2>Download Spark + Sparkling Water</h2>
+<p>You can download an appropriate version of Spark (version &gt;= 1.5.2, with something prebuilt for Hadoop) <a href="http://spark.apache.org/downloads.html">here</a> and you can download sparkling-water <a href="http://www.h2o.ai/download/sparkling-water/spark16">here</a>. Unzip everything. </p>
+<h2>Start Sparkling Water</h2>
+<p>Go to the folder where you downloaded sparkling water. Set your <code>SPARK_HOME</code> variable to the folder where you downloaded Spark. Since this is a local setup we'll only need to specify that the master node is <code>local[*]</code>. Next start the sparking-shell. </p>
+<div class="highlight"><pre><span></span><span class="nb">export</span> <span class="nv">SPARK_HOME</span><span class="o">=</span><span class="s2">&quot;/Users/code/Downloads/spark-1.6.0-bin-hadoop1&quot;</span>
+<span class="nb">export</span> <span class="nv">MASTER</span><span class="o">=</span><span class="s2">&quot;local[*]&quot;</span>
+./bin/sparkling-shell
+</pre></div>
+
+
+<p>This sparkling-shell prompt is a scala REPL. You'll have access to a sparkContext (<code>sc</code>) as well as a <code>sqlContext</code> just like the spark-shell. From this prompt, load in the appropriate h2o libraries and attach it to the spark context.</p>
+<div class="highlight"><pre><span></span><span class="k">import</span> <span class="nn">org.apache.spark.h2o._</span>
+<span class="k">val</span> <span class="n">h2oContext</span> <span class="k">=</span> <span class="n">H2OContext</span><span class="o">.</span><span class="n">getOrCreate</span><span class="o">(</span><span class="n">sc</span><span class="o">)</span>
+</pre></div>
+
+
+<p>With this connection made, h2o can make use of Spark as a compute engine as well as access its dataframes. It should also prompt you with an ip adress and a port number. You can visit this endpoint in the browser to see the h2o notebook.</p>
+<p><img alt="" src="http://i.imgur.com/HgZc1O2.png" /></p>
+<h2>Spark -&gt; H2o -&gt; Rstudio</h2>
+<p>We'll run some code in scala first, but you could also do some work in the browser and then still use R for intermediate commands. Let's first create a dataframe in scala and push it to h2o. </p>
+<div class="highlight"><pre><span></span><span class="k">import</span> <span class="nn">org.apache.spark.mllib.random.</span><span class="o">{</span><span class="nc">RandomRDDs</span> <span class="k">=&gt;</span> <span class="n">r</span><span class="o">}</span>
+<span class="k">import</span> <span class="nn">org.apache.spark.sql.</span><span class="o">{</span><span class="n">functions</span> <span class="k">=&gt;</span> <span class="n">sf</span><span class="o">}</span>
+
+<span class="k">def</span> <span class="n">gen_blob</span><span class="o">()</span> <span class="k">=</span> <span class="o">{</span>
+  <span class="k">if</span><span class="o">(</span><span class="n">scala</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="nc">Random</span><span class="o">.</span><span class="n">nextDouble</span><span class="o">()</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="o">){</span>
+    <span class="o">(</span><span class="mi">0</span><span class="o">,</span> 
+     <span class="n">scala</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="nc">Random</span><span class="o">.</span><span class="n">nextDouble</span><span class="o">()*</span><span class="mi">2</span><span class="o">,</span>
+     <span class="n">scala</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="nc">Random</span><span class="o">.</span><span class="n">nextDouble</span><span class="o">(),</span>
+     <span class="n">scala</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="nc">Random</span><span class="o">.</span><span class="n">nextDouble</span><span class="o">()*</span><span class="mi">2</span><span class="o">)</span>
+  <span class="o">}</span><span class="k">else</span><span class="o">{</span>
+    <span class="o">(</span><span class="mi">1</span><span class="o">,</span> 
+     <span class="mi">1</span> <span class="o">+</span> <span class="n">scala</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="nc">Random</span><span class="o">.</span><span class="n">nextDouble</span><span class="o">(),</span>
+     <span class="mi">1</span> <span class="o">+</span> <span class="n">scala</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="nc">Random</span><span class="o">.</span><span class="n">nextDouble</span><span class="o">()*</span><span class="mi">2</span><span class="o">,</span>
+     <span class="mi">1</span> <span class="o">+</span> <span class="n">scala</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="nc">Random</span><span class="o">.</span><span class="n">nextDouble</span><span class="o">())</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="k">val</span> <span class="n">n</span> <span class="k">=</span> <span class="mi">10000</span>
+<span class="k">val</span> <span class="n">rdd</span> <span class="k">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="o">(</span><span class="mi">1</span> <span class="n">to</span> <span class="n">n</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="n">x</span> <span class="k">=&gt;</span> <span class="n">gen_blob</span><span class="o">())</span>
+
+<span class="k">val</span> <span class="n">ddf</span> <span class="k">=</span> <span class="n">rdd</span><span class="o">.</span><span class="n">toDF</span><span class="o">()</span> 
+<span class="k">val</span> <span class="n">hdf</span> <span class="k">=</span> <span class="n">h2oContext</span><span class="o">.</span><span class="n">asH2OFrame</span><span class="o">(</span><span class="n">ddf</span><span class="o">,</span> <span class="n">frameName</span> <span class="k">=</span> <span class="s">&quot;foobar&quot;</span><span class="o">)</span>
+</pre></div>
+
+
+<p>Once this is written in the shell, go to Rstudio and load some useful libraries. </p>
+<div class="highlight"><pre><span></span><span class="kn">library</span><span class="p">(</span>magrittr<span class="p">)</span>
+<span class="kn">library</span><span class="p">(</span>dplyr<span class="p">)</span>
+<span class="kn">library</span><span class="p">(</span>ggplot2<span class="p">)</span>
+<span class="kn">library</span><span class="p">(</span>h2o<span class="p">)</span>
+</pre></div>
+
+
+<p>With these libraries loaded, connect to the sparkling-water port we have made before. In this case I am connecting to localhost, but this might also be a functional h2o instance on a spark cluster on the local network.</p>
+<div class="highlight"><pre><span></span>client <span class="o">&lt;-</span> h2o.init<span class="p">(</span>ip <span class="o">=</span> <span class="s">&#39;localhost&#39;</span><span class="p">,</span> port<span class="o">=</span><span class="m">54321</span><span class="p">)</span>
+h2o.ls<span class="p">()</span>
+rddf <span class="o">&lt;-</span> h2o.getFrame<span class="p">(</span><span class="s">&quot;foobar&quot;</span><span class="p">)</span>
+</pre></div>
+
+
+<p>You'll notice that this <code>rddf</code> is not a normal R dataframe. </p>
+<div class="highlight"><pre><span></span>&gt; typeof(rddf)
+[1] &quot;environment&quot;
+</pre></div>
+
+
+<p>Because this RDD is small enough you can also import it as a normal R dataframe. </p>
+<div class="highlight"><pre><span></span>rddf <span class="o">%&gt;%</span> 
+  as.data.frame <span class="o">%&gt;%</span> 
+  sample_n<span class="p">(</span><span class="m">1000</span><span class="p">)</span> <span class="o">%&gt;%</span> 
+  plot<span class="p">(</span>title <span class="o">=</span> <span class="s">&quot;random data from sparkling-shell&quot;</span><span class="p">)</span>
+</pre></div>
+
+
+<p>Not only is this dataframe available in R, but you can also confirm that this frame is usable from the web-ui. </p>
+<p><img alt="" src="http://i.imgur.com/m6GFC1G.png" /></p>
+<h2>More ML</h2>
+<p>Because we now have access to this h2o frame we can run h2o commands against it from R. H2o will leverage Spark as a computational engine here which means that we now have a method to command large scala and performant machine learning algorithms from R. </p>
+<h3>Autoencoders</h3>
+<p>One of the nice features is that you can run modestly complex neural networks with this h2o link. </p>
+<div class="highlight"><pre><span></span>mod_nn <span class="o">&lt;-</span> h2o.deeplearning<span class="p">(</span>
+  x <span class="o">=</span> <span class="kt">c</span><span class="p">(</span><span class="s">&quot;_2&quot;</span><span class="p">,</span> <span class="s">&quot;_3&quot;</span><span class="p">,</span> <span class="s">&quot;_4&quot;</span><span class="p">),</span>
+  training_frame <span class="o">=</span> rddf<span class="p">,</span>
+  hidden <span class="o">=</span> <span class="kt">c</span><span class="p">(</span><span class="m">4</span><span class="p">,</span><span class="m">2</span><span class="p">),</span>
+  epochs <span class="o">=</span> <span class="m">100</span><span class="p">,</span>
+  activation <span class="o">=</span> <span class="s">&#39;Tanh&#39;</span><span class="p">,</span>
+  autoencoder <span class="o">=</span> <span class="kc">TRUE</span>
+<span class="p">)</span>
+
+features <span class="o">&lt;-</span> h2o.deepfeatures<span class="p">(</span>mod_nn<span class="p">,</span> rddf<span class="p">,</span> layer<span class="o">=</span><span class="m">2</span><span class="p">)</span>
+
+pltr_nn <span class="o">&lt;-</span> features <span class="o">%&gt;%</span> 
+  as.data.frame <span class="o">%&gt;%</span> 
+  <span class="kp">cbind</span><span class="p">(</span>rddf <span class="o">%&gt;%</span> as.data.frame <span class="o">%&gt;%</span> <span class="m">.</span><span class="p">[</span><span class="m">1</span><span class="p">])</span>
+
+<span class="kp">colnames</span><span class="p">(</span>pltr_nn<span class="p">)</span> <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">(</span><span class="s">&quot;l1&quot;</span><span class="p">,</span> <span class="s">&quot;l2&quot;</span><span class="p">,</span> <span class="s">&#39;label&#39;</span><span class="p">)</span>
+
+ggplot<span class="p">()</span> <span class="o">+</span> 
+  geom_point<span class="p">(</span>data<span class="o">=</span>pltr_nn<span class="p">,</span> aes<span class="p">(</span>l1<span class="p">,</span> l2<span class="p">,</span> colour <span class="o">=</span> label<span class="p">),</span> alpha <span class="o">=</span> <span class="m">0.5</span><span class="p">)</span> <span class="o">+</span> 
+  ggtitle<span class="p">(</span><span class="s">&quot;encoder does a good job of splitting labels via clustering&quot;</span><span class="p">)</span>
+</pre></div>
+
+
+<p><img alt="" src="http://i.imgur.com/vkZFchq.png" /></p>
+<h3>Grid Search</h3>
+<p>Another feature of h2o is that it has a very extensive grid search implemented. Let's define a list of hyper-parameters as well as some search criteria. </p>
+<div class="highlight"><pre><span></span>hyper_params <span class="o">=</span> <span class="kt">list</span><span class="p">(</span>ntrees <span class="o">=</span> <span class="kt">c</span><span class="p">(</span><span class="m">100</span><span class="p">,</span> <span class="m">1000</span><span class="p">),</span> 
+                    max_depth <span class="o">=</span> <span class="m">1</span><span class="o">:</span><span class="m">4</span><span class="p">,</span> 
+                    learn_rate <span class="o">=</span> <span class="kp">seq</span><span class="p">(</span><span class="m">0.001</span><span class="p">,</span><span class="m">0.01</span><span class="p">),</span>
+                    sample_rate <span class="o">=</span> <span class="kp">seq</span><span class="p">(</span><span class="m">0.3</span><span class="p">,</span><span class="m">1</span><span class="p">))</span>
+
+search_criteria <span class="o">=</span> <span class="kt">list</span><span class="p">(</span>strategy <span class="o">=</span> <span class="s">&quot;RandomDiscrete&quot;</span><span class="p">,</span> max_runtime_secs <span class="o">=</span> <span class="m">600</span><span class="p">,</span> 
+                       max_models <span class="o">=</span> <span class="m">100</span><span class="p">,</span> stopping_metric <span class="o">=</span> <span class="s">&quot;AUTO&quot;</span><span class="p">,</span> 
+                       stopping_tolerance <span class="o">=</span> <span class="m">0.00001</span><span class="p">,</span> stopping_rounds <span class="o">=</span> <span class="m">5</span><span class="p">,</span> seed <span class="o">=</span> <span class="m">123456</span><span class="p">)</span>
+</pre></div>
+
+
+<p>We can use these to do a grid search on the hyperparameters of a gradient boosting machine which tries to predict the label of our generated dataset. You may note that the running the code below can take a bit of time on your machine (if you're doing this on a laptop, prepare for a bit of heat). </p>
+<div class="highlight"><pre><span></span>gbm_grid <span class="o">&lt;-</span> h2o.grid<span class="p">(</span><span class="s">&quot;gbm&quot;</span><span class="p">,</span> grid_id <span class="o">=</span> <span class="s">&quot;mygrid&quot;</span><span class="p">,</span>
+                     x <span class="o">=</span> <span class="kt">c</span><span class="p">(</span><span class="s">&quot;_2&quot;</span><span class="p">,</span> <span class="s">&quot;_3&quot;</span><span class="p">,</span> <span class="s">&quot;_4&quot;</span><span class="p">),</span> 
+                     y <span class="o">=</span> <span class="kt">c</span><span class="p">(</span><span class="s">&quot;_1&quot;</span><span class="p">),</span> 
+                     training_frame <span class="o">=</span> rddf<span class="p">,</span> nfolds <span class="o">=</span> <span class="m">5</span><span class="p">,</span>
+                     distribution<span class="o">=</span><span class="s">&quot;gaussian&quot;</span><span class="p">,</span> 
+                     score_tree_interval <span class="o">=</span> <span class="m">100</span><span class="p">,</span> 
+                     seed <span class="o">=</span> <span class="m">123456</span><span class="p">,</span> 
+                     hyper_params <span class="o">=</span> hyper_params<span class="p">,</span>
+                     search_criteria <span class="o">=</span> search_criteria<span class="p">)</span>
+
+gbm_sorted_grid <span class="o">&lt;-</span> h2o.getGrid<span class="p">(</span>grid_id <span class="o">=</span> <span class="s">&quot;mygrid&quot;</span><span class="p">,</span> sort_by <span class="o">=</span> <span class="s">&quot;mse&quot;</span><span class="p">)</span>
+gbm_sorted_grid<span class="o">@</span>summary_table <span class="o">%&gt;%</span> View
+</pre></div>
+
+
+<p>You can even select the best model. </p>
+<div class="highlight"><pre><span></span>best_model <span class="o">&lt;-</span> h2o.getModel<span class="p">(</span>gbm_sorted_grid<span class="o">@</span>model_ids<span class="p">[[</span><span class="m">1</span><span class="p">]])</span>
+</pre></div>
+
+
+<h2>Making Friends with Engineers</h2>
+<p>A nice feature of h2o is that it doesn't just make scientists happy, it makes engineers happy as well. H2o can output Plain Old Java Object files which can bring the machine learning algorithm in production quickly. </p>
+<div class="highlight"><pre><span></span>h2o.download_pojo<span class="p">(</span>best_model<span class="p">,</span> path <span class="o">=</span> <span class="s">&quot;/tmp/&quot;</span><span class="p">,</span> getjar<span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>
+<span class="c1"># [1] &quot;POJO written to: /tmp//mygrid_model_29.java&quot;</span>
+</pre></div>
+
+
+<p>You can also reach these files via the rest api which is documented <a href="https://github.com/h2oai/h2o-3/blob/master/h2o-docs/src/product/howto/POJO_QuickStart.md">here</a>. </p>
+<h2>Back to the flow</h2>
+<p>If you want to see details, you could see all this in Rstudio, but you could also go back to the web-ui to inspect everything we've done here. </p>
+<p><img alt="" src="http://i.imgur.com/9VVPcUG.png" /></p>
+<p><br> </p>
+<h2>PySparkling</h2>
+<p>I'm using a bit of hack here by opening a seperate sparling-shell and then connecting another h2o client to it from R. In the python world, this is more smooth. Through the <code>pysparkling</code> project you do everything we have done here by just starting a single notebook. More information (as well as install instructions) can be found <a href="https://github.com/h2oai/sparkling-water">here</a> and <a href="http://www.h2o.ai/download/sparkling-water/spark16">here</a>. </p>
+<h2>Conclusion</h2>
+<p>A lot of people will be interested in this pattern, because we've got another scalable way of machine learning. H2o runs on Spark after all. </p>
+<p>You may want to realize that h2o does not need Spark to run though. You can run all these algorithms in parallel on a cluster of machines that are provisioned with just h2o and no Spark. The fact that it can communicate with Spark has benefits but it is not a requirement. The fact that we have an intelligent grid search as well as a method for autoencoding is a welcome addition to the Spark ecosystem tho. </p></div>
+	<hr>
+</div>
+        <br>
+  		</div>
+  	</div>
+  </div>
+
+  <div class="container">
+  	<div class="row">
+  		<div class="col-md-12 text-center center-block aw-bottom">
+  			<p>Vincent D. Warmerdam Made with Pelican</p>
+  		</div>
+  	</div>
+  </div>
+  <!-- JavaScript -->
+  <script src="/theme/js/jquery-2.1.3.min.js"></script>
+  <script type="text/javascript">
+  jQuery(document).ready(function($) {
+  	$("div.collapseheader").click(function () {
+  		$header = $(this).children("span").first();
+  		$codearea = $(this).children(".input_area");
+  		$codearea.slideToggle(500, function () {
+  			$header.text(function () {
+  				return $codearea.is(":visible") ? "Collapse Code" : "Expand Code";
+  			});
+  		});
+  	});
+  });
+
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-28011256-6', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

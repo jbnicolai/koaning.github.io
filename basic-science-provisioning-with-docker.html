@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Basic Science Provisioning with Docker — koaning.io</title>
+  <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+	<meta name="description" content="Title: Basic Science Provisioning with Docker; Date: 2015-06-17; Author: Vincent D. Warmerdam">
+	<meta name="author" content="Vincent D. Warmerdam">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="/theme/css/bootstrap.css">
+  <link rel="stylesheet" type="text/css" href="/theme/css/style.css">
+  <script async type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  </script>
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <br>
+    		<h1><a class="web_title" href="/">koaning.io</a></h1>
+        <blockquote>
+          <p class="pull-left">Blog of a data scientist/developer </p>
+          <p class="pull-right"><a href="https://nl.linkedin.com/in/vincentwarmerdam"> &nbsp; keyword bingo</a></p>
+          <p class="pull-right"><a href="https://twitter.com/fishnets88"> &nbsp; twitter</a></p>
+          <p class="pull-right"><a href="/feeds/rss.xml"> &nbsp; rss</a></p>
+        </blockquote>
+    		<br><br>
+      </div>
+    </div>
+  	<div class="row">
+  		<div class="col-md-12">
+<div class="article" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="text-center article-header">
+		<h1 itemprop="name headline" class="article-title">Basic Science Provisioning with Docker</h1>
+		<span itemprop="author" itemscope itemtype="http://schema.org/Person"></span>
+		<time datetime="2015-06-17T00:00:00+02:00" itemprop="datePublished">Wed 17 June 2015</time>
+	</div>
+	<br><br>
+	<div itemprop="articleBody" class="article-body"><p><br> </p>
+<p><img src="https://upload.wikimedia.org/wikipedia/commons/7/79/Docker_(container_engine)_logo.png" alt="" width="10%"></p>
+<p><br> </p>
+<p>The old school way of provisioning machines is via the command line. To more dev savy people it may be straightforward to create an <a href="http://badhessian.org/2013/11/cluster-computing-for-027hr-using-amazon-ec2-and-ipython-notebook">ipython notebook server</a> or an <a href="http://www.rstudio.com/products/rstudio/download-server/">rstudio server</a> but to people who aren't too familiar to the command line this might be a daunting task. Thanks to docker, all of this has become a whole lot easier if you just want to have some notebooks ready. This blogpost is meant as a quick startup guide. </p>
+<h2>New School Provisioning</h2>
+<p>The new school way of doing things is not to install everything in bash but to simply load a docker container with everything preinstalled. A docker container is like a virtual machine but much more lighteight. This means that once docker is installed on your machine, you only need a single line of code to get an entire science stack running. In this part I will explain how to get a container like that of <a href="tmpnb.org">tmpnb</a> online on a server that you control. </p>
+<p>Installing docker usually doesn't involve much, but it does depend on your operating system.</p>
+<h4>CentOS</h4>
+<div class="highlight"><pre><span></span>yum install -y docker; sudo service docker start
+</pre></div>
+
+
+<h4>Ubuntu</h4>
+<div class="highlight"><pre><span></span>wget -qO- https://get.docker.com/ | sh
+</pre></div>
+
+
+<h4>Mac</h4>
+<div class="highlight"><pre><span></span>https://docs.docker.com/installation/mac/
+</pre></div>
+
+
+<p>Another easy way to get started is to rent a server form digital ocean that comes with docker. Once you have a computer ready with docker, ssh into the machine via the command line and then run the following command: </p>
+<div class="highlight"><pre><span></span>$ docker run -dp 8888:8888 jupyter/demo
+</pre></div>
+
+
+<p>This takes a while, but it will install a very complete docker image. In the background, docker will download a blueprint with all dependencies for you. </p>
+<p>If you run this on a ubuntu machine locally you can go do <code>localhost:8888</code> in your browser. Otherwise, if the server is on a network (or the internet) then you can go it's ip adress <code>&lt;ip-adress&gt;:8888</code> to see the result. It should look something like: </p>
+<p>This notebook is amazing, it contains notebook capabilities not just for python but also for bash, ruby, julia, R and even haskell. It also comes with packages for each of these languages that help you get started right away. Jupyter notebooks are meant as a language agnostic tool, this makes it very powerful in learning environments. </p>
+<p>Another popular and very powerful alternative to the jupyter notebook is to use the Rstudio server. Starting this is equally simple. </p>
+<div class="highlight"><pre><span></span>$ docker run -dp 8787:8787 rocker/hadleyverse
+</pre></div>
+
+
+<p>This doesn't allow full support for all languages, but has many extra features that the R users might miss in the notebook. This service can be reached from the browser as well, this time on port 8787. The username/password for this service is <code>rstudio</code>/<code>rstudio</code>. If you want to use a custom username/password you can use</p>
+<div class="highlight"><pre><span></span>$ docker run -d -p 8787:8787 -e <span class="nv">USER</span><span class="o">=</span>&lt;username&gt; -e <span class="nv">PASSWORD</span><span class="o">=</span>&lt;password&gt; rocker/hadleyverse
+</pre></div>
+
+
+<p>For more info, please read the <a href="https://github.com/rocker-org/rocker/wiki/Using-the-RStudio-image">github wiki</a> of this project.</p>
+<h2>Security</h2>
+<p>Be aware. Rstudio may have come with a password but the jupyter notebook didn't. This is a serious security issue. If the ip adress is public then anybody can just use the notebook and send all sorts of malisious code to it. The setup is fine if you are on a secure network and you are the only user who knows about the machine, but if it is not the case you could be in serious trouble. It is not hard to completely destroy a server through a notebook because you essentially have full access to it. </p>
+<p>Also, even if a user needs a password to log in, there might still be a problem. If the user is in a cafe with open wifi, then all the communication with the server can be listened to because the data that gets sent is not encrypted. This means that somebody might be listening and intercepting passwords together with usernames. Preferably, we want our service over https instead of http to combat this. </p>
+<p>The current setup should preferably only be used on machines that are on an internal network and shared only with people that you trust. </p>
+<p>Both <a href="https://s3.amazonaws.com/rstudio-server/rstudio-server-pro-0.98.507-admin-guide.pdf">rstudio</a> and <a href="http://ipython.org/ipython-doc/1/interactive/public_server.html">ipython</a> have documented solutions to this security problem. It involves creating a self-signed certificate and then having the notebook service point to it.  You can implement these yourself but please be warned that this is an advanced topic. If you feel uncomfortable in this area then please only use these docker containers on your internal machines that cannot be reached from the outside. </p>
+<h2>Performance</h2>
+<p>You can specify how many resources from the machine a docker container can take from the command line. Use <code>-m</code> to specify how much memory the docker container can use (<code>512m</code> or <code>2g</code>) and use <code>--cpuset</code> to allocate which cpu's the docker container gets to use (you can specify <code>ALL</code>). </p>
+<h4>Example</h4>
+<div class="highlight"><pre><span></span>docker run -m 512m -cpuset ALL -p 8787:8787 rocker/hadleyverse
+</pre></div>
+
+
+<p>You can check the system usage via <code>mpstat</code>. </p></div>
+	<hr>
+</div>
+        <br>
+  		</div>
+  	</div>
+  </div>
+
+  <div class="container">
+  	<div class="row">
+  		<div class="col-md-12 text-center center-block aw-bottom">
+  			<p>Vincent D. Warmerdam Made with Pelican</p>
+  		</div>
+  	</div>
+  </div>
+  <!-- JavaScript -->
+  <script src="/theme/js/jquery-2.1.3.min.js"></script>
+  <script type="text/javascript">
+  jQuery(document).ready(function($) {
+  	$("div.collapseheader").click(function () {
+  		$header = $(this).children("span").first();
+  		$codearea = $(this).children(".input_area");
+  		$codearea.slideToggle(500, function () {
+  			$header.text(function () {
+  				return $codearea.is(":visible") ? "Collapse Code" : "Expand Code";
+  			});
+  		});
+  	});
+  });
+
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-28011256-6', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

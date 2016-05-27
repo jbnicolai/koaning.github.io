@@ -1,0 +1,29 @@
+.web_title{
+	font-size: 70px;
+	color: black;
+}
+
+h2{
+	color:black;
+}
+
+pre{
+    margin: 1rem -1rem;
+    padding: 1rem;
+    margin-right: 0;
+    margin-left: 0;
+    background-color: #f7f7f9;
+}
+
+img{
+	width:100%;
+}
+
+h3.talk_notes{
+	font-size: 16px;
+}
+
+button.btn{
+	background-color: white;
+	border-color: black;
+}

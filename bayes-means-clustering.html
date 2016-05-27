@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Bayes-Means Clustering — koaning.io</title>
+  <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+	<meta name="description" content="Title: Bayes-Means Clustering; Date: 2016-01-15; Author: Vincent D. Warmerdam">
+	<meta name="author" content="Vincent D. Warmerdam">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="/theme/css/bootstrap.css">
+  <link rel="stylesheet" type="text/css" href="/theme/css/style.css">
+  <script async type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  </script>
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <br>
+    		<h1><a class="web_title" href="/">koaning.io</a></h1>
+        <blockquote>
+          <p class="pull-left">Blog of a data scientist/developer </p>
+          <p class="pull-right"><a href="https://nl.linkedin.com/in/vincentwarmerdam"> &nbsp; keyword bingo</a></p>
+          <p class="pull-right"><a href="https://twitter.com/fishnets88"> &nbsp; twitter</a></p>
+          <p class="pull-right"><a href="/feeds/rss.xml"> &nbsp; rss</a></p>
+        </blockquote>
+    		<br><br>
+      </div>
+    </div>
+  	<div class="row">
+  		<div class="col-md-12">
+<div class="article" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="text-center article-header">
+		<h1 itemprop="name headline" class="article-title">Bayes-Means Clustering</h1>
+		<span itemprop="author" itemscope itemtype="http://schema.org/Person"></span>
+		<time datetime="2016-01-15T00:00:00+01:00" itemprop="datePublished">Fri 15 January 2016</time>
+	</div>
+	<br><br>
+	<div itemprop="articleBody" class="article-body"><p>The k-means algorithm is great, but people tend to always get into discussions on how to choose the parameter $k$. In this blogpost I will demonstrate a simple bayesian method to automate this decision a bit $k$. </p>
+<h2>The task</h2>
+<p>We will want to apply k-means on the following 1-dimensional dataset: </p>
+<div class="highlight"><pre><span></span><span class="kn">library</span><span class="p">(</span>ggplot2<span class="p">)</span>
+<span class="kn">library</span><span class="p">(</span>stringr<span class="p">)</span>
+<span class="kn">library</span><span class="p">(</span>dplyr<span class="p">)</span>
+<span class="kn">library</span><span class="p">(</span>purrr<span class="p">)</span>
+<span class="kn">library</span><span class="p">(</span>tidyr<span class="p">)</span>
+
+n <span class="o">&lt;-</span> <span class="m">2000</span>
+df <span class="o">&lt;-</span> <span class="kt">data.frame</span><span class="p">(</span>x <span class="o">=</span> <span class="kt">c</span><span class="p">(</span>rnorm<span class="p">(</span>n<span class="p">),</span> rnorm<span class="p">(</span>n<span class="p">,</span> <span class="m">4</span><span class="p">),</span> rnorm<span class="p">(</span>n<span class="o">/</span><span class="m">2</span><span class="p">,</span> <span class="m">-3.5</span><span class="p">)))</span>
+
+ggplot<span class="p">()</span> <span class="o">+</span> 
+  geom_density<span class="p">(</span>data<span class="o">=</span>df<span class="p">,</span> aes<span class="p">(</span>x<span class="p">),</span> fill <span class="o">=</span> <span class="s">&quot;steelblue&quot;</span><span class="p">,</span> colour <span class="o">=</span> <span class="kc">NA</span><span class="p">)</span> <span class="o">+</span> 
+  ggtitle<span class="p">(</span><span class="s">&quot;shape of the data&quot;</span><span class="p">)</span>
+</pre></div>
+
+
+<p><img alt="" src="/theme/images/density1.png" /></p>
+<p>Preferably, we would do a k-means clustering where $k=3$. The algorithm may consider other values of $k$ but it needs to come to the conclusion that this is subobtimal. </p>
+<h2>Theory</h2>
+<p>Take $H$ to be a hypothesis (say $k=4$ or $k=8$) and let $D$ be the data that is observed. We are keen on finding $ P(H|D) $ such that we may take the hypothesis with the largest probability given the data. Luckily, we have bayes rule, which has some interesting implications. </p>
+<p>$$ P(H|D) = \frac{P(D|H)P(H)}{P(D)} \propto P(D|H)P(H)$$ </p>
+<p>Let's zoom in on $P(D|H)$. It calculates, for every hypothesis, what the probability is that the data that we have is generated from via a certain hypothesis. This likelihood, we will find out, punishes complicated models without the need of putting our own priors in about the preference of each hypothesis ($P(H)$). For the rest of this document I'll assume $P(H)$ to be homegeneous for all hypotheses. </p>
+<p>Note that we are not interested in finding the exact probability value $P(H|D)$; we can suffice with a likelihood than can just tell us which hypothesis is most likely.</p>
+<h2>Code</h2>
+<p>R comes with a very nice <code>density</code> function, which uses gaussian kernels to do a nonparametric estimation of the density. In laymans terms: it can estimate the density for us, which is useful when we want to calculate $P(D|H)$. </p>
+<div class="highlight"><pre><span></span>dens <span class="o">&lt;-</span> density<span class="p">(</span>df<span class="o">$</span>x<span class="p">)</span>
+dens <span class="o">%&gt;%</span> plot
+</pre></div>
+
+
+<p><img alt="" src="/theme/images/density2.png" /></p>
+<p>The following code generates likelihoods for different values of $k$ as well as generates a dataframe with the likelihood estimate for every allocation of clusters. </p>
+<div class="highlight"><pre><span></span>find_density <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>dens_obj<span class="p">,</span> x<span class="p">){</span>
+  index <span class="o">&lt;-</span> <span class="p">(</span>dens_obj<span class="o">$</span>x <span class="o">-</span> x<span class="p">)</span> <span class="o">%&gt;%</span> abs <span class="o">%&gt;%</span> <span class="kp">which.min</span>
+  dens_obj<span class="o">$</span>y<span class="p">[</span>index<span class="p">]</span>
+<span class="p">}</span>
+
+pltr <span class="o">&lt;-</span> <span class="kt">data.frame</span><span class="p">()</span>
+lik <span class="o">&lt;-</span> <span class="kt">data.frame</span><span class="p">()</span>
+
+<span class="kr">for</span><span class="p">(</span>i <span class="kr">in</span> <span class="m">1</span><span class="o">:</span><span class="m">12</span><span class="p">){</span>
+  <span class="c1"># perform kmeans for k=i</span>
+  mod <span class="o">&lt;-</span> kmeans<span class="p">(</span>df<span class="o">$</span>x<span class="p">,</span> i<span class="p">)</span>
+  sizes <span class="o">&lt;-</span> mod<span class="o">$</span>cluster <span class="o">%&gt;%</span> table <span class="o">%&gt;%</span> <span class="kt">array</span>
+  centers <span class="o">&lt;-</span> mod<span class="o">$</span>centers
+
+  <span class="c1"># sample data from this kmeans allocation</span>
+  <span class="c1"># such that we can estimate a density </span>
+  sampled_data <span class="o">&lt;-</span> map2<span class="p">(</span>sizes<span class="p">,</span> centers<span class="p">,</span> <span class="o">~</span> rnorm<span class="p">(</span><span class="m">.</span>x<span class="p">,</span> <span class="m">.</span>y<span class="p">))</span> <span class="o">%&gt;%</span> <span class="kp">unlist</span>
+  dens <span class="o">&lt;-</span> density<span class="p">(</span>sampled_data<span class="p">)</span>
+
+  <span class="c1"># calculate likelihood that this density </span>
+  <span class="c1"># create the data we started out with </span>
+  likelihood <span class="o">&lt;-</span> df<span class="o">$</span>x <span class="o">%&gt;%</span> 
+    map<span class="p">(</span><span class="o">~</span>find_density<span class="p">(</span>dens<span class="p">,</span> <span class="m">.</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="kp">log</span><span class="p">)</span> <span class="o">%&gt;%</span> 
+    reduce<span class="p">(</span><span class="kp">sum</span><span class="p">)</span>
+
+  <span class="c1"># update dataframes that keep track of data</span>
+  pltr <span class="o">&lt;-</span> <span class="kp">rbind</span><span class="p">(</span>pltr<span class="p">,</span> <span class="kt">data.frame</span><span class="p">(</span>x <span class="o">=</span> dens<span class="o">$</span>x<span class="p">,</span> y <span class="o">=</span> dens<span class="o">$</span>y<span class="p">,</span> i <span class="o">=</span> i<span class="p">))</span>
+  lik <span class="o">&lt;-</span> <span class="kp">rbind</span><span class="p">(</span>lik<span class="p">,</span> <span class="kt">data.frame</span><span class="p">(</span>k <span class="o">=</span> i<span class="p">,</span> likelihood <span class="o">=</span> likelihood<span class="p">))</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Note that to determine the sample size for each cluster, I count the number of points that are assigned to it. For every clustering allocation we now have an associated density $p(x|H)$. This is what they look like:</p>
+<div class="highlight"><pre><span></span>ggplot() + 
+  geom_line(data=pltr, aes(x,y)) + 
+  facet_wrap(~i, scales = &quot;free&quot;) + 
+  ggtitle(&#39;which likelihood is the most similar&#39;)
+</pre></div>
+
+
+<p><img alt="" src="/theme/images/k_vals.png" /></p>
+<p>The only trick applied here is that I try to fit my original data with each of these distributions via <code>map(~find_density(dens, .) %&gt;% log)</code> and get a log likelihood. These are summerized in the table below.</p>
+<div class="highlight"><pre><span></span><span class="o">&gt;</span> lik
+    k likelihood
+<span class="m">1</span>   <span class="m">1</span>  <span class="m">-26040.41</span>
+<span class="m">2</span>   <span class="m">2</span>  <span class="m">-13183.14</span>
+<span class="m">3</span>   <span class="m">3</span>  <span class="m">-11850.67</span>
+<span class="m">4</span>   <span class="m">4</span>  <span class="m">-11939.20</span>
+<span class="m">5</span>   <span class="m">5</span>  <span class="m">-12039.32</span>
+<span class="m">6</span>   <span class="m">6</span>  <span class="m">-12077.95</span>
+<span class="m">7</span>   <span class="m">7</span>  <span class="m">-12090.67</span>
+<span class="m">8</span>   <span class="m">8</span>  <span class="m">-12104.20</span>
+<span class="m">9</span>   <span class="m">9</span>  <span class="m">-12134.48</span>
+<span class="m">10</span> <span class="m">10</span>  <span class="m">-12132.03</span>
+<span class="m">11</span> <span class="m">11</span>  <span class="m">-12148.86</span>
+<span class="m">12</span> <span class="m">12</span>  <span class="m">-12130.69</span>
+</pre></div>
+
+
+<p>Behold(!), we reach maximum likelihood when we only have 3 clusters. By simply looking at bayes theorm we have gotten ourselves a probibalistic way of finding an appropriate $k$. </p>
+<h2>Conclusion</h2>
+<p>I've kept the example simple by keeping $\sigma = 1$ everywhere. In practice this would be another thing that you estimate, but the general likelihood rule would still apply. In practice the likelihood function would just get (much) more complicated but you would still be able to apply a similar $P(D|H)$ trick to pick the best model.</p>
+<p>Note that this trick can be applied for other models and other tasks as well. Bayes rule is suprisingly effective in suggesting clever ways to judge algorithms. The hard part of these types of algorithms usually isn't in the application of bayes theorem, rather in finding an appropriate sampler. Because we're only using a one dimensinal problem we can use the simple <code>density</code> method. For more dimensions I might advice the kernel density estimator from scikit learn, which is quite exellent!</p></div>
+	<hr>
+</div>
+        <br>
+  		</div>
+  	</div>
+  </div>
+
+  <div class="container">
+  	<div class="row">
+  		<div class="col-md-12 text-center center-block aw-bottom">
+  			<p>Vincent D. Warmerdam Made with Pelican</p>
+  		</div>
+  	</div>
+  </div>
+  <!-- JavaScript -->
+  <script src="/theme/js/jquery-2.1.3.min.js"></script>
+  <script type="text/javascript">
+  jQuery(document).ready(function($) {
+  	$("div.collapseheader").click(function () {
+  		$header = $(this).children("span").first();
+  		$codearea = $(this).children(".input_area");
+  		$codearea.slideToggle(500, function () {
+  			$header.text(function () {
+  				return $codearea.is(":visible") ? "Collapse Code" : "Expand Code";
+  			});
+  		});
+  	});
+  });
+
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-28011256-6', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

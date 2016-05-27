@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>An Introduction to Inference — koaning.io</title>
+  <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+	<meta name="description" content="Title: An Introduction to Inference; Date: 2016-04-14; Author: Vincent D. Warmerdam">
+	<meta name="author" content="Vincent D. Warmerdam">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="/theme/css/bootstrap.css">
+  <link rel="stylesheet" type="text/css" href="/theme/css/style.css">
+  <script async type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  </script>
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <br>
+    		<h1><a class="web_title" href="/">koaning.io</a></h1>
+        <blockquote>
+          <p class="pull-left">Blog of a data scientist/developer </p>
+          <p class="pull-right"><a href="https://nl.linkedin.com/in/vincentwarmerdam"> &nbsp; keyword bingo</a></p>
+          <p class="pull-right"><a href="https://twitter.com/fishnets88"> &nbsp; twitter</a></p>
+          <p class="pull-right"><a href="/feeds/rss.xml"> &nbsp; rss</a></p>
+        </blockquote>
+    		<br><br>
+      </div>
+    </div>
+  	<div class="row">
+  		<div class="col-md-12">
+<div class="article" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="text-center article-header">
+		<h1 itemprop="name headline" class="article-title">An Introduction to Inference</h1>
+		<span itemprop="author" itemscope itemtype="http://schema.org/Person"></span>
+		<time datetime="2016-04-14T00:00:00+02:00" itemprop="datePublished">Thu 14 April 2016</time>
+	</div>
+	<br><br>
+	<div itemprop="articleBody" class="article-body"><script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+<p><strong> "The theory of probabilities is just common sense reduced to calculus." </strong> </p>
+<p class="pull-right"> Pierre-Simon Laplace</p>
+
+<p><br> </p>
+<p>This document contains an introduction to probibalistic inference meant as a comfortable first step for data people to get introduced to bayesian thinking. It will be a bit mathy, but nothing beyond kahn-level probability. </p>
+<h2>Definition</h2>
+<p>Bayes Rule is a lovely law in probability theory that is defined via a simple formula.</p>
+<p>$$ P(E|D) = \frac{P(E,D)}{P(D)} = \frac{P(D|E)P(E)}{P(D)} $$</p>
+<p>Here $E$ and $D$ are events. They can be anything. As a simplest example; suppose that I am rolling dice and that $D$ is the number of dice that I've rolled and that $E$ is the number of eyes that I see. Via some basic simulation I can generate plots of what $P(E|D)$ might look like. </p>
+<p><img alt="" src="/theme/images/dice.png" /></p>
+<p>In this plot you see the probability distribution for the number of eyes given the number of dice that are rolled. The number of dice are listed on the right hand side, the number of eyes are denoted on the x-axis and the y-axis shows how often this occured in a simulation. You should notice that when I roll 4 dice that it is not likely for me witness a total of 4 eyes but it is impossible to get 3. This is what we expect and this is what we could also calculate with probability theory. </p>
+<p>Here's an amazing thing; you could turn this plot on it's head. If you only switch the numbers on the x-axis with the numbers on the right hand side then you suddenly have all distributions for $P(D|E)$. We can use what we know about $P(E|D)$ to gain knowledge about $P(D|E)$. As we'll see in the next formal example, this is a very nice property and it's something that follows straight from probability theory. </p>
+<h2>A textbook example</h2>
+<p>Let's consider a textbook problem, this time with a bit more math; </p>
+<p><em>There is an epidemic. A person has a probability $\frac{1}{100}$ to have the disease. The authorities decide to test the population, but the test is not completely reliable: the test generally gives $\frac{1}{110}$ people a positive result but given that you have the disease the probability of getting a positive result is $\frac{65}{100}$.</em></p>
+<p>Let $D$ denote the event of having the disease, let $T$ denote event of a positive outcome of a test. If we are interested in finding $P(D|T)$ then we can just go and apply Bayes rule: </p>
+<p>$$ P(D|T) = \frac{P(T|D)P(D)}{P(T)} = \frac{\frac{65}{100} \times \frac{1}{100}}{\frac{1}{110}} \approx 0.715 $$</p>
+<p>This is neat. We learned something about having the disease via our knowledge on the performance of the test. Bayes rule gives us a precise method to generate more knowledge after having observed data. In this case the data that we observe is the fact that the test was positive. What else can we calculate? </p>
+<h2>More inference $P(T|\neg D)$</h2>
+<p>Suppose the test came out negative. What then do we know? </p>
+<p>We can use basic probability theory again and split up the probability of getting a positive test result. It's easier to think about this outcome by splitting it up into two situations; the situation that multiple tests are positive given that you have the disease and the situation that multiple tests are positive given that you don't have the disease. </p>
+<p>$$
+\begin{align}
+P(T) &amp; = P(T\cap D) + P(T\cap \neg D) \\
+     &amp; = P(T|D)P(D) + P(T|\neg D)P(\neg D)
+\end{align}
+$$</p>
+<p>We know $ P(T|D) $ , $P(D)$ and $P(T)$. We can figure out that $P(\neg D) = 1 - P(D)$ too. So we only need to fill these numbers into the formula above to get;</p>
+<p>$$P(T|\neg D) = \frac{7}{1980}$$</p>
+<h2>Taking more tests</h2>
+<p>Sofar, we've only considered the outcome of one test. Again we can think about what the probability might be that two tests are both positive by splitting the situation up into the two possibilities for getting the disease. </p>
+<p>\begin{align}
+P(TT) &amp;= P(TT|D)P(D) + P(TT| \neg D) P(\neg D) \\
+      &amp;= \Big(\frac{65}{100}\Big)^2 \times \frac{1}{100} + \Big(\frac{7}{1980}\Big)^2 \times \frac{99}{100}\\
+      &amp;= \frac{839}{198000} \approx 0.004237374
+\end{align}</p>
+<p>\begin{aligned} 
+P(TTT) &amp;= P(TTT|D)P(D) + P(TTT| \neg D) P(\neg D) \\
+       &amp;= \Big(\frac{65}{100}\Big)^3 \times \frac{1}{100} + \Big(\frac{7}{1980}\Big)^3 \times \frac{99}{100} \\
+       &amp;= \frac{1076657}{392040000} \approx 0.002746294
+\end{aligned} </p>
+<p>Notice that these probabilities were not strictly given to us. These are probabilities that we've inferred from the information known to us by applying probability theory. The only true assumption that we've made is that the only thing that is of influence to the test result is wheather or not you have the disease. </p>
+<h2>Graphical View</h2>
+<p>People tend to get lost in the math a bit here, so it might be good to introduce a visual method of communicating. </p>
+<p><img alt="inline" src="/theme/images/illness1.png" /></p>
+<p>$$ P(D|T) = \frac{P(T|D)P(D)}{P(T)} = \frac{\frac{65}{100} \times \frac{1}{100}}{\frac{1}{110}} \approx 0.715 $$ </p>
+<h2>Multiple Tests</h2>
+<p>In the next bit I'll introduce a graphical notation along with the any math. Let's figure out how likely it is to have a certain disease after taking one, two or three tests that came out positive. We'll use results that we've calculated before.</p>
+<h3>Two Tests</h3>
+<p><img alt="inline" src="/theme/images/illness2.png" /></p>
+<p>$$ P(D|TT) =  \frac{P(TT|D)P(D)}{P(TT)} = \frac{\Big(\frac{65}{100}\Big)^2 \times \frac{1}{100}}{\frac{839}{198000}} = \frac{16731}{16780} \approx 0.9971 $$ </p>
+<h3>Three Tests</h3>
+<p><img alt="inline" src="/theme/images/illness3.png" /></p>
+<p>$$ P(D|TTT) = \frac{P(TTT|D)P(D)}{P(TTT)} = \frac{\Big(\frac{65}{100}\Big)^3 \times \frac{1}{100}}{\frac{1076657}{392040000}} = \frac{21532797}{21533140} \approx 0.9999$$ </p>
+<h1>What just happened?</h1>
+<p>Via Bayes Rule, we can infer information about $P(D|TTT)$ even though we initially only know about $P(T|D)$ (and $P(T)$ and $P(D)$). </p>
+<p>The trick is that we clearly define the uncertainty that we have and infer the rest via probability theory. In this case the main cheat was realizing that the tests are independant of eachother. This is what makes inference so strong! By defining our uncertainties in how we model things we can use probability theory to infer knowledge once data is known to us. </p>
+<h1>Even More Inference!</h1>
+<p>Let's have another look at this graphical representation.</p>
+<p><img alt="inline" src="/theme/images/illness3.png" /></p>
+<p>This graph describes how a system of dependencies which define probabilities of events. Be careful though. This graphical representation should not suggest that the inference can only occur in one direction. </p>
+<p>For example, suppose that we took two tests that were both positive, how would our belief change for the third test (ie: what is $P(T_3|T_1, T_2)$)? </p>
+<p><img alt="inline" src="/theme/images/illness4.png" /></p>
+<p>You can describe the sensation of inference through words as well. If two tests are positive, it is very likely that you have the disease. If it is very likely that you have the disease then it is also rather likely that the next test is positive. </p>
+<p>In maths; </p>
+<p>$$ P(T_3 | T_1 T_2 ) = \frac{P(T_1, T_2, T_3)}{P(T_1, T_2)} = \frac{1076657}{1661220} \approx 0.6481 $$ </p>
+<p>Note that there's an alternative method (this is a longer path, but worthwhile to understand if you've never walked this road before). </p>
+<p>\begin{align}
+P(D | T_1, T_2) &amp; = \frac{16731}{16780} \\ 
+P(\neg D | T_1, T_2) &amp; = 1 - P(D | T_1, T_2) = \frac{49}{16780}
+\end{align}</p>
+<p>\begin{align}
+P(T_3 | T_1, T_2) &amp; = P(T_3 | T_1, T_2, D) P(D | T_1, T_2) + P(T_3 | T_1, T_2, \neg D) P(\neg D | T_1, T_2) \\
+&amp; = P(T_3 | D) P(D | T_1, T_2) + P(T_3 | \neg D) P( \neg D | T_1, T_2) \\
+&amp; = \frac{65}{100} \frac{16731}{16780} + \frac{7}{1980} \frac{49}{16780} \\
+&amp; = \frac{1076657}{1661220} \approx 0.6481
+\end{align}</p>
+<p>Notice that 0.6481 is almost the same as $P(T|D)$, which is what we would expect.</p>
+<p>The graphical representation tells us that once we know $D$ the events $T_1 ... T_3$ are independant of eachother. That doesn't mean that we cannot infer about $P(D | T_i)$, it merely means that we have to keep track of different assumptions in our model. Probability theory resolves the rest. </p>
+<h1>Conclusion</h1>
+<p>Please recognize how powerful this methodology is. Not only does this way of thinking give you immense modelling flexibilities but it even allows you to work with actual probabilities at all times. Many machine learning models try to approximate this thinking with more black box sort of methods but it loses some probibalistic interpretation in the process. </p></div>
+	<hr>
+</div>
+        <br>
+  		</div>
+  	</div>
+  </div>
+
+  <div class="container">
+  	<div class="row">
+  		<div class="col-md-12 text-center center-block aw-bottom">
+  			<p>Vincent D. Warmerdam Made with Pelican</p>
+  		</div>
+  	</div>
+  </div>
+  <!-- JavaScript -->
+  <script src="/theme/js/jquery-2.1.3.min.js"></script>
+  <script type="text/javascript">
+  jQuery(document).ready(function($) {
+  	$("div.collapseheader").click(function () {
+  		$header = $(this).children("span").first();
+  		$codearea = $(this).children(".input_area");
+  		$codearea.slideToggle(500, function () {
+  			$header.text(function () {
+  				return $codearea.is(":visible") ? "Collapse Code" : "Expand Code";
+  			});
+  		});
+  	});
+  });
+
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-28011256-6', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Fun Datasets — koaning.io</title>
+  <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+	<meta name="description" content="Title: Fun Datasets; Date: 2015-05-01; Author: Vincent D. Warmerdam">
+	<meta name="author" content="Vincent D. Warmerdam">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="/theme/css/bootstrap.css">
+  <link rel="stylesheet" type="text/css" href="/theme/css/style.css">
+  <script async type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  </script>
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <br>
+    		<h1><a class="web_title" href="/">koaning.io</a></h1>
+        <blockquote>
+          <p class="pull-left">Blog of a data scientist/developer </p>
+          <p class="pull-right"><a href="https://nl.linkedin.com/in/vincentwarmerdam"> &nbsp; keyword bingo</a></p>
+          <p class="pull-right"><a href="https://twitter.com/fishnets88"> &nbsp; twitter</a></p>
+          <p class="pull-right"><a href="/feeds/rss.xml"> &nbsp; rss</a></p>
+        </blockquote>
+    		<br><br>
+      </div>
+    </div>
+  	<div class="row">
+  		<div class="col-md-12">
+<div class="article" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="text-center article-header">
+		<h1 itemprop="name headline" class="article-title">Fun Datasets</h1>
+		<span itemprop="author" itemscope itemtype="http://schema.org/Person"></span>
+		<time datetime="2015-05-01T00:00:00+02:00" itemprop="datePublished">Fri 01 May 2015</time>
+	</div>
+	<br><br>
+	<div itemprop="articleBody" class="article-body"><p>When I started out doing data I tought myself how to scrape websites. I didn't <strong>just</strong> do it because it was fun to learn how to scrape; it was my only source of interesting data that I could use to practice my analysis skills. There wasn't as much open data back then, so I had to find them by hand.</p>
+<p>Open datasets are important not just for transparancy and insights but also for education. Having a fun dataset is the best way to start learning the joy of analyzing it. </p>
+<p><img src="/theme/images/open-data.png" alt="" width="50%"></p>
+<p>In this document I will describe datasets that I like to use whenever I teach simply because they are <strong>fun</strong> to analyse. This is a working document as I will mainly use this page for reference, more datasets will be added over time. It will contain both content that I've collected and content from others. </p>
+<p>Each dataset has a description, a download link, a suggestion for an analysis and a source. Please be nice and refer to it if you are going to share this data or use it in your research.  </p>
+<h3>Chick Weight</h3>
+<p>My absolute favorite starter dataset. In this dataset you try to predict how much a chicken will weight right before it is slaughtered. You get to analyse the effect of different diets on the chickens weight as well as the effect of time. </p>
+<p><img src="/theme/images/chickweight.png" alt=""></p>
+<p>You can download the data <a href="/theme/data/chickweight.csv">here</a>.</p>
+<h3>Affairs</h3>
+<p>This dataset from 1978 contains information about politicians having affairs. The goal of the dataset is to find characteristics that make it more plausable for a politician to have an affair. Does the number of children matter? How religious the politician is? Or education/marriage rating?</p>
+<p><img src="/theme/images/affair.png" alt=""></p>
+<p>You can download the data <a href="/theme/data/affairs.csv">here</a>.</p>
+<blockquote>
+<p><small> Source : <em>Fair, R. (1977) “A note on the computation of the tobit estimator”, Econometrica, 45, 1723-1727.
+http://fairmodel.econ.yale.edu/rayfair/pdf/1978A200.PDF.</em></small></p>
+</blockquote>
+<h3>Computers</h3>
+<p>This dataset contains data from 1993 to 1995 about the prices of computers. Because it was the 90ies you can check what the effect of the addition of cd-rom drive is on the price of the computer, or the effect of the clock speed on the price. You could even check the effect of ad placements. </p>
+<div class="highlight"><pre><span></span>lm(formula = price ~ speed + hd + ram + screen, data = Computers)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-1048.21  -297.09   -48.29   214.30  2538.47
+
+Coefficients:
+             Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  10.33311   88.22222   0.117    0.907    
+speed         5.24930    0.27836  18.858   &lt;2e-16 ***
+hd           -0.57936    0.03507 -16.520   &lt;2e-16 ***
+ram          76.74545    1.53586  49.969   &lt;2e-16 ***
+screen      105.52592    6.18879  17.051   &lt;2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 427.5 on 6254 degrees of freedom
+Multiple R-squared:  0.4586,    Adjusted R-squared:  0.4583 
+F-statistic:  1325 on 4 and 6254 DF,  p-value: &lt; 2.2e-16
+</pre></div>
+
+
+<p>You can download the data <a href="/theme/data/computers.csv">here</a>.</p>
+<blockquote>
+<p><small> Source: <em>Stengos, T. and E. Zacharias (2005) “Intertemporal pricing and price discrimination : a semiparametric
+hedonic analysis of the personal computer market”, Journal of Applied Econometrics, forthcoming</em> </small></p>
+</blockquote>
+<h3>Cigarettes</h3>
+<p>This dataset contains data about cigaret consumption in the united states. I have a hunch that certain states might have more smokers than others and it may also be that the price elasticity of these smokes is not consistent across states. </p>
+<p>The dataset contains state, year, consummer price index, state population, number of packs per capita, state personal income (total, nominal), average combined local tax, average price and excise tax including sales tax. </p>
+<p><img src="/theme/images/cigarette.png" alt="" width="50%"></p>
+<p>You can download the data <a href="/theme/data/cigarette.csv">here</a>.</p>
+<blockquote>
+<p><small>Source:<em>Stock, James H. and Mark W. Watson (2003) Introduction to Econometrics, Addison-Wesley Educational Publishers, http://wps.aw.com/aw_stockwatsn_economtrcs_1, chapter 10.</em></small></p>
+</blockquote>
+<h3>Stocks</h3>
+<p>Stocks are always fun to analyse and as always, pandas is your best friend. </p>
+<div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="kn">import</span> <span class="nn">pandas.io.data</span> <span class="kn">as</span> <span class="nn">web</span>
+<span class="o">&gt;</span> <span class="kn">import</span> <span class="nn">datetime</span>
+<span class="o">&gt;</span> <span class="n">start</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2010</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="o">&gt;</span> <span class="n">end</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2013</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">27</span><span class="p">)</span>
+<span class="o">&gt;</span> <span class="n">f</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;F&quot;</span><span class="p">,</span> <span class="s1">&#39;yahoo&#39;</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span>
+</pre></div>
+
+
+<p>This will give you a dataset which you can then analyze. </p>
+<div class="highlight"><pre><span></span>&gt; print(f.head())
+             Open   High    Low  Close     Volume  Adj Close
+Date                                                        
+2010-01-04  10.17  10.28  10.05  10.28   60855800    9.42672
+2010-01-05  10.45  11.24  10.40  10.96  215620200   10.05028
+2010-01-06  11.21  11.46  11.13  11.37  200070600   10.42625
+2010-01-07  11.46  11.69  11.32  11.66  130201700   10.69218
+2010-01-08  11.67  11.74  11.46  11.69  130463000   10.71969
+</pre></div>
+
+
+<p>Or even quickly visualize. </p>
+<div class="highlight"><pre><span></span>&gt; f[&#39;Open&#39;].plot()
+</pre></div>
+
+
+<p><img src="/theme/images/pandas-stocks.png" alt="" width="50%"></p>
+<h3>Pokemon</h3>
+<p>Even though most fans are nearing their 30ies, pokemon is still an <a href="http://www.dragonflycave.com/obsession.htm">obsession</a>. Which is why the internet created a reliable <a href="http://pokeapi.co/docs/">pokemon api</a> along with a python package that you can use to download pokemon data.</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pykemon</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span> 
+<span class="n">pokemons</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">300</span><span class="p">):</span>
+    <span class="n">pokemons</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pykemon</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pokemon_id</span><span class="o">=</span><span class="n">i</span><span class="p">))</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="p">[[</span><span class="n">p</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">hp</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">attack</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">keys</span><span class="p">()[</span><span class="mi">0</span><span class="p">]]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">pokemons</span><span class="p">]</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">,</span><span class="s2">&quot;hp&quot;</span><span class="p">,</span><span class="s2">&quot;attack&quot;</span><span class="p">,</span><span class="s2">&quot;type&quot;</span><span class="p">])</span>
+</pre></div>
+
+
+<p>You might be able to create a model that can predict what pokemon beats another pokemon, or perhaps you would like to analyze the hp/attack ratio for each pokemon ... the possibilities are endless.  </p>
+<p><img alt="" src="/theme/images/pokemon.png" /></p>
+<h3>Xbox at eBay</h3>
+<p>Auctions are interesting from a game theory/behavioral science perspective which is why ebay decided to share some data a while ago. This dataset contains bidding information on (amoungst other things) Xbox sales. You can find the data <a href="http://www.modelingonlineauctions.com/datasets">here</a>.</p>
+<p><img alt="" src="/theme/images/ebay.png" /></p>
+<h3>Deaths in movies</h3>
+<p>Ever wonder how many people died in that action movie? Yep, there's a dataset for that too. Thanks to the fine folks at <a href="http://www.moviebodycounts.com/">moviebodycount</a>. For inspiration on how to analyze this dataset I refer you to an exellect <a href="http://nbviewer.ipython.org/github/yaph/ipython-notebooks/blob/master/Exploring%20Movie%20Body%20Counts.ipynb">notebook</a> by Ramiro Gomez.</p>
+<p>A small preview of this notebook; turns out that there is a relationship between movie deaths and IMDB rating. </p>
+<p><img alt="" src="/theme/images/moviedeaths.png" /></p>
+<hr>
+
+<h3>Github</h3>
+<p>Github has a pretty great api that you could mine from the command line. It you have curl, <a href="http://stedolan.github.io/jq/">jq</a> and <a href="https://csvkit.readthedocs.org/en/0.9.1/">csvkit</a> you can turn any github repo into csv data with just two lines of command line. </p>
+<div class="highlight"><pre><span></span>curl https://api.github.com/users/mbostock/repos | jq &#39;.&#39; &gt; github.json
+in2csv github.json &gt; github.csv
+</pre></div>
+
+
+<h3>Conclusion</h3>
+<p>This list is far from complete but these datasets should help students to get motivated to learn about data analysis. </p>
+<p>Feel free to use any of these datasets to teach! Please, do keep the sources in mind. Others have spent a lot of time on them. </p>
+<!--<html>  
+### Pirate Bay
+
+http://www.csg.uzh.ch/publications/data/piratebay.html
+
+### MovieLens
+
+http://grouplens.org/datasets/movielens/
+http://grouplens.org/datasets/eachmovie/
+
+##### 8. Swearing at Mozilla 
+
+https://github.com/ansymo/msr2013-bug_dataset
+
+
+##### 10. Joke Recommendations 
+
+http://www.ieor.berkeley.edu/~goldberg/jester-data/
+
+
+
+##### 12.   Google Numbers 
+
+http://www.ee.surrey.ac.uk/CVSSP/demos/chars74k/
+
+##### 16. Swear words Southpark 
+
+http://www.imsdb.com/scripts/South-Park.html
+http://southpark.wikia.com/wiki/Portal:Scripts
+http://www.imdb.com/title/tt0121955/eprate
+
+##### 17. Simpsons D'oH 
+
+http://www.springfieldspringfield.co.uk/episode_scripts.php?tv-show=the-simpsons
+
+##### NYC taxi data 
+
+https://archive.org/details/nycTaxiTripData2013
+
+## General sources 
+
+The following source list larger datasets and apis that are very suitable if you want to challange yourself. 
+
+- [Large Datasets hosten om Amazon](http://aws.amazon.com/datasets)
+- [Stackexchange Data](http://data.stackexchange.com/)
+- [Kaggle Competition Data](http://kaggle.com)
+- [Rdatasets](http://vincentarelbundock.github.io/Rdatasets/datasets.html)
+
+
+-->
+
+<p _="%" body="body" endblock="endblock">{% endfilter %}</p></div>
+	<hr>
+</div>
+        <br>
+  		</div>
+  	</div>
+  </div>
+
+  <div class="container">
+  	<div class="row">
+  		<div class="col-md-12 text-center center-block aw-bottom">
+  			<p>Vincent D. Warmerdam Made with Pelican</p>
+  		</div>
+  	</div>
+  </div>
+  <!-- JavaScript -->
+  <script src="/theme/js/jquery-2.1.3.min.js"></script>
+  <script type="text/javascript">
+  jQuery(document).ready(function($) {
+  	$("div.collapseheader").click(function () {
+  		$header = $(this).children("span").first();
+  		$codearea = $(this).children(".input_area");
+  		$codearea.slideToggle(500, function () {
+  			$header.text(function () {
+  				return $codearea.is(":visible") ? "Collapse Code" : "Expand Code";
+  			});
+  		});
+  	});
+  });
+
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-28011256-6', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

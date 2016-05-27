@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>H2o encoders starter — koaning.io</title>
+  <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+	<meta name="description" content="Title: H2o encoders starter; Date: 2016-01-27; Author: Vincent D. Warmerdam">
+	<meta name="author" content="Vincent D. Warmerdam">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="/theme/css/bootstrap.css">
+  <link rel="stylesheet" type="text/css" href="/theme/css/style.css">
+  <script async type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  </script>
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <br>
+    		<h1><a class="web_title" href="/">koaning.io</a></h1>
+        <blockquote>
+          <p class="pull-left">Blog of a data scientist/developer </p>
+          <p class="pull-right"><a href="https://nl.linkedin.com/in/vincentwarmerdam"> &nbsp; keyword bingo</a></p>
+          <p class="pull-right"><a href="https://twitter.com/fishnets88"> &nbsp; twitter</a></p>
+          <p class="pull-right"><a href="/feeds/rss.xml"> &nbsp; rss</a></p>
+        </blockquote>
+    		<br><br>
+      </div>
+    </div>
+  	<div class="row">
+  		<div class="col-md-12">
+<div class="article" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="text-center article-header">
+		<h1 itemprop="name headline" class="article-title">H2o encoders starter</h1>
+		<span itemprop="author" itemscope itemtype="http://schema.org/Person"></span>
+		<time datetime="2016-01-27T00:00:00+01:00" itemprop="datePublished">Wed 27 January 2016</time>
+	</div>
+	<br><br>
+	<div itemprop="articleBody" class="article-body"><p>This document contains a startup script for H2O in R. It is a silly example (why would anybody want to train a deep encoder on the iris dataset) but it helps people get started. This setup is meant for local use, not for cluster setup.</p>
+<p>Just copy the code in! </p>
+<h3>Setup</h3>
+<div class="highlight"><pre><span></span>library(readr)
+library(dplyr)
+library(ggplot2)
+library(GGally)
+library(h2o)
+
+h2o.init(ip = &#39;localhost&#39;, port = 54321, nthreads= -1, max_mem_size = &#39;4g&#39;)
+h2o.clusterInfo()
+</pre></div>
+
+
+<h3>Autoencoder</h3>
+<div class="highlight"><pre><span></span>h2o_df <span class="o">&lt;-</span> as.h2o<span class="p">(</span>iris<span class="p">)</span>
+
+mod_nn <span class="o">&lt;-</span> h2o.deeplearning<span class="p">(</span>
+  x <span class="o">=</span> <span class="kt">c</span><span class="p">(</span><span class="s">&#39;Sepal.Length&#39;</span><span class="p">,</span> <span class="s">&#39;Sepal.Width&#39;</span><span class="p">,</span> <span class="s">&#39;Petal.Length&#39;</span><span class="p">,</span> <span class="s">&#39;Petal.Width&#39;</span><span class="p">),</span>
+  training_frame <span class="o">=</span> h2o_df<span class="p">,</span>
+  hidden <span class="o">=</span> <span class="kt">c</span><span class="p">(</span><span class="m">2</span><span class="p">),</span>
+  epochs <span class="o">=</span> <span class="m">100</span><span class="p">,</span>
+  activation <span class="o">=</span> <span class="s">&#39;Tanh&#39;</span><span class="p">,</span>
+  autoencoder <span class="o">=</span> <span class="kc">TRUE</span>
+<span class="p">)</span>
+
+features <span class="o">&lt;-</span> h2o.deepfeatures<span class="p">(</span>mod_nn<span class="p">,</span> h2o_df<span class="p">,</span> layer<span class="o">=</span><span class="m">1</span><span class="p">)</span>
+pltr_nn <span class="o">&lt;-</span> features <span class="o">%&gt;%</span> 
+  as.data.frame <span class="o">%&gt;%</span> 
+  mutate<span class="p">(</span>species <span class="o">=</span> iris<span class="o">$</span>Species<span class="p">)</span>
+
+<span class="kp">colnames</span><span class="p">(</span>pltr_nn<span class="p">)</span> <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">(</span><span class="s">&quot;x1&quot;</span><span class="p">,</span> <span class="s">&quot;x2&quot;</span><span class="p">,</span> <span class="s">&quot;species&quot;</span><span class="p">)</span>
+
+ggplot<span class="p">()</span> <span class="o">+</span> 
+  geom_point<span class="p">(</span>data<span class="o">=</span>pltr_nn<span class="p">,</span> aes<span class="p">(</span>x1<span class="p">,</span> x2<span class="p">,</span> colour <span class="o">=</span> species<span class="p">))</span>
+</pre></div>
+
+
+<p><img alt="" src="/theme/images/encoder1.png" /></p>
+<h3>PCA</h3>
+<div class="highlight"><pre><span></span>mod_pca <span class="o">&lt;-</span> h2o.prcomp<span class="p">(</span>
+  x <span class="o">=</span> <span class="kt">c</span><span class="p">(</span><span class="s">&#39;Sepal.Length&#39;</span><span class="p">,</span> <span class="s">&#39;Sepal.Width&#39;</span><span class="p">,</span> <span class="s">&#39;Petal.Length&#39;</span><span class="p">,</span> <span class="s">&#39;Petal.Width&#39;</span><span class="p">),</span>
+  training_frame <span class="o">=</span> h2o_df<span class="p">,</span> k <span class="o">=</span> <span class="m">2</span><span class="p">,</span> transform <span class="o">=</span> <span class="s">&#39;STANDARDIZE&#39;</span>
+<span class="p">)</span>
+
+pltr_pca <span class="o">&lt;-</span> h2o.predict<span class="p">(</span>mod_pca<span class="p">,</span> h2o_df<span class="p">,</span> num_pc<span class="o">=</span><span class="m">2</span><span class="p">)</span> <span class="o">%&gt;%</span> 
+  as.data.frame <span class="o">%&gt;%</span> 
+  mutate<span class="p">(</span>species <span class="o">=</span> iris<span class="o">$</span>Species<span class="p">)</span>
+
+<span class="kp">colnames</span><span class="p">(</span>pltr_pca<span class="p">)</span> <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">(</span><span class="s">&quot;x1&quot;</span><span class="p">,</span> <span class="s">&quot;x2&quot;</span><span class="p">,</span> <span class="s">&quot;species&quot;</span><span class="p">)</span>
+
+ggplot<span class="p">()</span> <span class="o">+</span> 
+  geom_point<span class="p">(</span>data<span class="o">=</span>pltr_pca<span class="p">,</span> aes<span class="p">(</span>x1<span class="p">,</span> x2<span class="p">,</span> colour <span class="o">=</span> species<span class="p">))</span>
+</pre></div>
+
+
+<p><img alt="" src="/theme/images/encoder2.png" /></p>
+<p>The syntax is very lovely R-like. One just has to remember that h2o assumes a slightly different internal datastructure to keep things performant (similarly to SparkR). It does offer some machine learning possiblilities not available to SparkR users. Features! </p></div>
+	<hr>
+</div>
+        <br>
+  		</div>
+  	</div>
+  </div>
+
+  <div class="container">
+  	<div class="row">
+  		<div class="col-md-12 text-center center-block aw-bottom">
+  			<p>Vincent D. Warmerdam Made with Pelican</p>
+  		</div>
+  	</div>
+  </div>
+  <!-- JavaScript -->
+  <script src="/theme/js/jquery-2.1.3.min.js"></script>
+  <script type="text/javascript">
+  jQuery(document).ready(function($) {
+  	$("div.collapseheader").click(function () {
+  		$header = $(this).children("span").first();
+  		$codearea = $(this).children(".input_area");
+  		$codearea.slideToggle(500, function () {
+  			$header.text(function () {
+  				return $codearea.is(":visible") ? "Collapse Code" : "Expand Code";
+  			});
+  		});
+  	});
+  });
+
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-28011256-6', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

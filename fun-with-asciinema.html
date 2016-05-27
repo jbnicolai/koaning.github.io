@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Fun with Asciinema — koaning.io</title>
+  <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+	<meta name="description" content="Title: Fun with Asciinema; Date: 2016-03-19; Author: Vincent D. Warmerdam">
+	<meta name="author" content="Vincent D. Warmerdam">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="/theme/css/bootstrap.css">
+  <link rel="stylesheet" type="text/css" href="/theme/css/style.css">
+  <script async type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  </script>
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <br>
+    		<h1><a class="web_title" href="/">koaning.io</a></h1>
+        <blockquote>
+          <p class="pull-left">Blog of a data scientist/developer </p>
+          <p class="pull-right"><a href="https://nl.linkedin.com/in/vincentwarmerdam"> &nbsp; keyword bingo</a></p>
+          <p class="pull-right"><a href="https://twitter.com/fishnets88"> &nbsp; twitter</a></p>
+          <p class="pull-right"><a href="/feeds/rss.xml"> &nbsp; rss</a></p>
+        </blockquote>
+    		<br><br>
+      </div>
+    </div>
+  	<div class="row">
+  		<div class="col-md-12">
+<div class="article" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="text-center article-header">
+		<h1 itemprop="name headline" class="article-title">Fun with Asciinema</h1>
+		<span itemprop="author" itemscope itemtype="http://schema.org/Person"></span>
+		<time datetime="2016-03-19T00:00:00+01:00" itemprop="datePublished">Sat 19 March 2016</time>
+	</div>
+	<br><br>
+	<div itemprop="articleBody" class="article-body"><p>So there's this service that let's you record your actions in the terminal. This led me to play around with python.</p>
+<style>
+    iframe {
+    margin: 0 auto;
+    display: block;
+}
+</style>
+
+<p>Here's a demo of what I mean. </p>
+<script type="text/javascript" src="https://asciinema.org/a/28r5rjhr09v6cod4kpsb70jay.js" id="asciicast-28r5rjhr09v6cod4kpsb70jay" async></script>
+
+<p>So what happends if I play with the colors of the terminal? </p>
+<script type="text/javascript" src="https://asciinema.org/a/153zhb0gkuiuv3dkt27zzu65w.js" id="asciicast-153zhb0gkuiuv3dkt27zzu65w" async></script>
+
+<p>Playing with colors is fun. Let's show how a random sorting algorithm sorts. </p>
+<script type="text/javascript" src="https://asciinema.org/a/6znd52bfy2alzfv8xa7axmw74.js" id="asciicast-6znd52bfy2alzfv8xa7axmw74" async></script>
+
+<p>We can even go all the way by playing a version of the game of life. Below I'm simulating random noise with something from an accumulated ising model. It feels slightly mesmerizing. </p>
+<script type="text/javascript" src="https://asciinema.org/a/0246tme4rmpd70l81giq1z17s.js" id="asciicast-0246tme4rmpd70l81giq1z17s" async></script>
+
+<p>I call 'coding in train'-time well spent. One can imagine some education fun to be had using this tool too if people are just learning python from the terminal. </p>
+<p>There's a gist <a href="https://gist.github.com/koaning/955c7ef41428f5252639">here</a> with all the code, to all those who are interested. </p></div>
+	<hr>
+</div>
+        <br>
+  		</div>
+  	</div>
+  </div>
+
+  <div class="container">
+  	<div class="row">
+  		<div class="col-md-12 text-center center-block aw-bottom">
+  			<p>Vincent D. Warmerdam Made with Pelican</p>
+  		</div>
+  	</div>
+  </div>
+  <!-- JavaScript -->
+  <script src="/theme/js/jquery-2.1.3.min.js"></script>
+  <script type="text/javascript">
+  jQuery(document).ready(function($) {
+  	$("div.collapseheader").click(function () {
+  		$header = $(this).children("span").first();
+  		$codearea = $(this).children(".input_area");
+  		$codearea.slideToggle(500, function () {
+  			$header.text(function () {
+  				return $codearea.is(":visible") ? "Collapse Code" : "Expand Code";
+  			});
+  		});
+  	});
+  });
+
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-28011256-6', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

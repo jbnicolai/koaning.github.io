@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>GG Periodic Highlight — koaning.io</title>
+  <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+	<meta name="description" content="Title: GG Periodic Highlight; Date: 2016-03-07; Author: Vincent D. Warmerdam">
+	<meta name="author" content="Vincent D. Warmerdam">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="/theme/css/bootstrap.css">
+  <link rel="stylesheet" type="text/css" href="/theme/css/style.css">
+  <script async type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  </script>
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <br>
+    		<h1><a class="web_title" href="/">koaning.io</a></h1>
+        <blockquote>
+          <p class="pull-left">Blog of a data scientist/developer </p>
+          <p class="pull-right"><a href="https://nl.linkedin.com/in/vincentwarmerdam"> &nbsp; keyword bingo</a></p>
+          <p class="pull-right"><a href="https://twitter.com/fishnets88"> &nbsp; twitter</a></p>
+          <p class="pull-right"><a href="/feeds/rss.xml"> &nbsp; rss</a></p>
+        </blockquote>
+    		<br><br>
+      </div>
+    </div>
+  	<div class="row">
+  		<div class="col-md-12">
+<div class="article" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="text-center article-header">
+		<h1 itemprop="name headline" class="article-title">GG Periodic Highlight</h1>
+		<span itemprop="author" itemscope itemtype="http://schema.org/Person"></span>
+		<time datetime="2016-03-07T00:00:00+01:00" itemprop="datePublished">Mon 07 March 2016</time>
+	</div>
+	<br><br>
+	<div itemprop="articleBody" class="article-body"><p>Sometimes you'll to confirm if a timeseries pattern is influenced by the day of the week. Weekends are a prime example for when usually online behavior is different. This document will explain a method of communicating this visually. </p>
+<div class="highlight"><pre><span></span>library(ggplot2)
+library(dplyr)
+</pre></div>
+
+
+<p>Let's first generate some data which has a small negative bias towards the weekend. </p>
+<div class="highlight"><pre><span></span>n <span class="o">&lt;-</span> <span class="m">750</span>
+df <span class="o">&lt;-</span> <span class="kt">data.frame</span><span class="p">(</span>datetime <span class="o">=</span> <span class="kp">as.POSIXct</span><span class="p">(</span><span class="s">&#39;2015-01-01&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="m">1</span><span class="o">:</span>n<span class="p">)</span><span class="o">*</span><span class="m">3600</span><span class="p">,</span> 
+                 value <span class="o">=</span> rnorm<span class="p">(</span>n<span class="p">))</span>
+
+df <span class="o">&lt;-</span> df <span class="o">%&gt;%</span> 
+  mutate<span class="p">(</span>day_of_week <span class="o">=</span> datetime <span class="o">%&gt;%</span> <span class="kp">strftime</span><span class="p">(</span><span class="s">&#39;%A&#39;</span><span class="p">),</span>
+         week_nr <span class="o">=</span> datetime <span class="o">%&gt;%</span> <span class="kp">strftime</span><span class="p">(</span><span class="s">&#39;%W&#39;</span><span class="p">))</span> <span class="o">%&gt;%</span> 
+  mutate<span class="p">(</span>value <span class="o">=</span> <span class="kp">ifelse</span><span class="p">(</span>day_of_week <span class="o">%in%</span> <span class="kt">c</span><span class="p">(</span><span class="s">&#39;Saturday&#39;</span><span class="p">,</span> <span class="s">&#39;Sunday&#39;</span><span class="p">),</span> 
+         value <span class="o">-</span> runif<span class="p">(</span>n<span class="p">)</span> <span class="o">*</span> <span class="m">3</span><span class="p">,</span> value<span class="p">))</span>
+
+ggplot<span class="p">()</span> <span class="o">+</span> 
+  geom_line<span class="p">(</span>data<span class="o">=</span>df<span class="p">,</span> aes<span class="p">(</span>datetime<span class="p">,</span> value<span class="p">))</span> <span class="o">+</span> 
+  ggtitle<span class="p">(</span><span class="s">&#39;timeseries without weekends highlighted&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<p><img alt="" src="/theme/images/gg_periodic01.png" /></p>
+<p>The bias is big enough to suggest some form of seasonality, though it may not immediately be obvious that it is for weekends. We could look up the dates and confirm that the time between the peaks are 7 days, but perferably this we want to commincate this visually. </p>
+<p>Let's instead create a dataframe that will be able to highlight correct dates.</p>
+<div class="highlight"><pre><span></span>y_min <span class="o">=</span> <span class="p">(</span>df<span class="o">$</span>value <span class="o">%&gt;%</span> <span class="kp">min</span><span class="p">)</span> <span class="o">-</span> <span class="m">1</span>
+y_max <span class="o">=</span> <span class="p">(</span>df<span class="o">$</span>value <span class="o">%&gt;%</span> <span class="kp">max</span><span class="p">)</span> <span class="o">+</span> <span class="m">1</span>
+
+df_highlight <span class="o">&lt;-</span> df <span class="o">%&gt;%</span> 
+  filter<span class="p">(</span>day_of_week <span class="o">%in%</span> <span class="kt">c</span><span class="p">(</span><span class="s">&#39;Saturday&#39;</span><span class="p">,</span> <span class="s">&#39;Sunday&#39;</span><span class="p">))</span> <span class="o">%&gt;%</span> 
+  group_by<span class="p">(</span>week_nr<span class="p">)</span> <span class="o">%&gt;%</span> 
+  summarise<span class="p">(</span>xmin <span class="o">=</span> <span class="kp">min</span><span class="p">(</span>datetime<span class="p">),</span> xmax <span class="o">=</span> <span class="kp">max</span><span class="p">(</span>datetime<span class="p">))</span>
+
+ggplot<span class="p">()</span> <span class="o">+</span> 
+  geom_rect<span class="p">(</span>data<span class="o">=</span>df_highlight<span class="p">,</span> 
+            aes<span class="p">(</span>xmin <span class="o">=</span> xmin<span class="p">,</span> xmax <span class="o">=</span> xmax<span class="p">,</span> ymin <span class="o">=</span> y_min<span class="p">,</span> ymax <span class="o">=</span> y_max<span class="p">),</span> 
+            alpha <span class="o">=</span> <span class="m">0.15</span><span class="p">)</span> <span class="o">+</span> 
+  geom_line<span class="p">(</span>data<span class="o">=</span>df<span class="p">,</span> aes<span class="p">(</span>datetime<span class="p">,</span> value<span class="p">))</span> <span class="o">+</span> 
+  ggtitle<span class="p">(</span><span class="s">&#39;timeseries with weekends highlighted&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<p><img alt="" src="/theme/images/gg_periodic02.png" /></p>
+<h2>Hours per day</h2>
+<p>Another pattern to consider is to look at certain hours during the day. The code will be similar. We'll seperate the concern of highlighting the correct dates to another dataframe and another layer of the plot.</p>
+<div class="highlight"><pre><span></span><span class="n">set</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">n</span> <span class="o">&lt;-</span> <span class="mi">150</span>
+<span class="n">df</span> <span class="o">&lt;-</span> <span class="n">data</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="n">datetime</span> <span class="o">=</span> <span class="n">as</span><span class="o">.</span><span class="n">POSIXct</span><span class="p">(</span><span class="s">&#39;2015-01-01&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">n</span><span class="p">)</span><span class="o">*</span><span class="mi">3600</span><span class="p">,</span> 
+                 <span class="n">value</span> <span class="o">=</span> <span class="n">rnorm</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
+
+<span class="n">df</span> <span class="o">&lt;-</span> <span class="n">df</span> <span class="nv">%</span><span class="err">&gt;%</span> 
+  <span class="nv">mutate</span><span class="p">(</span><span class="n">hour</span> <span class="o">=</span> <span class="n">datetime</span> <span class="nv">%</span><span class="err">&gt;%</span> <span class="nv">strftime</span><span class="p">(</span><span class="s">&#39;%H&#39;</span><span class="p">)</span> <span class="nv">%</span><span class="err">&gt;%</span> <span class="nv">as</span><span class="o">.</span><span class="n">numeric</span><span class="p">,</span>
+         <span class="n">date</span> <span class="o">=</span> <span class="n">datetime</span> <span class="nv">%</span><span class="err">&gt;%</span> <span class="nv">as</span><span class="o">.</span><span class="n">Date</span><span class="p">,</span>
+         <span class="n">value</span> <span class="o">=</span> <span class="n">ifelse</span><span class="p">(</span><span class="n">hour</span> <span class="nv">%in%</span> <span class="nv">1:6</span><span class="p">,</span> <span class="n">value</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">runif</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="n">value</span><span class="p">))</span>
+
+<span class="n">ggplot</span><span class="p">()</span> <span class="o">+</span> 
+  <span class="n">geom_line</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">aes</span><span class="p">(</span><span class="n">datetime</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span> <span class="o">+</span> 
+  <span class="n">ggtitle</span><span class="p">(</span><span class="s">&#39;timeseries without early hours highlighted&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<p><img alt="" src="/theme/images/gg_periodic03.png" /></p>
+<p>Note that from this series, it is visually not obvious that there is a pattern.</p>
+<div class="highlight"><pre><span></span><span class="n">y_min</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="nv">$value</span> <span class="nv">%</span><span class="err">&gt;%</span> <span class="nv">min</span><span class="p">)</span> <span class="o">-</span> <span class="mf">0.1</span>
+<span class="n">y_max</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="nv">$value</span> <span class="nv">%</span><span class="err">&gt;%</span> <span class="nv">max</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.1</span>
+
+<span class="n">df_highlight</span> <span class="o">&lt;-</span> <span class="n">df</span> <span class="nv">%</span><span class="err">&gt;%</span> 
+  <span class="nv">filter</span><span class="p">(</span><span class="n">hour</span> <span class="nv">%in%</span> <span class="nv">c</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span> <span class="nv">%</span><span class="err">&gt;%</span> 
+  <span class="nv">group_by</span><span class="p">(</span><span class="n">date</span><span class="p">)</span> <span class="nv">%</span><span class="err">&gt;%</span> 
+  <span class="nv">summarise</span><span class="p">(</span><span class="n">xmin</span> <span class="o">=</span> <span class="n">min</span><span class="p">(</span><span class="n">datetime</span><span class="p">),</span> <span class="n">xmax</span> <span class="o">=</span> <span class="n">max</span><span class="p">(</span><span class="n">datetime</span><span class="p">))</span>
+
+<span class="n">ggplot</span><span class="p">()</span> <span class="o">+</span> 
+  <span class="n">geom_rect</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df_highlight</span><span class="p">,</span> 
+            <span class="n">aes</span><span class="p">(</span><span class="n">xmin</span> <span class="o">=</span> <span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span> <span class="o">=</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">ymin</span> <span class="o">=</span> <span class="n">y_min</span><span class="p">,</span> <span class="n">ymax</span> <span class="o">=</span> <span class="n">y_max</span><span class="p">),</span> 
+            <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.15</span><span class="p">)</span> <span class="o">+</span> 
+  <span class="n">geom_line</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">aes</span><span class="p">(</span><span class="n">datetime</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span> <span class="o">+</span> 
+  <span class="n">ggtitle</span><span class="p">(</span><span class="s">&#39;timeseries with early hours highlighted&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<p><img alt="" src="/theme/images/gg_periodic04.png" /></p>
+<p>The pattern does become obvious when you apply the highlight. </p>
+<h1>Conclusion</h1>
+<p>This 'obviousness' should prompt a potential danger; visual bias. Even though this highlighting technique might be effective to point out a pattern when there is one it may also suggest a pattern when there isn't. It remains a useful technique simply because from a domain perspective it is very sensible to visually confirm the effect of certain periods. </p></div>
+	<hr>
+</div>
+        <br>
+  		</div>
+  	</div>
+  </div>
+
+  <div class="container">
+  	<div class="row">
+  		<div class="col-md-12 text-center center-block aw-bottom">
+  			<p>Vincent D. Warmerdam Made with Pelican</p>
+  		</div>
+  	</div>
+  </div>
+  <!-- JavaScript -->
+  <script src="/theme/js/jquery-2.1.3.min.js"></script>
+  <script type="text/javascript">
+  jQuery(document).ready(function($) {
+  	$("div.collapseheader").click(function () {
+  		$header = $(this).children("span").first();
+  		$codearea = $(this).children(".input_area");
+  		$codearea.slideToggle(500, function () {
+  			$header.text(function () {
+  				return $codearea.is(":visible") ? "Collapse Code" : "Expand Code";
+  			});
+  		});
+  	});
+  });
+
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-28011256-6', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

@@ -1,0 +1,720 @@
+name,attack,defence,hp,type
+Bulbasaur,49,49,45,"[u'grass', u'poison']"
+Ivysaur,62,63,60,"[u'grass', u'poison']"
+Venusaur,82,83,80,"[u'grass', u'poison']"
+Charmander,52,43,39,[u'fire']
+Charmeleon,64,58,58,[u'fire']
+Charizard,84,78,78,"[u'fire', u'flying']"
+Squirtle,48,65,44,[u'water']
+Wartortle,63,80,59,[u'water']
+Blastoise,83,100,79,[u'water']
+Caterpie,30,35,45,[u'bug']
+Metapod,20,55,50,[u'bug']
+Butterfree,45,50,60,"[u'flying', u'bug']"
+Weedle,35,30,40,"[u'bug', u'poison']"
+Kakuna,25,50,45,"[u'bug', u'poison']"
+Beedrill,90,40,65,"[u'bug', u'poison']"
+Pidgey,45,40,40,"[u'flying', u'normal']"
+Pidgeotto,60,55,63,"[u'flying', u'normal']"
+Pidgeot,80,75,83,"[u'flying', u'normal']"
+Rattata,56,35,30,[u'normal']
+Raticate,81,60,55,[u'normal']
+Spearow,60,30,40,"[u'flying', u'normal']"
+Fearow,90,65,65,"[u'flying', u'normal']"
+Ekans,60,44,35,[u'poison']
+Arbok,85,69,60,[u'poison']
+Pikachu,55,40,35,[u'electric']
+Raichu,90,55,60,[u'electric']
+Sandshrew,75,85,50,[u'ground']
+Sandslash,100,110,75,[u'ground']
+Nidoran-f,47,52,55,[u'poison']
+Nidorina,62,67,70,[u'poison']
+Nidoqueen,92,87,90,"[u'poison', u'ground']"
+Nidoran-m,57,40,46,[u'poison']
+Nidorino,72,57,61,[u'poison']
+Nidoking,102,77,81,"[u'poison', u'ground']"
+Clefairy,45,48,70,[u'fairy']
+Clefable,70,73,95,[u'fairy']
+Vulpix,41,40,38,[u'fire']
+Ninetales,76,75,73,[u'fire']
+Jigglypuff,45,20,115,"[u'fairy', u'normal']"
+Wigglytuff,70,45,140,"[u'fairy', u'normal']"
+Zubat,45,35,40,"[u'flying', u'poison']"
+Golbat,80,70,75,"[u'flying', u'poison']"
+Oddish,50,55,45,"[u'grass', u'poison']"
+Gloom,65,70,60,"[u'grass', u'poison']"
+Vileplume,80,85,75,"[u'grass', u'poison']"
+Paras,70,55,35,"[u'grass', u'bug']"
+Parasect,95,80,60,"[u'grass', u'bug']"
+Venonat,55,50,60,"[u'bug', u'poison']"
+Venomoth,65,60,70,"[u'bug', u'poison']"
+Diglett,55,25,10,[u'ground']
+Dugtrio,80,50,35,[u'ground']
+Meowth,45,35,40,[u'normal']
+Persian,70,60,65,[u'normal']
+Psyduck,52,48,50,[u'water']
+Golduck,82,78,80,[u'water']
+Mankey,80,35,40,[u'fighting']
+Primeape,105,60,65,[u'fighting']
+Growlithe,70,45,55,[u'fire']
+Arcanine,110,80,90,[u'fire']
+Poliwag,50,40,40,[u'water']
+Poliwhirl,65,65,65,[u'water']
+Poliwrath,95,95,90,"[u'water', u'fighting']"
+Abra,20,15,25,[u'psychic']
+Kadabra,35,30,40,[u'psychic']
+Alakazam,50,45,55,[u'psychic']
+Machop,80,50,70,[u'fighting']
+Machoke,100,70,80,[u'fighting']
+Machamp,130,80,90,[u'fighting']
+Bellsprout,75,35,50,"[u'grass', u'poison']"
+Weepinbell,90,50,65,"[u'grass', u'poison']"
+Victreebel,105,65,80,"[u'grass', u'poison']"
+Tentacool,40,35,40,"[u'water', u'poison']"
+Tentacruel,70,65,80,"[u'water', u'poison']"
+Geodude,80,100,40,"[u'rock', u'ground']"
+Graveler,95,115,55,"[u'rock', u'ground']"
+Golem,120,130,80,"[u'rock', u'ground']"
+Ponyta,85,55,50,[u'fire']
+Rapidash,100,70,65,[u'fire']
+Slowpoke,65,65,90,"[u'water', u'psychic']"
+Slowbro,75,110,95,"[u'water', u'psychic']"
+Magnemite,35,70,25,"[u'steel', u'electric']"
+Magneton,60,95,50,"[u'steel', u'electric']"
+Farfetchd,65,55,52,"[u'flying', u'normal']"
+Doduo,85,45,35,"[u'flying', u'normal']"
+Dodrio,110,70,60,"[u'flying', u'normal']"
+Seel,45,55,65,[u'water']
+Dewgong,70,80,90,"[u'water', u'ice']"
+Grimer,80,50,80,[u'poison']
+Muk,105,75,105,[u'poison']
+Shellder,65,100,30,[u'water']
+Cloyster,95,180,50,"[u'water', u'ice']"
+Gastly,35,30,30,"[u'ghost', u'poison']"
+Haunter,50,45,45,"[u'ghost', u'poison']"
+Gengar,65,60,60,"[u'ghost', u'poison']"
+Onix,45,160,35,"[u'rock', u'ground']"
+Drowzee,48,45,60,[u'psychic']
+Hypno,73,70,85,[u'psychic']
+Krabby,105,90,30,[u'water']
+Kingler,130,115,55,[u'water']
+Voltorb,30,50,40,[u'electric']
+Electrode,50,70,60,[u'electric']
+Exeggcute,40,80,60,"[u'psychic', u'grass']"
+Exeggutor,95,85,95,"[u'psychic', u'grass']"
+Cubone,50,95,50,[u'ground']
+Marowak,80,110,60,[u'ground']
+Hitmonlee,120,53,50,[u'fighting']
+Hitmonchan,105,79,50,[u'fighting']
+Lickitung,55,75,90,[u'normal']
+Koffing,65,95,40,[u'poison']
+Weezing,90,120,65,[u'poison']
+Rhyhorn,85,95,80,"[u'rock', u'ground']"
+Rhydon,130,120,105,"[u'rock', u'ground']"
+Chansey,5,5,250,[u'normal']
+Tangela,55,115,65,[u'grass']
+Kangaskhan,95,80,105,[u'normal']
+Horsea,40,70,30,[u'water']
+Seadra,65,95,55,[u'water']
+Goldeen,67,60,45,[u'water']
+Seaking,92,65,80,[u'water']
+Staryu,45,55,30,[u'water']
+Starmie,75,85,60,"[u'water', u'psychic']"
+Mr-mime,45,65,40,"[u'fairy', u'psychic']"
+Scyther,110,80,70,"[u'flying', u'bug']"
+Jynx,50,35,65,"[u'psychic', u'ice']"
+Electabuzz,83,57,65,[u'electric']
+Magmar,95,57,65,[u'fire']
+Pinsir,125,100,65,[u'bug']
+Tauros,100,95,75,[u'normal']
+Magikarp,10,55,20,[u'water']
+Gyarados,125,79,95,"[u'water', u'flying']"
+Lapras,85,80,130,"[u'water', u'ice']"
+Ditto,48,48,48,[u'normal']
+Eevee,55,50,55,[u'normal']
+Vaporeon,65,60,130,[u'water']
+Jolteon,65,60,65,[u'electric']
+Flareon,130,60,65,[u'fire']
+Porygon,60,70,65,[u'normal']
+Omanyte,40,100,35,"[u'water', u'rock']"
+Omastar,60,125,70,"[u'water', u'rock']"
+Kabuto,80,90,30,"[u'water', u'rock']"
+Kabutops,115,105,60,"[u'water', u'rock']"
+Aerodactyl,105,65,80,"[u'flying', u'rock']"
+Snorlax,110,65,160,[u'normal']
+Articuno,85,100,90,"[u'flying', u'ice']"
+Zapdos,90,85,90,"[u'flying', u'electric']"
+Moltres,100,90,90,"[u'fire', u'flying']"
+Dratini,64,45,41,[u'dragon']
+Dragonair,84,65,61,[u'dragon']
+Dragonite,134,95,91,"[u'flying', u'dragon']"
+Mewtwo,110,90,106,[u'psychic']
+Mew,100,100,100,[u'psychic']
+Chikorita,49,65,45,[u'grass']
+Bayleef,62,80,60,[u'grass']
+Meganium,82,100,80,[u'grass']
+Cyndaquil,52,43,39,[u'fire']
+Quilava,64,58,58,[u'fire']
+Typhlosion,84,78,78,[u'fire']
+Totodile,65,64,50,[u'water']
+Croconaw,80,80,65,[u'water']
+Feraligatr,105,100,85,[u'water']
+Sentret,46,34,35,[u'normal']
+Furret,76,64,85,[u'normal']
+Hoothoot,30,30,60,"[u'flying', u'normal']"
+Noctowl,50,50,100,"[u'flying', u'normal']"
+Ledyba,20,30,40,"[u'flying', u'bug']"
+Ledian,35,50,55,"[u'flying', u'bug']"
+Spinarak,60,40,40,"[u'bug', u'poison']"
+Ariados,90,70,70,"[u'bug', u'poison']"
+Crobat,90,80,85,"[u'flying', u'poison']"
+Chinchou,38,38,75,"[u'water', u'electric']"
+Lanturn,58,58,125,"[u'water', u'electric']"
+Pichu,40,15,20,[u'electric']
+Cleffa,25,28,50,[u'fairy']
+Igglybuff,30,15,90,"[u'fairy', u'normal']"
+Togepi,20,65,35,[u'fairy']
+Togetic,40,85,55,"[u'fairy', u'flying']"
+Natu,50,45,40,"[u'psychic', u'flying']"
+Xatu,75,70,65,"[u'psychic', u'flying']"
+Mareep,40,40,55,[u'electric']
+Flaaffy,55,55,70,[u'electric']
+Ampharos,75,85,90,[u'electric']
+Bellossom,80,95,75,[u'grass']
+Marill,20,50,70,"[u'water', u'fairy']"
+Azumarill,50,80,100,"[u'water', u'fairy']"
+Sudowoodo,100,115,70,[u'rock']
+Politoed,75,75,90,[u'water']
+Hoppip,35,40,35,"[u'flying', u'grass']"
+Skiploom,45,50,55,"[u'flying', u'grass']"
+Jumpluff,55,70,75,"[u'flying', u'grass']"
+Aipom,70,55,55,[u'normal']
+Sunkern,30,30,30,[u'grass']
+Sunflora,75,55,75,[u'grass']
+Yanma,65,45,65,"[u'flying', u'bug']"
+Wooper,45,45,55,"[u'water', u'ground']"
+Quagsire,85,85,95,"[u'water', u'ground']"
+Espeon,65,60,65,[u'psychic']
+Umbreon,65,110,95,[u'dark']
+Murkrow,85,42,60,"[u'dark', u'flying']"
+Slowking,75,80,95,"[u'water', u'psychic']"
+Misdreavus,60,60,60,[u'ghost']
+Unown,72,48,48,[u'psychic']
+Wobbuffet,33,58,190,[u'psychic']
+Girafarig,80,65,70,"[u'psychic', u'normal']"
+Pineco,65,90,50,[u'bug']
+Forretress,90,140,75,"[u'steel', u'bug']"
+Dunsparce,70,70,100,[u'normal']
+Gligar,75,105,65,"[u'flying', u'ground']"
+Steelix,85,200,75,"[u'steel', u'ground']"
+Snubbull,80,50,60,[u'fairy']
+Granbull,120,75,90,[u'fairy']
+Qwilfish,95,75,65,"[u'water', u'poison']"
+Scizor,130,100,70,"[u'steel', u'bug']"
+Shuckle,10,230,20,"[u'bug', u'rock']"
+Heracross,125,75,80,"[u'bug', u'fighting']"
+Sneasel,95,55,55,"[u'dark', u'ice']"
+Teddiursa,80,50,60,[u'normal']
+Ursaring,130,75,90,[u'normal']
+Slugma,40,40,40,[u'fire']
+Magcargo,50,120,50,"[u'fire', u'rock']"
+Swinub,50,40,50,"[u'ice', u'ground']"
+Piloswine,100,80,100,"[u'ice', u'ground']"
+Corsola,55,85,55,"[u'water', u'rock']"
+Remoraid,65,35,35,[u'water']
+Octillery,105,75,75,[u'water']
+Delibird,55,45,45,"[u'flying', u'ice']"
+Mantine,40,70,65,"[u'water', u'flying']"
+Skarmory,80,140,65,"[u'steel', u'flying']"
+Houndour,60,30,45,"[u'fire', u'dark']"
+Houndoom,90,50,75,"[u'fire', u'dark']"
+Kingdra,95,95,75,"[u'water', u'dragon']"
+Phanpy,60,60,90,[u'ground']
+Donphan,120,120,90,[u'ground']
+Porygon2,80,90,85,[u'normal']
+Stantler,95,62,73,[u'normal']
+Smeargle,20,35,55,[u'normal']
+Tyrogue,35,35,35,[u'fighting']
+Hitmontop,95,95,50,[u'fighting']
+Smoochum,30,15,45,"[u'psychic', u'ice']"
+Elekid,63,37,45,[u'electric']
+Magby,75,37,45,[u'fire']
+Miltank,80,105,95,[u'normal']
+Blissey,10,10,255,[u'normal']
+Raikou,85,75,90,[u'electric']
+Entei,115,85,115,[u'fire']
+Suicune,75,115,100,[u'water']
+Larvitar,64,50,50,"[u'rock', u'ground']"
+Pupitar,84,70,70,"[u'rock', u'ground']"
+Tyranitar,134,110,100,"[u'dark', u'rock']"
+Lugia,90,130,106,"[u'psychic', u'flying']"
+Ho-oh,130,90,106,"[u'fire', u'flying']"
+Celebi,100,100,100,"[u'psychic', u'grass']"
+Treecko,45,35,40,[u'grass']
+Grovyle,65,45,50,[u'grass']
+Sceptile,85,65,70,[u'grass']
+Torchic,60,40,45,[u'fire']
+Combusken,85,60,60,"[u'fire', u'fighting']"
+Blaziken,120,70,80,"[u'fire', u'fighting']"
+Mudkip,70,50,50,[u'water']
+Marshtomp,85,70,70,"[u'water', u'ground']"
+Swampert,110,90,100,"[u'water', u'ground']"
+Poochyena,55,35,35,[u'dark']
+Mightyena,90,70,70,[u'dark']
+Zigzagoon,30,41,38,[u'normal']
+Linoone,70,61,78,[u'normal']
+Wurmple,45,35,45,[u'bug']
+Silcoon,35,55,50,[u'bug']
+Beautifly,70,50,60,"[u'flying', u'bug']"
+Cascoon,35,55,50,[u'bug']
+Dustox,50,70,60,"[u'bug', u'poison']"
+Lotad,30,30,40,"[u'water', u'grass']"
+Lombre,50,50,60,"[u'water', u'grass']"
+Ludicolo,70,70,80,"[u'water', u'grass']"
+Seedot,40,50,40,[u'grass']
+Nuzleaf,70,40,70,"[u'dark', u'grass']"
+Shiftry,100,60,90,"[u'dark', u'grass']"
+Taillow,55,30,40,"[u'flying', u'normal']"
+Swellow,85,60,60,"[u'flying', u'normal']"
+Wingull,30,30,40,"[u'water', u'flying']"
+Pelipper,50,100,60,"[u'water', u'flying']"
+Ralts,25,25,28,"[u'fairy', u'psychic']"
+Kirlia,35,35,38,"[u'fairy', u'psychic']"
+Gardevoir,65,65,68,"[u'fairy', u'psychic']"
+Surskit,30,32,40,"[u'water', u'bug']"
+Masquerain,60,62,70,"[u'flying', u'bug']"
+Shroomish,40,60,60,[u'grass']
+Breloom,130,80,60,"[u'grass', u'fighting']"
+Slakoth,60,60,60,[u'normal']
+Vigoroth,80,80,80,[u'normal']
+Slaking,160,100,150,[u'normal']
+Nincada,45,90,31,"[u'bug', u'ground']"
+Ninjask,90,45,61,"[u'flying', u'bug']"
+Shedinja,90,45,1,"[u'ghost', u'bug']"
+Whismur,51,23,64,[u'normal']
+Loudred,71,43,84,[u'normal']
+Exploud,91,63,104,[u'normal']
+Makuhita,60,30,72,[u'fighting']
+Hariyama,120,60,144,[u'fighting']
+Azurill,20,40,50,"[u'fairy', u'normal']"
+Nosepass,45,135,30,[u'rock']
+Skitty,45,45,50,[u'normal']
+Delcatty,65,65,70,[u'normal']
+Sableye,75,75,50,"[u'ghost', u'dark']"
+Mawile,85,85,50,"[u'steel', u'fairy']"
+Aron,70,100,50,"[u'steel', u'rock']"
+Lairon,90,140,60,"[u'steel', u'rock']"
+Aggron,110,180,70,"[u'steel', u'rock']"
+Meditite,40,55,30,"[u'psychic', u'fighting']"
+Medicham,60,75,60,"[u'psychic', u'fighting']"
+Electrike,45,40,40,[u'electric']
+Manectric,75,60,70,[u'electric']
+Plusle,50,40,60,[u'electric']
+Minun,40,50,60,[u'electric']
+Volbeat,73,55,65,[u'bug']
+Illumise,47,55,65,[u'bug']
+Roselia,60,45,50,"[u'grass', u'poison']"
+Gulpin,43,53,70,[u'poison']
+Swalot,73,83,100,[u'poison']
+Carvanha,90,20,45,"[u'water', u'dark']"
+Sharpedo,120,40,70,"[u'water', u'dark']"
+Wailmer,70,35,130,[u'water']
+Wailord,90,45,170,[u'water']
+Numel,60,40,60,"[u'fire', u'ground']"
+Camerupt,100,70,70,"[u'fire', u'ground']"
+Torkoal,85,140,70,[u'fire']
+Spoink,25,35,60,[u'psychic']
+Grumpig,45,65,80,[u'psychic']
+Spinda,60,60,60,[u'normal']
+Trapinch,100,45,45,[u'ground']
+Vibrava,70,50,50,"[u'dragon', u'ground']"
+Flygon,100,80,80,"[u'dragon', u'ground']"
+Cacnea,85,40,50,[u'grass']
+Cacturne,115,60,70,"[u'dark', u'grass']"
+Swablu,40,60,45,"[u'flying', u'normal']"
+Altaria,70,90,75,"[u'flying', u'dragon']"
+Zangoose,115,60,73,[u'normal']
+Seviper,100,60,73,[u'poison']
+Lunatone,55,65,70,"[u'psychic', u'rock']"
+Solrock,95,85,70,"[u'psychic', u'rock']"
+Barboach,48,43,50,"[u'water', u'ground']"
+Whiscash,78,73,110,"[u'water', u'ground']"
+Corphish,80,65,43,[u'water']
+Crawdaunt,120,85,63,"[u'water', u'dark']"
+Baltoy,40,55,40,"[u'psychic', u'ground']"
+Claydol,70,105,60,"[u'psychic', u'ground']"
+Lileep,41,77,66,"[u'grass', u'rock']"
+Cradily,81,97,86,"[u'grass', u'rock']"
+Anorith,95,50,45,"[u'bug', u'rock']"
+Armaldo,125,100,75,"[u'bug', u'rock']"
+Feebas,15,20,20,[u'water']
+Milotic,60,79,95,[u'water']
+Castform,70,70,70,[u'normal']
+Kecleon,90,70,60,[u'normal']
+Shuppet,75,35,44,[u'ghost']
+Banette,115,65,64,[u'ghost']
+Duskull,40,90,20,[u'ghost']
+Dusclops,70,130,40,[u'ghost']
+Tropius,68,83,99,"[u'flying', u'grass']"
+Chimecho,50,70,65,[u'psychic']
+Absol,130,60,65,[u'dark']
+Wynaut,23,48,95,[u'psychic']
+Snorunt,50,50,50,[u'ice']
+Glalie,80,80,80,[u'ice']
+Spheal,40,50,70,"[u'water', u'ice']"
+Sealeo,60,70,90,"[u'water', u'ice']"
+Walrein,80,90,110,"[u'water', u'ice']"
+Clamperl,64,85,35,[u'water']
+Huntail,104,105,55,[u'water']
+Gorebyss,84,105,55,[u'water']
+Relicanth,90,130,100,"[u'water', u'rock']"
+Luvdisc,30,55,43,[u'water']
+Bagon,75,60,45,[u'dragon']
+Shelgon,95,100,65,[u'dragon']
+Salamence,135,80,95,"[u'flying', u'dragon']"
+Beldum,55,80,40,"[u'steel', u'psychic']"
+Metang,75,100,60,"[u'steel', u'psychic']"
+Metagross,135,130,80,"[u'steel', u'psychic']"
+Regirock,100,200,80,[u'rock']
+Regice,50,100,80,[u'ice']
+Registeel,75,150,80,[u'steel']
+Latias,80,90,80,"[u'psychic', u'dragon']"
+Latios,90,80,80,"[u'psychic', u'dragon']"
+Kyogre,100,90,100,[u'water']
+Groudon,150,140,100,[u'ground']
+Rayquaza,150,90,105,"[u'flying', u'dragon']"
+Jirachi,100,100,100,"[u'steel', u'psychic']"
+Deoxys-normal,150,50,50,[u'psychic']
+Turtwig,68,64,55,[u'grass']
+Grotle,89,85,75,[u'grass']
+Torterra,109,105,95,"[u'grass', u'ground']"
+Chimchar,58,44,44,[u'fire']
+Monferno,78,52,64,"[u'fire', u'fighting']"
+Infernape,104,71,76,"[u'fire', u'fighting']"
+Piplup,51,53,53,[u'water']
+Prinplup,66,68,64,[u'water']
+Empoleon,86,88,84,"[u'steel', u'water']"
+Starly,55,30,40,"[u'flying', u'normal']"
+Staravia,75,50,55,"[u'flying', u'normal']"
+Staraptor,120,70,85,"[u'flying', u'normal']"
+Bidoof,45,40,59,[u'normal']
+Bibarel,85,60,79,"[u'water', u'normal']"
+Kricketot,25,41,37,[u'bug']
+Kricketune,85,51,77,[u'bug']
+Shinx,65,34,45,[u'electric']
+Luxio,85,49,60,[u'electric']
+Luxray,120,79,80,[u'electric']
+Budew,30,35,40,"[u'grass', u'poison']"
+Roserade,70,65,60,"[u'grass', u'poison']"
+Cranidos,125,40,67,[u'rock']
+Rampardos,165,60,97,[u'rock']
+Shieldon,42,118,30,"[u'steel', u'rock']"
+Bastiodon,52,168,60,"[u'steel', u'rock']"
+Burmy,29,45,40,[u'bug']
+Wormadam-plant,59,85,60,"[u'grass', u'bug']"
+Mothim,94,50,70,"[u'flying', u'bug']"
+Combee,30,42,30,"[u'flying', u'bug']"
+Vespiquen,80,102,70,"[u'flying', u'bug']"
+Pachirisu,45,70,60,[u'electric']
+Buizel,65,35,55,[u'water']
+Floatzel,105,55,85,[u'water']
+Cherubi,35,45,45,[u'grass']
+Cherrim,60,70,70,[u'grass']
+Shellos,48,48,76,[u'water']
+Gastrodon,83,68,111,"[u'water', u'ground']"
+Ambipom,100,66,75,[u'normal']
+Drifloon,50,34,90,"[u'ghost', u'flying']"
+Drifblim,80,44,150,"[u'ghost', u'flying']"
+Buneary,66,44,55,[u'normal']
+Lopunny,76,84,65,[u'normal']
+Mismagius,60,60,60,[u'ghost']
+Honchkrow,125,52,100,"[u'dark', u'flying']"
+Glameow,55,42,49,[u'normal']
+Purugly,82,64,71,[u'normal']
+Chingling,30,50,45,[u'psychic']
+Stunky,63,47,63,"[u'dark', u'poison']"
+Skuntank,93,67,103,"[u'dark', u'poison']"
+Bronzor,24,86,57,"[u'steel', u'psychic']"
+Bronzong,89,116,67,"[u'steel', u'psychic']"
+Bonsly,80,95,50,[u'rock']
+Mime-jr,25,45,20,"[u'fairy', u'psychic']"
+Happiny,5,5,100,[u'normal']
+Chatot,65,45,76,"[u'flying', u'normal']"
+Spiritomb,92,108,50,"[u'ghost', u'dark']"
+Gible,70,45,58,"[u'dragon', u'ground']"
+Gabite,90,65,68,"[u'dragon', u'ground']"
+Garchomp,130,95,108,"[u'dragon', u'ground']"
+Munchlax,85,40,135,[u'normal']
+Riolu,70,40,40,[u'fighting']
+Lucario,110,70,70,"[u'steel', u'fighting']"
+Hippopotas,72,78,68,[u'ground']
+Hippowdon,112,118,108,[u'ground']
+Skorupi,50,90,40,"[u'bug', u'poison']"
+Drapion,90,110,70,"[u'dark', u'poison']"
+Croagunk,61,40,48,"[u'poison', u'fighting']"
+Toxicroak,106,65,83,"[u'poison', u'fighting']"
+Carnivine,100,72,74,[u'grass']
+Finneon,49,56,49,[u'water']
+Lumineon,69,76,69,[u'water']
+Mantyke,20,50,45,"[u'water', u'flying']"
+Snover,62,50,60,"[u'grass', u'ice']"
+Abomasnow,92,75,90,"[u'grass', u'ice']"
+Weavile,120,65,70,"[u'dark', u'ice']"
+Magnezone,70,115,70,"[u'steel', u'electric']"
+Lickilicky,85,95,110,[u'normal']
+Rhyperior,140,130,115,"[u'rock', u'ground']"
+Tangrowth,100,125,100,[u'grass']
+Electivire,123,67,75,[u'electric']
+Magmortar,95,67,75,[u'fire']
+Togekiss,50,95,85,"[u'fairy', u'flying']"
+Yanmega,76,86,86,"[u'flying', u'bug']"
+Leafeon,110,130,65,[u'grass']
+Glaceon,60,110,65,[u'ice']
+Gliscor,95,125,75,"[u'flying', u'ground']"
+Mamoswine,130,80,110,"[u'ice', u'ground']"
+Porygon-z,80,70,85,[u'normal']
+Gallade,125,65,68,"[u'psychic', u'fighting']"
+Probopass,55,145,60,"[u'steel', u'rock']"
+Dusknoir,100,135,45,[u'ghost']
+Froslass,80,70,70,"[u'ghost', u'ice']"
+Rotom,50,77,50,"[u'ghost', u'electric']"
+Uxie,75,130,75,[u'psychic']
+Mesprit,105,105,80,[u'psychic']
+Azelf,125,70,75,[u'psychic']
+Dialga,120,120,100,"[u'steel', u'dragon']"
+Palkia,120,100,90,"[u'water', u'dragon']"
+Heatran,90,106,91,"[u'steel', u'fire']"
+Regigigas,160,110,110,[u'normal']
+Giratina-altered,100,120,150,"[u'ghost', u'dragon']"
+Cresselia,70,120,120,[u'psychic']
+Phione,80,80,80,[u'water']
+Manaphy,100,100,100,[u'water']
+Darkrai,90,90,70,[u'dark']
+Shaymin-land,100,100,100,[u'grass']
+Arceus,120,120,120,[u'normal']
+Victini,100,100,100,"[u'fire', u'psychic']"
+Snivy,45,55,45,[u'grass']
+Servine,60,75,60,[u'grass']
+Serperior,75,95,75,[u'grass']
+Tepig,63,45,65,[u'fire']
+Pignite,93,55,90,"[u'fire', u'fighting']"
+Emboar,123,65,110,"[u'fire', u'fighting']"
+Oshawott,55,45,55,[u'water']
+Dewott,75,60,75,[u'water']
+Samurott,100,85,95,[u'water']
+Patrat,55,39,45,[u'normal']
+Watchog,85,69,60,[u'normal']
+Lillipup,60,45,45,[u'normal']
+Herdier,80,65,65,[u'normal']
+Stoutland,110,90,85,[u'normal']
+Purrloin,50,37,41,[u'dark']
+Liepard,88,50,64,[u'dark']
+Pansage,53,48,50,[u'grass']
+Simisage,98,63,75,[u'grass']
+Pansear,53,48,50,[u'fire']
+Simisear,98,63,75,[u'fire']
+Panpour,53,48,50,[u'water']
+Simipour,98,63,75,[u'water']
+Munna,25,45,76,[u'psychic']
+Musharna,55,85,116,[u'psychic']
+Pidove,55,50,50,"[u'flying', u'normal']"
+Tranquill,77,62,62,"[u'flying', u'normal']"
+Unfezant,115,80,80,"[u'flying', u'normal']"
+Blitzle,60,32,45,[u'electric']
+Zebstrika,100,63,75,[u'electric']
+Roggenrola,75,85,55,[u'rock']
+Boldore,105,105,70,[u'rock']
+Gigalith,135,130,85,[u'rock']
+Woobat,45,43,55,"[u'psychic', u'flying']"
+Swoobat,57,55,67,"[u'psychic', u'flying']"
+Drilbur,85,40,60,[u'ground']
+Excadrill,135,60,110,"[u'steel', u'ground']"
+Audino,60,86,103,[u'normal']
+Timburr,80,55,75,[u'fighting']
+Gurdurr,105,85,85,[u'fighting']
+Conkeldurr,140,95,105,[u'fighting']
+Tympole,50,40,50,[u'water']
+Palpitoad,65,55,75,"[u'water', u'ground']"
+Seismitoad,95,75,105,"[u'water', u'ground']"
+Throh,100,85,120,[u'fighting']
+Sawk,125,75,75,[u'fighting']
+Sewaddle,53,70,45,"[u'grass', u'bug']"
+Swadloon,63,90,55,"[u'grass', u'bug']"
+Leavanny,103,80,75,"[u'grass', u'bug']"
+Venipede,45,59,30,"[u'bug', u'poison']"
+Whirlipede,55,99,40,"[u'bug', u'poison']"
+Scolipede,100,89,60,"[u'bug', u'poison']"
+Cottonee,27,60,40,"[u'fairy', u'grass']"
+Whimsicott,67,85,60,"[u'fairy', u'grass']"
+Petilil,35,50,45,[u'grass']
+Lilligant,60,75,70,[u'grass']
+Basculin-red-striped,92,65,70,[u'water']
+Sandile,72,35,50,"[u'dark', u'ground']"
+Krokorok,82,45,60,"[u'dark', u'ground']"
+Krookodile,117,80,95,"[u'dark', u'ground']"
+Darumaka,90,45,70,[u'fire']
+Darmanitan-standard,140,55,105,[u'fire']
+Maractus,86,67,75,[u'grass']
+Dwebble,65,85,50,"[u'bug', u'rock']"
+Crustle,95,125,70,"[u'bug', u'rock']"
+Scraggy,75,70,50,"[u'dark', u'fighting']"
+Scrafty,90,115,65,"[u'dark', u'fighting']"
+Sigilyph,58,80,72,"[u'psychic', u'flying']"
+Yamask,30,85,38,[u'ghost']
+Cofagrigus,50,145,58,[u'ghost']
+Tirtouga,78,103,54,"[u'water', u'rock']"
+Carracosta,108,133,74,"[u'water', u'rock']"
+Archen,112,45,55,"[u'flying', u'rock']"
+Archeops,140,65,75,"[u'flying', u'rock']"
+Trubbish,50,62,50,[u'poison']
+Garbodor,95,82,80,[u'poison']
+Zorua,65,40,40,[u'dark']
+Zoroark,105,60,60,[u'dark']
+Minccino,50,40,55,[u'normal']
+Cinccino,95,60,75,[u'normal']
+Gothita,30,50,45,[u'psychic']
+Gothorita,45,70,60,[u'psychic']
+Gothitelle,55,95,70,[u'psychic']
+Solosis,30,40,45,[u'psychic']
+Duosion,40,50,65,[u'psychic']
+Reuniclus,65,75,110,[u'psychic']
+Ducklett,44,50,62,"[u'water', u'flying']"
+Swanna,87,63,75,"[u'water', u'flying']"
+Vanillite,50,50,36,[u'ice']
+Vanillish,65,65,51,[u'ice']
+Vanilluxe,95,85,71,[u'ice']
+Deerling,60,50,60,"[u'grass', u'normal']"
+Sawsbuck,100,70,80,"[u'grass', u'normal']"
+Emolga,75,60,55,"[u'flying', u'electric']"
+Karrablast,75,45,50,[u'bug']
+Escavalier,135,105,70,"[u'steel', u'bug']"
+Foongus,55,45,69,"[u'grass', u'poison']"
+Amoonguss,85,70,114,"[u'grass', u'poison']"
+Frillish,40,50,55,"[u'ghost', u'water']"
+Jellicent,60,70,100,"[u'ghost', u'water']"
+Alomomola,75,80,165,[u'water']
+Joltik,47,50,50,"[u'bug', u'electric']"
+Galvantula,77,60,70,"[u'bug', u'electric']"
+Ferroseed,50,91,44,"[u'steel', u'grass']"
+Ferrothorn,94,131,74,"[u'steel', u'grass']"
+Klink,55,70,40,[u'steel']
+Klang,80,95,60,[u'steel']
+Klinklang,100,115,60,[u'steel']
+Tynamo,55,40,35,[u'electric']
+Eelektrik,85,70,65,[u'electric']
+Eelektross,115,80,85,[u'electric']
+Elgyem,55,55,55,[u'psychic']
+Beheeyem,75,75,75,[u'psychic']
+Litwick,30,55,50,"[u'ghost', u'fire']"
+Lampent,40,60,60,"[u'ghost', u'fire']"
+Chandelure,55,90,60,"[u'ghost', u'fire']"
+Axew,87,60,46,[u'dragon']
+Fraxure,117,70,66,[u'dragon']
+Haxorus,147,90,76,[u'dragon']
+Cubchoo,70,40,55,[u'ice']
+Beartic,110,80,95,[u'ice']
+Cryogonal,50,30,70,[u'ice']
+Shelmet,40,85,50,[u'bug']
+Accelgor,70,40,80,[u'bug']
+Stunfisk,66,84,109,"[u'electric', u'ground']"
+Mienfoo,85,50,45,[u'fighting']
+Mienshao,125,60,65,[u'fighting']
+Druddigon,120,90,77,[u'dragon']
+Golett,74,50,59,"[u'ghost', u'ground']"
+Golurk,124,80,89,"[u'ghost', u'ground']"
+Pawniard,85,70,45,"[u'steel', u'dark']"
+Bisharp,125,100,65,"[u'steel', u'dark']"
+Bouffalant,110,95,95,[u'normal']
+Rufflet,83,50,70,"[u'flying', u'normal']"
+Braviary,123,75,100,"[u'flying', u'normal']"
+Vullaby,55,75,70,"[u'dark', u'flying']"
+Mandibuzz,65,105,110,"[u'dark', u'flying']"
+Heatmor,97,66,85,[u'fire']
+Durant,109,112,58,"[u'steel', u'bug']"
+Deino,65,50,52,"[u'dark', u'dragon']"
+Zweilous,85,70,72,"[u'dark', u'dragon']"
+Hydreigon,105,90,92,"[u'dark', u'dragon']"
+Larvesta,85,55,55,"[u'fire', u'bug']"
+Volcarona,60,65,85,"[u'fire', u'bug']"
+Cobalion,90,129,91,"[u'steel', u'fighting']"
+Terrakion,129,90,91,"[u'fighting', u'rock']"
+Virizion,90,72,91,"[u'grass', u'fighting']"
+Tornadus-incarnate,115,70,79,[u'flying']
+Tornadus-incarnate,115,70,79,[u'flying']
+Thundurus-incarnate,115,70,79,"[u'flying', u'electric']"
+Reshiram,120,100,100,"[u'fire', u'dragon']"
+Zekrom,150,120,100,"[u'electric', u'dragon']"
+Landorus-incarnate,125,90,89,"[u'flying', u'ground']"
+Kyurem,130,90,125,"[u'ice', u'dragon']"
+Keldeo-ordinary,72,90,91,"[u'water', u'fighting']"
+Meloetta-aria,77,77,100,"[u'psychic', u'normal']"
+Genesect,120,95,71,"[u'steel', u'bug']"
+Chespin,61,65,56,[u'grass']
+Quilladin,78,95,61,[u'grass']
+Chesnaught,107,122,88,"[u'grass', u'fighting']"
+Fennekin,45,40,40,[u'fire']
+Braixen,59,58,59,[u'fire']
+Delphox,69,72,75,"[u'fire', u'psychic']"
+Froakie,56,41,41,[u'water']
+Frogadier,63,52,54,[u'water']
+Greninja,95,67,72,"[u'water', u'dark']"
+Bunnelby,36,38,38,[u'normal']
+Diggersby,56,77,85,"[u'ground', u'normal']"
+Fletchling,50,43,45,"[u'flying', u'normal']"
+Fletchinder,73,55,62,"[u'fire', u'flying']"
+Talonflame,81,71,78,"[u'fire', u'flying']"
+Scatterbug,35,40,38,[u'bug']
+Spewpa,22,60,45,[u'bug']
+Vivillon,52,50,80,"[u'flying', u'bug']"
+Litleo,50,58,62,"[u'fire', u'normal']"
+Pyroar,68,72,86,"[u'fire', u'normal']"
+Flabebe,38,39,44,[u'fairy']
+Floette,45,47,54,[u'fairy']
+Florges,65,68,78,[u'fairy']
+Skiddo,65,48,66,[u'grass']
+Gogoat,100,62,123,[u'grass']
+Pancham,82,62,67,[u'fighting']
+Pangoro,124,78,95,"[u'dark', u'fighting']"
+Furfrou,80,60,75,[u'normal']
+Espurr,48,54,62,[u'psychic']
+Meowstic-male,48,76,74,[u'psychic']
+Honedge,80,100,45,"[u'ghost', u'steel']"
+Doublade,110,150,59,"[u'ghost', u'steel']"
+Aegislash,50,150,60,"[u'ghost', u'steel']"
+Spritzee,52,60,78,[u'fairy']
+Aromatisse,72,72,101,[u'fairy']
+Swirlix,48,66,62,[u'fairy']
+Slurpuff,80,86,82,[u'fairy']
+Inkay,54,53,53,"[u'dark', u'psychic']"
+Malamar,92,88,86,"[u'dark', u'psychic']"
+Binacle,52,67,42,"[u'water', u'rock']"
+Barbaracle,105,115,72,"[u'water', u'rock']"
+Skrelp,60,60,50,"[u'water', u'poison']"
+Dragalge,75,90,65,"[u'poison', u'dragon']"
+Clauncher,53,62,50,[u'water']
+Clawitzer,73,88,71,[u'water']
+Helioptile,38,33,44,"[u'electric', u'normal']"
+Heliolisk,55,52,62,"[u'electric', u'normal']"
+Tyrunt,89,77,58,"[u'dragon', u'rock']"
+Tyrantrum,121,119,82,"[u'dragon', u'rock']"
+Amaura,59,50,77,"[u'ice', u'rock']"
+Aurorus,77,72,123,"[u'ice', u'rock']"
+Sylveon,65,65,95,[u'fairy']
+Hawlucha,92,77,78,"[u'flying', u'fighting']"
+Dedenne,58,57,67,"[u'fairy', u'electric']"
+Carbink,50,150,50,"[u'fairy', u'rock']"
+Goomy,50,35,45,[u'dragon']
+Sliggoo,75,53,68,[u'dragon']
+Goodra,100,70,90,[u'dragon']
+Klefki,81,91,58,"[u'steel', u'fairy']"
+Phantump,70,48,43,"[u'ghost', u'grass']"
+Trevenant,110,76,85,"[u'ghost', u'grass']"
+Pumpkaboo-average,66,70,49,"[u'ghost', u'grass']"
+Gourgeist-average,90,122,65,"[u'ghost', u'grass']"
+Bergmite,69,86,56,[u'ice']
+Avalugg,117,184,95,[u'ice']
+Noibat,30,35,40,"[u'flying', u'dragon']"
+Noivern,70,80,85,"[u'flying', u'dragon']"
+Xerneas,131,95,126,[u'fairy']
+Yveltal,131,95,126,"[u'dark', u'flying']"
+Zygarde,100,121,108,"[u'dragon', u'ground']"

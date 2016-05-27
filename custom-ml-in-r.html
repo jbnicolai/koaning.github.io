@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Custom ML in R — koaning.io</title>
+  <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+	<meta name="description" content="Title: Custom ML in R; Date: 2015-11-05; Author: Vincent D. Warmerdam">
+	<meta name="author" content="Vincent D. Warmerdam">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="/theme/css/bootstrap.css">
+  <link rel="stylesheet" type="text/css" href="/theme/css/style.css">
+  <script async type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  </script>
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <br>
+    		<h1><a class="web_title" href="/">koaning.io</a></h1>
+        <blockquote>
+          <p class="pull-left">Blog of a data scientist/developer </p>
+          <p class="pull-right"><a href="https://nl.linkedin.com/in/vincentwarmerdam"> &nbsp; keyword bingo</a></p>
+          <p class="pull-right"><a href="https://twitter.com/fishnets88"> &nbsp; twitter</a></p>
+          <p class="pull-right"><a href="/feeds/rss.xml"> &nbsp; rss</a></p>
+        </blockquote>
+    		<br><br>
+      </div>
+    </div>
+  	<div class="row">
+  		<div class="col-md-12">
+<div class="article" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="text-center article-header">
+		<h1 itemprop="name headline" class="article-title">Custom ML in R</h1>
+		<span itemprop="author" itemscope itemtype="http://schema.org/Person"></span>
+		<time datetime="2015-11-05T00:00:00+01:00" itemprop="datePublished">Thu 05 November 2015</time>
+	</div>
+	<br><br>
+	<div itemprop="articleBody" class="article-body"><p>Before writing this blogpost I did very little with object oriented code in R. I never really saw it as a useful feature because I am mostly using R as an analysis tool. The power of R comes partly from the fact that other people have done this work for you. Recently though, I've been tasked to write a custom machine learning library that needed to support the <code>predict</code> function. </p>
+<p>This document will describe the simplest machine learning method ever and some quick details on how to implement it in R via object oriented coding. This post is heavily inspired by <a href="https://cran.r-project.org/doc/contrib/Leisch-CreatingPackages.pdf">this pdf</a> and <a href="http://adv-r.had.co.nz/OO-essentials.html">this tutorial</a>. My goal is to have a similar document but a bit shorter to make it easier for my own reference. I will try to compare python to R wherever possible such that other people may find it useful too. </p>
+<h2>S3 Classes</h2>
+<p>Where python has dictionaries, R has lists. </p>
+<div class="highlight"><pre><span></span>obj <span class="o">&lt;-</span> <span class="kt">list</span><span class="p">(</span>a <span class="o">=</span> <span class="m">1</span><span class="p">,</span> b <span class="o">=</span> <span class="m">2</span><span class="p">)</span>
+</pre></div>
+
+
+<p>Instead of having methods within these objects, R uses functions that can accept many different types of objects. Notice below that I am using the same function on a list as I am on a dataframe. </p>
+<div class="highlight"><pre><span></span><span class="kp">names</span><span class="p">(</span>obj<span class="p">)</span> 
+<span class="c1"># &quot;a&quot; &quot;b&quot;</span>
+<span class="kp">names</span><span class="p">(</span>ChickWeight<span class="p">)</span>
+<span class="c1"># &quot;weight&quot; &quot;Time&quot;   &quot;Chick&quot;  &quot;Diet&quot; </span>
+</pre></div>
+
+
+<p>Where python has polymorphism, R (and Julia by the way) has multiple dispatch. Methods do not belong to objects, they belong to functions. Instead of binding a method to an object, R allows you to write many functions that share the same name but refer to different objects. For example, if you want to check out what objects can be handed to <code>summary</code>:</p>
+<div class="highlight"><pre><span></span><span class="o">&gt;</span> methods<span class="p">(</span><span class="kp">summary</span><span class="p">)</span>
+ <span class="p">[</span><span class="m">1</span><span class="p">]</span> summary.aov                    summary.aovlist<span class="o">*</span>               summary.aspell<span class="o">*</span>               
+ <span class="p">[</span><span class="m">4</span><span class="p">]</span> summary.check_packages_in_dir<span class="o">*</span> summary.connection             summary.data.frame            
+ <span class="p">[</span><span class="m">7</span><span class="p">]</span> summary.Date                   summary.default                summary.ecdf<span class="o">*</span>             
+ <span class="kc">...</span>   
+</pre></div>
+
+
+<p>You could also check for all methods that below to a certain class.</p>
+<div class="highlight"><pre><span></span><span class="o">&gt;</span> methods<span class="p">(</span>class <span class="o">=</span> <span class="s">&quot;Date&quot;</span><span class="p">)</span>
+ <span class="p">[</span><span class="m">1</span><span class="p">]</span> <span class="o">-</span>             <span class="p">[</span>             <span class="p">[[</span>            <span class="p">[</span><span class="o">&lt;-</span>           <span class="o">+</span>             as.character 
+ <span class="p">[</span><span class="m">7</span><span class="p">]</span> as.data.frame as.list       as.POSIXct    as.POSIXlt    Axis          <span class="kt">c</span>            
+<span class="p">[</span><span class="m">13</span><span class="p">]</span> coerce        cut           diff          format        hist          initialize   
+<span class="p">[</span><span class="m">19</span><span class="p">]</span> is.numeric    julian        Math          mean          <span class="kp">months</span>
+<span class="kc">...</span>
+</pre></div>
+
+
+<p>If the function <code>mean()</code> were called on a <code>Date</code> object it would internally call <code>mean.Date()</code>. To keep track of what method a function should use R looks at the name of the function. In the case of <code>mean.Date()</code> the S3 class in R would recognize that the function <code>mean</code> can be used for <code>Date</code> by looking at the name. A silly example; <code>foo.bar()</code> would allow R to recognize that the function <code>foo</code> can be used on a <code>bar</code> object. </p>
+<p>This should feel very odd if you are a python programmer because it puts a lot of functions in the global namespace. </p>
+<p>Let's create an object of type foo again, just to be explicit.</p>
+<div class="highlight"><pre><span></span>obj <span class="o">&lt;-</span> <span class="kt">list</span><span class="p">(</span>a <span class="o">=</span> <span class="m">1</span><span class="p">,</span> b <span class="o">=</span> <span class="m">2</span><span class="p">)</span>
+<span class="kp">class</span><span class="p">(</span>obj<span class="p">)</span> <span class="o">&lt;-</span> <span class="s">&#39;foo&#39;</span> 
+
+<span class="o">&gt;</span> <span class="kp">class</span><span class="p">(</span>obj<span class="p">)</span> 
+<span class="s">&quot;foo&quot;</span>
+</pre></div>
+
+
+<p>We will now create a method <code>mean.foo</code> which will be called by the generic function <code>mean</code> if it is passed an object of class <code>foo</code>. </p>
+<div class="highlight"><pre><span></span>mean.foo <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>x<span class="p">){</span>
+  <span class="p">(</span>x<span class="o">$</span>a <span class="o">+</span> x<span class="o">$</span>b<span class="p">)</span><span class="o">/</span><span class="m">2</span>
+<span class="p">}</span>
+
+<span class="o">&gt;</span> <span class="kp">mean</span><span class="p">(</span>obj<span class="p">)</span> 
+<span class="m">1.5</span>
+</pre></div>
+
+
+<p>The only thing missing right now is a way to generate our own generic function. Just like <code>mean</code> was a generic function here, we might want to create a generic function that can be used on multiple objects. </p>
+<div class="highlight"><pre><span></span>f <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>x<span class="p">)</span> <span class="kp">UseMethod</span><span class="p">(</span><span class="s">&quot;f&quot;</span><span class="p">)</span>
+f.foo <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>x<span class="p">){</span>
+  <span class="kp">paste</span><span class="p">(</span>x<span class="o">$</span>a<span class="p">,</span> <span class="s">&quot;and&quot;</span><span class="p">,</span>  x<span class="o">$</span>b<span class="p">,</span> <span class="s">&quot;are in this foo obj&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+f.numeric <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>x<span class="p">){</span>
+  <span class="kp">paste</span><span class="p">(</span><span class="s">&quot;this numeric has value&quot;</span><span class="p">,</span> x<span class="p">)</span>
+<span class="p">}</span>
+
+<span class="o">&gt;</span> f<span class="p">(</span>obj<span class="p">)</span>
+<span class="p">[</span><span class="m">1</span><span class="p">]</span> <span class="s">&quot;1 and 2 are in this foo obj&quot;</span>
+<span class="o">&gt;</span> f<span class="p">(</span><span class="m">2</span><span class="p">)</span>
+<span class="p">[</span><span class="m">1</span><span class="p">]</span> <span class="s">&quot;this numeric has value 2&quot;</span>
+</pre></div>
+
+
+<h2>The model</h2>
+<p>I want to make a model that assumes a continous variable $y$ and a discrete input $X$. It will average $y$ over all the $X$ combinations.</p>
+<p>To create this machine learnin model I want a generic function that returns an object with a class. As long as I create a function via <code>UseMethod</code> that returns a <code>list</code> with an assigned class this should work. </p>
+<div class="highlight"><pre><span></span><span class="kn">library</span><span class="p">(</span>dplyr<span class="p">)</span>
+
+aggmod <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>x<span class="p">,</span> <span class="kc">...</span><span class="p">)</span> <span class="kp">UseMethod</span><span class="p">(</span><span class="s">&quot;aggmod&quot;</span><span class="p">)</span>
+
+aggmod.default <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>form<span class="p">,</span> data<span class="p">,</span> <span class="kc">...</span><span class="p">){</span>
+  res <span class="o">&lt;-</span> <span class="kt">list</span><span class="p">()</span>
+
+  agg <span class="o">&lt;-</span> aggregate<span class="p">(</span>formula <span class="o">=</span> form<span class="p">,</span> FUN <span class="o">=</span> <span class="kp">mean</span><span class="p">,</span> data <span class="o">=</span> data<span class="p">)</span>
+  <span class="kp">colnames</span><span class="p">(</span>agg<span class="p">)</span> <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">(</span>form <span class="o">%&gt;%</span> all.vars <span class="o">%&gt;%</span> <span class="kp">tail</span><span class="p">(</span><span class="m">-1</span><span class="p">),</span> <span class="s">&quot;pred&quot;</span><span class="p">)</span>
+  res<span class="o">$</span>agg <span class="o">&lt;-</span> agg
+
+  res<span class="o">$</span>call <span class="o">&lt;-</span> <span class="kp">match.call</span><span class="p">()</span>
+  res<span class="o">$</span>formula <span class="o">&lt;-</span> form
+  res<span class="o">$</span>fitted.values <span class="o">&lt;-</span> data <span class="o">%&gt;%</span> left_join<span class="p">(</span>res<span class="o">$</span>agg<span class="p">)</span> <span class="o">%&gt;%</span> <span class="m">.</span><span class="o">$</span>pred
+  res<span class="o">$</span>y <span class="o">&lt;-</span> data <span class="o">%&gt;%</span> select_<span class="p">(</span>form <span class="o">%&gt;%</span> all.vars <span class="o">%&gt;%</span> <span class="kp">head</span><span class="p">(</span><span class="m">1</span><span class="p">))</span>
+  res<span class="o">$</span>residuals <span class="o">&lt;-</span> res<span class="o">$</span>y <span class="o">-</span> res<span class="o">$</span>fitted.values
+  res<span class="o">$</span>mae <span class="o">&lt;-</span> <span class="kp">mean</span><span class="p">(</span><span class="kp">sum</span><span class="p">(</span><span class="kp">abs</span><span class="p">(</span>res<span class="o">$</span>residuals<span class="p">)</span><span class="o">/</span><span class="kp">length</span><span class="p">(</span>res<span class="o">$</span>residuals<span class="p">)))</span>
+  res<span class="o">$</span>mse <span class="o">&lt;-</span> <span class="kp">mean</span><span class="p">(</span><span class="kp">sum</span><span class="p">(</span>res<span class="o">$</span>residuals<span class="o">^</span><span class="m">2</span><span class="p">)</span><span class="o">/</span><span class="kp">length</span><span class="p">(</span>res<span class="o">$</span>residuals<span class="p">))</span>
+
+  <span class="kp">class</span><span class="p">(</span>res<span class="p">)</span> <span class="o">&lt;-</span> <span class="s">&quot;aggmod&quot;</span>
+  res
+<span class="p">}</span>
+</pre></div>
+
+
+<p>The <code>.default</code> method can be seen as a constructor. When we call <code>aggmod()</code> function it will point to the <code>aggmod.default</code> method and return a list of class <code>aggmod</code>. This object still needs some utility generics. Currently, this object has no pretty print representation and can also not be passed into the <code>predict</code> function. </p>
+<div class="highlight"><pre><span></span>print.aggmod <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>x<span class="p">,</span> <span class="kc">...</span><span class="p">){</span>
+  <span class="kp">cat</span><span class="p">(</span><span class="s">&quot;Call:\n&quot;</span><span class="p">)</span>
+  <span class="kp">print</span><span class="p">(</span>x<span class="o">$</span><span class="kp">call</span><span class="p">)</span>
+  <span class="kp">cat</span><span class="p">(</span><span class="s">&quot;\nMSE:&quot;</span><span class="p">)</span>
+  <span class="kp">print</span><span class="p">(</span>x<span class="o">$</span>mse<span class="p">)</span>
+  <span class="kp">cat</span><span class="p">(</span><span class="s">&quot;MAE:&quot;</span><span class="p">)</span>
+  <span class="kp">print</span><span class="p">(</span>x<span class="o">$</span>mae<span class="p">)</span>
+<span class="p">}</span>
+
+predict.aggmod <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>x<span class="p">,</span> newdata <span class="o">=</span> <span class="kc">NULL</span><span class="p">,</span> <span class="kc">...</span><span class="p">){</span>
+  <span class="kr">if</span><span class="p">(</span><span class="kp">is.null</span><span class="p">(</span>newdata<span class="p">))</span> <span class="kr">return</span><span class="p">(</span>fitted<span class="p">(</span>x<span class="p">))</span>
+  newdata <span class="o">%&gt;%</span> left_join<span class="p">(</span>x<span class="o">$</span>agg<span class="p">)</span> <span class="o">%&gt;%</span> <span class="m">.</span><span class="o">$</span>pred
+<span class="p">}</span>
+</pre></div>
+
+
+<p>With this in place, it starts to feel like using the <code>lm</code> function.</p>
+<div class="highlight"><pre><span></span>modl <span class="o">&lt;-</span> aggmod<span class="p">(</span>weight <span class="o">~</span> Time <span class="o">+</span> Diet<span class="p">,</span> ChickWeight<span class="p">)</span> 
+<span class="o">&gt;</span> modl <span class="o">%&gt;%</span> <span class="kp">print</span>
+Call<span class="o">:</span>
+aggmod.default<span class="p">(</span>form <span class="o">=</span> weight <span class="o">~</span> Time <span class="o">+</span> Diet<span class="p">,</span> data <span class="o">=</span> ChickWeight<span class="p">)</span>
+
+MSE<span class="o">:</span><span class="p">[</span><span class="m">1</span><span class="p">]</span> <span class="m">631109.7</span>
+MAE<span class="o">:</span><span class="p">[</span><span class="m">1</span><span class="p">]</span> <span class="m">11692.11</span>
+
+<span class="o">&gt;</span> predict<span class="p">(</span>modl<span class="p">,</span> newdata <span class="o">=</span> ChickWeight <span class="o">%&gt;%</span> sample_n<span class="p">(</span><span class="m">5</span><span class="p">))</span>
+Joining <span class="kp">by</span><span class="o">:</span> <span class="kt">c</span><span class="p">(</span><span class="s">&quot;Time&quot;</span><span class="p">,</span> <span class="s">&quot;Diet&quot;</span><span class="p">)</span>
+<span class="p">[</span><span class="m">1</span><span class="p">]</span> <span class="m">187.70000</span>  <span class="m">47.25000</span>  <span class="m">79.68421</span>  <span class="m">64.50000</span>  <span class="m">66.78947</span>
+</pre></div>
+
+
+<h2>Conclusion</h2>
+<p>I found this exercize very helpful in understanding the R way of dealing with objects. If you are from a different programming language this may feel like a very strange way of doing things but it has it's benefits. By allowing our code to be written this way, we can do the following; </p>
+<div class="highlight"><pre><span></span>formulas <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">(</span>weight <span class="o">~</span> Time<span class="p">,</span> weight <span class="o">~</span> Time <span class="o">+</span> Diet<span class="p">,</span> weight <span class="o">~</span> Diet<span class="p">)</span>
+ml_methods <span class="o">&lt;-</span> <span class="kt">list</span><span class="p">(</span>lm<span class="p">,</span> aggmod<span class="p">)</span>
+df <span class="o">&lt;-</span> <span class="kt">data.frame</span><span class="p">(</span>variables <span class="o">=</span> <span class="kp">as.character</span><span class="p">(),</span> model <span class="o">=</span> <span class="kp">as.character</span><span class="p">(),</span> median_mse <span class="o">=</span> <span class="kp">as.numeric</span><span class="p">())</span>
+
+mse <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>x<span class="p">,</span>y<span class="p">){</span>
+  diff <span class="o">&lt;-</span> x <span class="o">-</span> y
+  <span class="kp">mean</span><span class="p">(</span><span class="kp">sum</span><span class="p">(</span><span class="kp">diff</span><span class="o">^</span><span class="m">2</span><span class="p">)</span><span class="o">/</span><span class="kp">length</span><span class="p">(</span><span class="kp">diff</span><span class="p">))</span>
+<span class="p">}</span>
+
+<span class="kr">for</span><span class="p">(</span>f <span class="kr">in</span> formulas<span class="p">){</span>
+  <span class="kr">for</span><span class="p">(</span>m <span class="kr">in</span> ml_methods<span class="p">){</span>
+    mod <span class="o">&lt;-</span> m<span class="p">(</span>f<span class="p">,</span> ChickWeight<span class="p">)</span>
+    df <span class="o">&lt;-</span> df <span class="o">%&gt;%</span> <span class="kp">rbind</span><span class="p">(</span><span class="kt">data.frame</span><span class="p">(</span>
+      variables <span class="o">=</span> f <span class="o">%&gt;%</span> all.vars <span class="o">%&gt;%</span> <span class="kp">tail</span><span class="p">(</span><span class="m">-1</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="kp">paste</span><span class="p">(</span>collapse<span class="o">=</span><span class="s">&#39; &#39;</span><span class="p">),</span>
+      model <span class="o">=</span> mod<span class="o">$</span>call <span class="o">%&gt;%</span> as.character <span class="o">%&gt;%</span> <span class="m">.</span><span class="p">[</span><span class="m">1</span><span class="p">],</span> 
+      median_mse <span class="o">=</span> mse<span class="p">(</span>mod <span class="o">%&gt;%</span> predict<span class="p">,</span> ChickWeight<span class="o">$</span>weight<span class="p">)</span>
+    <span class="p">))</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Having a generic <code>predict</code> allows an R user to focus on the statistics because there is a common expectation of how an object should interact with it. Not all programmers will like this style, some may say that it offers too much sugar. Another example of things that feel trippy to programmers; </p>
+<div class="highlight"><pre><span></span><span class="sb">`%+%`</span> <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>a<span class="p">,</span> b<span class="p">){</span>
+  <span class="kp">paste</span><span class="p">(</span>a<span class="p">,</span>b<span class="p">,</span> sep <span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="o">&gt;</span> <span class="s">&#39;a&#39;</span> <span class="o">%+%</span> <span class="s">&#39;b&#39;</span> <span class="o">%+%</span> <span class="s">&#39;c&#39;</span>
+<span class="p">[</span><span class="m">1</span><span class="p">]</span> <span class="s">&quot;abc&quot;</span>
+</pre></div>
+
+
+<p>Where python can make use of polymorphism for it's operators, R imposes different rules, but allows you to write your own operators. Most statistician will enjoy this because this syntax allows them only worry about doing statistics with code that feels natural to them.</p></div>
+	<hr>
+</div>
+        <br>
+  		</div>
+  	</div>
+  </div>
+
+  <div class="container">
+  	<div class="row">
+  		<div class="col-md-12 text-center center-block aw-bottom">
+  			<p>Vincent D. Warmerdam Made with Pelican</p>
+  		</div>
+  	</div>
+  </div>
+  <!-- JavaScript -->
+  <script src="/theme/js/jquery-2.1.3.min.js"></script>
+  <script type="text/javascript">
+  jQuery(document).ready(function($) {
+  	$("div.collapseheader").click(function () {
+  		$header = $(this).children("span").first();
+  		$codearea = $(this).children(".input_area");
+  		$codearea.slideToggle(500, function () {
+  			$header.text(function () {
+  				return $codearea.is(":visible") ? "Collapse Code" : "Expand Code";
+  			});
+  		});
+  	});
+  });
+
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-28011256-6', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

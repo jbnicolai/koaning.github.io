@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Mini TrueSkill Demo — koaning.io</title>
+  <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+	<meta name="description" content="Title: Mini TrueSkill Demo; Date: 2016-03-24; Author: Vincent D. Warmerdam">
+	<meta name="author" content="Vincent D. Warmerdam">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="/theme/css/bootstrap.css">
+  <link rel="stylesheet" type="text/css" href="/theme/css/style.css">
+  <script async type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  </script>
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <br>
+    		<h1><a class="web_title" href="/">koaning.io</a></h1>
+        <blockquote>
+          <p class="pull-left">Blog of a data scientist/developer </p>
+          <p class="pull-right"><a href="https://nl.linkedin.com/in/vincentwarmerdam"> &nbsp; keyword bingo</a></p>
+          <p class="pull-right"><a href="https://twitter.com/fishnets88"> &nbsp; twitter</a></p>
+          <p class="pull-right"><a href="/feeds/rss.xml"> &nbsp; rss</a></p>
+        </blockquote>
+    		<br><br>
+      </div>
+    </div>
+  	<div class="row">
+  		<div class="col-md-12">
+<div class="article" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="text-center article-header">
+		<h1 itemprop="name headline" class="article-title">Mini TrueSkill Demo</h1>
+		<span itemprop="author" itemscope itemtype="http://schema.org/Person"></span>
+		<time datetime="2016-03-24T00:00:00+01:00" itemprop="datePublished">Thu 24 March 2016</time>
+	</div>
+	<br><br>
+	<div itemprop="articleBody" class="article-body"><p>This document contains a small Shiny app that demos the gist of the TrueSkill algorithm. TrueSkill is a bayesian ranking system developed for the Xbox matching but variants of this work have since also appeared in other places. The algorithm deals with uncertainty and can run in an online setting. My implementation is done via sampling, which is a bit sloppy, but makes it much easier to quickly bootstrap it together. </p>
+<h4>The Gist of TrueSkill</h4>
+<p>The system tries to map a player to a belief of skill. We'll map this skill between 0 and 1. This is represented through a probability density function. When two players are playing against eachother then we can combine these two beliefs into a multivariate probability distribution. This is now a prior of skill between these two players. </p>
+<p>Next, the game will have an outcome, which will update the prior. If player one wins, we remove likelihood from the distribution that suggests player 2 is better and vice versa. This will be a blunt change or a subtle change depending on what <code>margin</code> of noise we'll allow .</p>
+<p>By doing this we get a few very nice properties that you can confirm in the app below.</p>
+<ul>
+<li>Suppose a good player wins from a player we know nothing about. In this case the posterior will look a lot like the prior. Very little belief will change. </li>
+<li>Suppose a good player looses from a player we know nothing about. In this case the good player will still be a good player but the unknown player will suddenly move up the ladder very rapidly. This makes sense. If we're sure you've just beat a very good player then we have more trust that you should move up rapidly. </li>
+<li>We can influence the speed at which an unknown player moves up/down the ladder by adjusting a parameter (here <code>prior</code>) which causes the prior belief to be more thickly centered around the center of skill levels. </li>
+<li>All of this can be implemented for a real time setting. You'll want the update rule to use probability theory instead of sampling if you care about such systems being fast and stable. </li>
+</ul>
+<h3>Shiny App</h3>
+<iframe src="https://koaning.shinyapps.io/trueskill/trueskill.Rmd" frameborder="0" width="100%" height="1200"></iframe></div>
+	<hr>
+</div>
+        <br>
+  		</div>
+  	</div>
+  </div>
+
+  <div class="container">
+  	<div class="row">
+  		<div class="col-md-12 text-center center-block aw-bottom">
+  			<p>Vincent D. Warmerdam Made with Pelican</p>
+  		</div>
+  	</div>
+  </div>
+  <!-- JavaScript -->
+  <script src="/theme/js/jquery-2.1.3.min.js"></script>
+  <script type="text/javascript">
+  jQuery(document).ready(function($) {
+  	$("div.collapseheader").click(function () {
+  		$header = $(this).children("span").first();
+  		$codearea = $(this).children(".input_area");
+  		$codearea.slideToggle(500, function () {
+  			$header.text(function () {
+  				return $codearea.is(":visible") ? "Collapse Code" : "Expand Code";
+  			});
+  		});
+  	});
+  });
+
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-28011256-6', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

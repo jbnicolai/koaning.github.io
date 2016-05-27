@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Biased Randomness to Perfect Fit — koaning.io</title>
+  <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+	<meta name="description" content="Title: Biased Randomness to Perfect Fit; Date: 2016-04-12; Author: Vincent D. Warmerdam">
+	<meta name="author" content="Vincent D. Warmerdam">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="/theme/css/bootstrap.css">
+  <link rel="stylesheet" type="text/css" href="/theme/css/style.css">
+  <script async type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  </script>
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <br>
+    		<h1><a class="web_title" href="/">koaning.io</a></h1>
+        <blockquote>
+          <p class="pull-left">Blog of a data scientist/developer </p>
+          <p class="pull-right"><a href="https://nl.linkedin.com/in/vincentwarmerdam"> &nbsp; keyword bingo</a></p>
+          <p class="pull-right"><a href="https://twitter.com/fishnets88"> &nbsp; twitter</a></p>
+          <p class="pull-right"><a href="/feeds/rss.xml"> &nbsp; rss</a></p>
+        </blockquote>
+    		<br><br>
+      </div>
+    </div>
+  	<div class="row">
+  		<div class="col-md-12">
+<div class="article" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="text-center article-header">
+		<h1 itemprop="name headline" class="article-title">Biased Randomness to Perfect Fit</h1>
+		<span itemprop="author" itemscope itemtype="http://schema.org/Person"></span>
+		<time datetime="2016-04-12T00:00:00+02:00" itemprop="datePublished">Tue 12 April 2016</time>
+	</div>
+	<br><br>
+	<div itemprop="articleBody" class="article-body"><p>So here's an interesting question; </p>
+<p><b>Can we generate a meaningful regression out of randomness?</b></p>
+<p>You may be tempted to think that this is impossible because randomness does not contain any information. Although this is a valid statement I'd like to show the contrary in this blogpost. Turns out that correlated entropy can generate useful features that can be used to fit smooth functions. </p>
+<h2>Libraries</h2>
+<p>I'll demo this approach in R, to follow along you'll need the following libraries installed;</p>
+<div class="highlight"><pre><span></span>library(dplyr)
+library(ggplot2)
+library(tidyr)
+</pre></div>
+
+
+<h2>Biased Entropy Series</h2>
+<p>Let's generate some random, but correlated, data. The idea is that this data will later generate a sequence. </p>
+<p>These two slides from <a href="https://www.cs.toronto.edu/~hinton/csc2515/notes/gp_slides_fall08.pdf">Ian Murray</a> might explain the idea better than words or math.</p>
+<p><img alt="" src="/theme/images/randomreg1.png" /></p>
+<p><img alt="" src="/theme/images/randomreg2.png" /></p>
+<p>I'll be drawing $n$ samples from an $n$-dimensional gaussian distribution that is correlated. I want the correlation between $x_i$ and $x_j$ to be large for $i \approx j$ and larger as the difference between $i$ and $j$ increases. We can then look at this generated data as if it is a time-series.</p>
+<h2>Generating from Entropy</h2>
+<p>To generate this data I'll need a symmetric function <code>rbf</code> to create the covariance matrix for the gaussian. </p>
+<p>$$ f(x_i, x_j) = c e^{\frac{(x_i - x_j)^2}{s}}$$ </p>
+<p>Note that the values for $c$ and $s$ can be regarded as some constant which aren't too important for the purpose of generating features. The important aspect is the symmetry. Let's do a quick for-loop to build this.</p>
+<div class="highlight"><pre><span></span>k <span class="o">&lt;-</span> <span class="m">100</span>
+covmat <span class="o">&lt;-</span> <span class="kt">matrix</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> k<span class="p">,</span> k<span class="p">)</span>
+<span class="kp">diag</span><span class="p">(</span>covmat<span class="p">)</span> <span class="o">&lt;-</span> <span class="m">1</span>
+rbf <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>x_i<span class="p">,</span> x_j<span class="p">)</span> <span class="kp">exp</span><span class="p">(</span><span class="m">-0.5</span><span class="o">*</span><span class="p">(</span>x_i <span class="o">-</span> x_j<span class="p">)</span><span class="o">^</span><span class="m">2</span><span class="p">)</span>
+
+<span class="kr">for</span><span class="p">(</span>i <span class="kr">in</span> <span class="m">1</span><span class="o">:</span>k<span class="p">){</span>
+  <span class="kr">for</span><span class="p">(</span>j <span class="kr">in</span> <span class="m">1</span><span class="o">:</span>k<span class="p">){</span>
+    covmat<span class="p">[</span>i<span class="p">,</span>j<span class="p">]</span> <span class="o">&lt;-</span> rbf<span class="p">(</span>i<span class="o">/</span><span class="m">10</span><span class="p">,</span> j<span class="o">/</span><span class="m">10</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>This diagonal matrix can now be used to generate random sequences. </p>
+<div class="highlight"><pre><span></span>n_guassians <span class="o">&lt;-</span> <span class="m">5</span>
+df <span class="o">&lt;-</span> MASS<span class="o">::</span>mvrnorm<span class="p">(</span>n <span class="o">=</span> n_guassians<span class="p">,</span> mu <span class="o">=</span> <span class="kp">rep</span><span class="p">(</span><span class="m">0</span><span class="p">,</span>k<span class="p">),</span> Sigma<span class="o">=</span>covmat<span class="p">)</span> <span class="o">%&gt;%</span> 
+  t <span class="o">%&gt;%</span> 
+  <span class="kt">data.frame</span> <span class="o">%&gt;%</span> 
+  gather<span class="p">(</span>key<span class="p">,</span> value<span class="p">)</span> <span class="o">%&gt;%</span> 
+  group_by<span class="p">(</span>key<span class="p">)</span> <span class="o">%&gt;%</span> 
+  mutate<span class="p">(</span>r <span class="o">=</span> row_number<span class="p">())</span> <span class="o">%&gt;%</span> 
+  ungroup
+
+pltr <span class="o">&lt;-</span> df <span class="o">%&gt;%</span> group_by<span class="p">(</span>key<span class="p">)</span> <span class="o">%&gt;%</span> mutate<span class="p">(</span>r <span class="o">=</span> row_number<span class="p">(),</span> v <span class="o">=</span> value <span class="o">%&gt;%</span> <span class="kp">cumsum</span><span class="p">)</span> <span class="o">%&gt;%</span> ungroup 
+
+ggplot<span class="p">()</span> <span class="o">+</span> 
+  geom_line<span class="p">(</span>data<span class="o">=</span>df<span class="p">,</span> aes<span class="p">(</span>r<span class="p">,</span> value<span class="p">,</span> colour <span class="o">=</span> key<span class="p">))</span> <span class="o">+</span> 
+  facet_grid<span class="p">(</span>key <span class="o">~</span> <span class="m">.</span><span class="p">)</span> <span class="o">+</span> 
+  ggtitle<span class="p">(</span><span class="s">&#39;correlated gaussian sequences&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<p><img alt="" src="/theme/images/randomreg3.png" /></p>
+<p>You'll notice that although these sequences are all random, they contain information. It is not white-noise, rather a biased pattern that's random enough that it cannot be predicted beforehand. </p>
+<p>Here comes the thought experiment. If we generate enough of these 'features', can we fit these to any arbitrary continous sequenes? </p>
+<div class="highlight"><pre><span></span>n_guassians <span class="o">&lt;-</span> <span class="m">5</span>
+
+gen_gaussians <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>n_gauss<span class="p">,</span> func<span class="p">){</span>
+  MASS<span class="o">::</span>mvrnorm<span class="p">(</span>n <span class="o">=</span> n_gauss<span class="p">,</span> mu <span class="o">=</span> <span class="kp">rep</span><span class="p">(</span><span class="m">0</span><span class="p">,</span>k<span class="p">),</span> Sigma<span class="o">=</span>covmat<span class="p">)</span> <span class="o">%&gt;%</span> 
+    t <span class="o">%&gt;%</span> 
+    <span class="kt">data.frame</span> <span class="o">%&gt;%</span> 
+    mutate<span class="p">(</span>r <span class="o">=</span> row_number<span class="p">(),</span> 
+           y <span class="o">=</span> func<span class="p">(</span>r<span class="o">/</span><span class="m">10</span><span class="p">))</span> 
+<span class="p">}</span>
+
+plot_datafit <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>gauss_df<span class="p">){</span>
+  mod <span class="o">&lt;-</span> lm<span class="p">(</span>y <span class="o">~</span> <span class="m">.</span><span class="p">,</span> data <span class="o">=</span> gauss_df <span class="o">%&gt;%</span> select<span class="p">(</span><span class="o">-</span>r<span class="p">))</span>
+
+  gauss_df <span class="o">&lt;-</span> gauss_df <span class="o">%&gt;%</span> 
+    mutate<span class="p">(</span>pred <span class="o">=</span> predict<span class="p">(</span>mod<span class="p">,</span> <span class="m">.</span><span class="p">))</span>
+
+  ggplot<span class="p">()</span> <span class="o">+</span> 
+    geom_point<span class="p">(</span>data<span class="o">=</span>gauss_df<span class="p">,</span> aes<span class="p">(</span>r<span class="p">,</span> y<span class="p">))</span> <span class="o">+</span> 
+    geom_line<span class="p">(</span>data<span class="o">=</span>gauss_df<span class="p">,</span> aes<span class="p">(</span>r<span class="p">,</span> pred<span class="p">),</span> colour <span class="o">=</span> <span class="s">&quot;steelblue&quot;</span><span class="p">)</span> <span class="o">+</span> 
+    ggtitle<span class="p">(</span><span class="kp">paste</span><span class="p">(</span><span class="s">&quot;number of gaussians for fit:&quot;</span><span class="p">,</span> <span class="p">(</span>gauss_df <span class="o">%&gt;%</span> <span class="kp">ncol</span><span class="p">)</span> <span class="o">-</span> <span class="m">3</span><span class="p">))</span>
+<span class="p">}</span>
+
+show_fit <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>n_gauss<span class="p">,</span> func<span class="p">)</span> <span class="p">{</span>
+  func <span class="o">%&gt;%</span> 
+    gen_gaussians<span class="p">(</span>n_gauss<span class="p">,</span> <span class="m">.</span><span class="p">)</span> <span class="o">%&gt;%</span> 
+    plot_datafit
+<span class="p">}</span>
+
+func1 <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>x<span class="p">)</span> <span class="kp">sin</span><span class="p">(</span>x<span class="o">/</span><span class="m">2</span><span class="p">)</span> <span class="o">+</span> <span class="m">2</span><span class="o">*</span><span class="kp">cos</span><span class="p">(</span>x<span class="o">*</span><span class="m">2</span><span class="p">)</span>
+func2 <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>x<span class="p">)</span> <span class="m">2</span><span class="o">^</span><span class="p">(</span><span class="kp">sin</span><span class="p">(</span>x<span class="o">/</span><span class="m">2</span><span class="p">)</span> <span class="o">+</span> <span class="m">2</span><span class="o">*</span><span class="kp">cos</span><span class="p">(</span>x<span class="o">*</span><span class="m">2</span><span class="p">))</span>
+</pre></div>
+
+
+<h1>Fitting: $\sin(x/2) + 2\cos(2x)$</h1>
+<div class="highlight"><pre><span></span>show_fit(5, func1)
+</pre></div>
+
+
+<p><img alt="" src="/theme/images/randomreg4.png" /></p>
+<div class="highlight"><pre><span></span>show_fit(10, func1)
+</pre></div>
+
+
+<p><img alt="" src="/theme/images/randomreg5.png" /></p>
+<div class="highlight"><pre><span></span>show_fit(25, func1)
+</pre></div>
+
+
+<p><img alt="" src="/theme/images/randomreg6.png" /></p>
+<h1>Fitting: $2^{sin(x/2) + 2*cos(2x)}$</h1>
+<div class="highlight"><pre><span></span>show_fit(5, func2)
+</pre></div>
+
+
+<p><img alt="" src="/theme/images/randomreg7.png" /></p>
+<div class="highlight"><pre><span></span>show_fit(10, func2)
+</pre></div>
+
+
+<p><img alt="" src="/theme/images/randomreg8.png" /></p>
+<div class="highlight"><pre><span></span>show_fit(25, func2)
+</pre></div>
+
+
+<p><img alt="" src="/theme/images/randomreg9.png" /></p>
+<p>We seem to be fitting rather well. This is an interesting feat. Because we're generating smooth random patterns, we are able to find a linear combination of them that fit the data well.The resulting fit is also very smooth. In a lot of ways this process is very similar to the exercize with the radial basis functions, except here I'm able to do this with (biased) random features. </p>
+<h2>Can I haz noisy data?</h2>
+<p>Yes! Although if the signal to noise ratio is off, you can expect the fit to capture the noise more than the signal. This is expected with most machine learning approaches. </p>
+<div class="highlight"><pre><span></span>show_fit_with_true <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>n_gauss<span class="p">,</span> func<span class="p">,</span> sigma <span class="o">=</span> <span class="m">0.5</span><span class="p">){</span>
+  p <span class="o">&lt;-</span> show_fit<span class="p">(</span>n_gauss<span class="p">,</span> <span class="kr">function</span><span class="p">(</span>x<span class="p">)</span> func<span class="p">(</span>x<span class="p">)</span> <span class="o">+</span> rnorm<span class="p">(</span><span class="kp">length</span><span class="p">(</span>x<span class="p">),</span> <span class="m">0</span><span class="p">,</span> sigma<span class="p">))</span>
+  p
+<span class="p">}</span>
+</pre></div>
+
+
+<h1>Effect of Noise in Data</h1>
+<div class="highlight"><pre><span></span>show_fit_with_true(10, function(x) 2^(sin(x/2) + 2*cos(x*2)))
+</pre></div>
+
+
+<p><img alt="" src="/theme/images/randomreg10.png" /></p>
+<div class="highlight"><pre><span></span>show_fit_with_true(50, function(x) 2^(sin(x/2) + 2*cos(x*2)))
+</pre></div>
+
+
+<p><img alt="" src="/theme/images/randomreg11.png" /></p>
+<h1>Conclusion</h1>
+<p>This featue generating trick might remind of a similar trick with radial basis functions. What is interesting here is that we're able to generate these features from biased entropy. Deterministic patterns can be tackled with appropriate randomness. </p></div>
+	<hr>
+</div>
+        <br>
+  		</div>
+  	</div>
+  </div>
+
+  <div class="container">
+  	<div class="row">
+  		<div class="col-md-12 text-center center-block aw-bottom">
+  			<p>Vincent D. Warmerdam Made with Pelican</p>
+  		</div>
+  	</div>
+  </div>
+  <!-- JavaScript -->
+  <script src="/theme/js/jquery-2.1.3.min.js"></script>
+  <script type="text/javascript">
+  jQuery(document).ready(function($) {
+  	$("div.collapseheader").click(function () {
+  		$header = $(this).children("span").first();
+  		$codearea = $(this).children(".input_area");
+  		$codearea.slideToggle(500, function () {
+  			$header.text(function () {
+  				return $codearea.is(":visible") ? "Collapse Code" : "Expand Code";
+  			});
+  		});
+  	});
+  });
+
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-28011256-6', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>
